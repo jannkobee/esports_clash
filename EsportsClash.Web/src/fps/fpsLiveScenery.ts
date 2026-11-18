@@ -9,7 +9,7 @@ import {batchStaticLiveGeometry} from './fpsLiveRenderOptimization.ts';
 export const LIVE_FESTOON_SPANS = [
   { id:'banana-south', from:{x:14.04,y:5.1,z:-14}, to:{x:33.49,y:4.7,z:-14}, sag:.68 },
   { id:'banana-mid', from:{x:14.04,y:5.1,z:-6}, to:{x:21.96,y:4.7,z:-6}, sag:.68 },
-  { id:'banana-north', from:{x:16.04,y:4.8,z:7.2}, to:{x:20.96,y:4.8,z:7.2}, sag:.52 },
+  { id:'banana-north', from:{x:16.04,y:4.8,z:7.65}, to:{x:20.96,y:4.8,z:7.65}, sag:.52 },
   { id:'fountain-gallery', from:{x:16.04,y:4.25,z:15}, to:{x:30.4,y:4.25,z:15}, sag:.42 },
   { id:'mid-pizzeria', from:{x:-2.0,y:5.05,z:-13.5}, to:{x:3.0,y:5.15,z:-13.5}, sag:.38 },
 ] as const;
@@ -37,8 +37,9 @@ export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMa
   buildMidWindowScenery(scene,{box,detail:detailMesh});
 
   // The attackers start in an actual dining room with a clear central departure aisle.
-  box('trattoria-ceiling-beam',0,4.28,-31.5,18,.18,.2,'#69503a');
-  box('trattoria-ceiling-beam-rear',0,4.28,-37,18,.18,.2,'#69503a');
+  // Beams sit flush under the 4.4 m roof slab; lamp cables run from it.
+  box('trattoria-ceiling-beam',0,4.31,-31.5,18,.18,.2,'#69503a');
+  box('trattoria-ceiling-beam-rear',0,4.31,-37,18,.18,.2,'#69503a');
   for(const side of [-1,1]){
     const x=side*6,z=-37;
     box(`trattoria-table-top-${side}`,x,.8,z,1.7,.08,1.2,'#8d6848');
@@ -48,16 +49,51 @@ export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMa
       const cup=detailMesh(MeshBuilder.CreateCylinder(`trattoria-cup-${side}-${seat}`,{height:.14,diameter:.1,tessellation:12},scene),'#c1b692');cup.position.set(x+seat*.45,.914,z+.27);
       box(`trattoria-stool-${side}-${seat}`,x+seat*.5,.24,z+.42,.34,.48,.34,'#786248');
     }
-    const cable=detailMesh(MeshBuilder.CreateCylinder(`trattoria-lamp-cable-${side}`,{height:1.05,diameter:.014,tessellation:6},scene),'#3e4340');cable.position.set(side*3,3.83,-36);
+    const cable=detailMesh(MeshBuilder.CreateCylinder(`trattoria-lamp-cable-${side}`,{height:1.12,diameter:.014,tessellation:6},scene),'#3e4340');cable.position.set(side*3,3.84,-36);
     const shade=detailMesh(MeshBuilder.CreateCylinder(`trattoria-lamp-shade-${side}`,{height:.2,diameterTop:.12,diameterBottom:.4,tessellation:16},scene),'#a18550');shade.position.set(side*3,3.23,-36);
   }
   // Original Jade Lantern frontage: brick piers, jade tile eave and gold lettering.
+  /**
+   * Painted shop sign: a solid backing board (reads as the frame) with separate, correctly oriented
+   * lettering faces on the front and back. Text is never mapped onto the box itself, which mirrored it on
+   * the back and turned it sideways or upside down on the edges. The canvas matches the sign's real
+   * proportions so lettering is not stretched.
+   */
   const paintedSign=(name:string,text:string,x:number,y:number,z:number,w:number,h:number,bg:string,fg:string)=>{
-    const texture=new DynamicTexture(`${name}-paint`,{width:1024,height:256},scene,false);
-    const fontPx=Math.max(46,Math.min(112,Math.floor(880/Math.max(1,text.length*.68))));
-    texture.drawText(text,null,Math.round(128+fontPx*.36),`bold ${fontPx}px Georgia`,fg,bg,true);
-    const mat=new StandardMaterial(`${name}-material`,scene);mat.diffuseTexture=texture;mat.specularColor=Color3.Black();
-    const panel=box(name,x,y,z,w,h,.035,bg);panel.material=mat;return panel;
+    const texW=1024,texH=Math.max(64,Math.min(1024,Math.round(texW*h/w)));
+    const texture=new DynamicTexture(`${name}-paint`,{width:texW,height:texH},scene,true);
+    const ctx=texture.getContext() as unknown as CanvasRenderingContext2D;
+    ctx.fillStyle=bg;ctx.fillRect(0,0,texW,texH);
+    // Light weathering: faint horizontal brush streaks so the paint is not a flat digital fill.
+    for(let i=0;i<18;i++){
+      const seed=Math.sin((i+1)*12.9898+name.length*78.233)*43758.5453,r=seed-Math.floor(seed);
+      ctx.fillStyle=`rgba(${r>.5?255:0},${r>.5?255:0},${r>.5?255:0},${.025+r*.03})`;
+      ctx.fillRect(0,Math.floor(r*texH),texW,Math.max(1,Math.round(texH*.02)));
+    }
+    const inset=Math.max(3,Math.round(texH*.07));
+    ctx.strokeStyle=fg;ctx.globalAlpha=.55;ctx.lineWidth=Math.max(2,Math.round(texH*.035));
+    ctx.strokeRect(inset,inset,texW-inset*2,texH-inset*2);
+    ctx.globalAlpha=.3;ctx.lineWidth=Math.max(1,Math.round(texH*.012));
+    ctx.strokeRect(inset*1.9,inset*1.9,texW-inset*3.8,texH-inset*3.8);ctx.globalAlpha=1;
+    let fontPx=Math.round(texH*.6);
+    ctx.font=`bold ${fontPx}px Georgia`;
+    const fit=(texW-inset*6)/Math.max(1,ctx.measureText(text).width);
+    if(fit<1){fontPx=Math.max(10,Math.floor(fontPx*fit));ctx.font=`bold ${fontPx}px Georgia`;}
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillText(text,texW/2+Math.max(1,fontPx*.04),texH/2+Math.max(1,fontPx*.05));
+    ctx.fillStyle=fg;ctx.fillText(text,texW/2,texH/2);
+    texture.update();texture.anisotropicFilteringLevel=8;
+    const face=new StandardMaterial(`${name}-material`,scene);face.diffuseTexture=texture;face.specularColor=Color3.Black();
+    const d=.035,panel=box(name,x,y,z,w,h,d,bg);
+    // Own backing material (slightly darker than the paint) keeps the sign out of static batching.
+    const backing=new StandardMaterial(`${name}-backing`,scene);backing.diffuseColor=Color3.FromHexString(bg).scale(.72);backing.specularColor=Color3.Black();
+    panel.material=backing;
+    for(const side of [-1,1]){
+      const plane=MeshBuilder.CreatePlane(`${name}-face-${side<0?'front':'back'}`,{width:w*.97,height:h*.92},scene);
+      plane.parent=panel;plane.position.z=side*(d/2+.006);plane.rotation.y=side<0?0:Math.PI;
+      plane.material=face;plane.isPickable=false;plane.receiveShadows=true;
+    }
+    return panel;
   };
   paintedSign('jade-lantern-gold-sign','JADE LANTERN',0,3.87,-29.28,10.8,.72,'#293f37','#dfc38c');
   paintedSign('port-customs-name','DOGANA / PORTO FONTESSA',0,.51,43.9,6.8,.4,'#3d5c58','#e4d1a6');
@@ -142,7 +178,7 @@ export function buildLiveScenery(scene:Scene,material:(color:string)=>StandardMa
       box(`bridge-stair-nosing-${side}-${north}-${i}`,0,h+.012,z-.37,3.2,.025,.07,'#d8c7a6');
     }
     for(let i=0;i<21;i++){
-      const leaf=detailMesh(MeshBuilder.CreateSphere(`bridge-ivy-${side}-${i}`,{diameter:.17+(i%3)*.04,segments:5},scene),i%2?'#61794a':'#7f8c50');leaf.scaling.set(1,.4,.7);leaf.position.set(side*1.83,.98-(i%6)*.15,-1.2+Math.floor(i/6)*.34);
+      const leaf=detailMesh(MeshBuilder.CreateSphere(`bridge-ivy-${side}-${i}`,{diameter:.17+(i%3)*.04,segments:5},scene),i%2?'#61794a':'#7f8c50');leaf.scaling.set(1,.4,.7);leaf.position.set(side*1.66,.98-(i%6)*.15,-1.2+Math.floor(i/6)*.34);
     }
   }
   // Waterline masonry, service inlets and restrained weathering give the quay a purpose.

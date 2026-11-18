@@ -1,4 +1,5 @@
 import {useEffect,useState,type FormEvent} from 'react';
+import {SearchField} from './ui/SearchField';
 import {useAccount} from '../AccountContext';
 import {request} from '../cloudPersistence';
 import {pediaMoney,pediaTime,pediaHref} from '../hexapedia';
@@ -25,7 +26,7 @@ export function WorldCareerDesk({onChange}:{onChange:()=>void}){
     {error&&<p className="cloud-error" role="alert">{error}</p>}{notice&&<p role="status">{notice}</p>}{!desk&&<p>Reading the career desk…</p>}
     {desk&&<><p>{desk.rules.player_terms}</p>
       <details><summary>Player employment and transfer consent</summary><p>Find a roster member to discuss renewal, or another player to discuss a possible move. A playing-time plan informs their decision; it does not change your starting five. A free-agent signing charges one week of the agreed salary as a registration fee and requires four weeks of payroll cover.</p>
-        <label>Find a player<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Player name"/></label>
+        <SearchField label="Find a player" showLabel placeholder="Player name" value={query} onChange={setQuery}/>
         <form onSubmit={e=>form(e,d=>void act('/players/'+d.get('player')+'/offer',{weekly_salary:money(d,'salary'),weeks:Number(d.get('weeks')),playing_time:d.get('playing_time'),request_key:crypto.randomUUID()}))}>
           <div className="record-filters"><label>Player<select name="player" required><optgroup label="Your roster">{desk.players.map(p=><option key={p.id} value={p.id}>{p.name} · {pediaMoney(p.weekly_salary)}/week</option>)}</optgroup><optgroup label="Free agents">{desk.free_agents.map(p=><option key={p.id} value={p.id}>{p.name} ? free agent</option>)}</optgroup>{results.length>0&&<optgroup label="Search results">{results.map(p=><option key={p.id} value={p.id}>{p.name} · {p.club}</option>)}</optgroup>}</select></label>
           <label>Weekly salary · PHP<input name="salary" type="number" required min="1" step="1" defaultValue="100"/></label><label>Minimum term · weeks<input name="weeks" type="number" min="4" max="52" defaultValue="8" required/></label><label>Playing-time plan<select name="playing_time"><option value="rotation">Rotation</option><option value="starter">Compete for a starting place</option><option value="development">Development</option></select></label></div><button className="cm-btn" disabled={busy}>Submit private offer</button>

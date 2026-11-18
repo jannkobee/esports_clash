@@ -17,6 +17,117 @@ class FpsPlayerArchitecture
         if(is_file($source)&&!hash_equals(hash_file('sha256',$source),hash_file('sha256',$packaged)))throw new \RuntimeException('FPS architecture package differs from its canonical source. Run the catalog sync script.');
         return $catalog ??= json_decode(file_get_contents(is_file($source)?$source:$packaged), true, 512, JSON_THROW_ON_ERROR);
     }
+    public function tendenciesCatalog(): array
+    {
+        static $tendencies;
+        if($tendencies!==null)return $tendencies;
+        $source=base_path('../EsportsClash.Web/src/fps/fps-player-tendencies-v4.json');
+        $packaged=resource_path('fps-player-tendencies-v4.json');
+        if(is_file($source)&&is_file($packaged)&&!hash_equals(hash_file('sha256',$source),hash_file('sha256',$packaged)))throw new \RuntimeException('FPS tendencies package differs from its canonical source. Run the catalog sync script.');
+        return $tendencies ??= json_decode(file_get_contents(is_file($source)?$source:$packaged), true, 512, JSON_THROW_ON_ERROR);
+    }
+    /** Keys returned by scouting derivation, in the order the shared vectors list them. */
+    public const SCOUTING_TENDENCY_KEYS = ['structuredCalling','defaultPreference','rushCalling','utilityHeavyCalling','delegation','playerAutonomy','leadFromFront','midroundAdaptation','tempoSwitching','opportunityCalling','riskCalling','secondaryCallerTrust','earlyAggression','playDiscipline','supportFlash','lurkFlank','wideSwing','jigglePeek','utilityConservation','rotationProactivity'];
+    private const DNA_KEYS = ['riskTolerance','emotionalStability','coachability','tacticalDiscipline','adaptability','creativity','confidenceVolatility','socialTrust','leadershipInitiative','competitiveDrive','teamOrientation','preparationPreference'];
+    /** Shared weight table generated from fpsPlayerTendencies.ts deriveFpsTendencies (see fpsTendencyFormulas.ts). */
+    public function tendencyFormulas(): array
+    {
+        static $formulas;
+        if($formulas!==null)return $formulas;
+        $source=base_path('../EsportsClash.Web/src/fps/fps-tendency-formulas-v4.json');
+        $packaged=resource_path('fps-tendency-formulas-v4.json');
+        if(is_file($source)&&is_file($packaged)&&!hash_equals(hash_file('sha256',$source),hash_file('sha256',$packaged)))throw new \RuntimeException('FPS tendency formula package differs from its canonical source. Run the catalog sync script.');
+        return $formulas ??= json_decode(file_get_contents(is_file($source)?$source:$packaged), true, 512, JSON_THROW_ON_ERROR);
+    }
+    /**
+     * Natural tendencies exactly as the client's deriveFpsTendencies computes them: the shared weight
+     * table summed in source order, the same FNV jitter and the same rounding. Reads only the 4D
+     * personality and stable DNA; never attributes, K/D or match results. Raw DNA never leaves here.
+     */
+    public function deriveTendencyValues(array $p, array $dna, array $keys): array
+    {
+        $p=$this->personality($p);
+        $table=$this->tendencyFormulas();
+        $prefInit=match($p['playstyle']){'AGGRESSIVE'=>.9,'PASSIVE'=>.1,default=>.5};
+        $prefCoord=$p['mindset']==='TEAM_FIRST'?.85:.25;
+        $prefDelib=match($p['decisionStyle']){'METHODICAL'=>.85,'INSTINCTIVE'=>.15,default=>.5};
+        $prefReass=match($p['decisionStyle']){'ADAPTIVE'=>.85,'INSTINCTIVE'=>.6,default=>.4};
+        $prefPress=match($p['temperament']){'VOLATILE'=>1,'STEADY'=>.45,default=>.1};
+        $inputs=['init'=>$prefInit*100,'coord'=>$prefCoord*100,'delib'=>$prefDelib*100,'reass'=>$prefReass*100,'press'=>$prefPress*100,'inst'=>(1-$prefDelib)*100,'indiv'=>(1-$prefCoord)*100];
+        $d=array_replace(array_fill_keys(self::DNA_KEYS,50),array_intersect_key($dna,array_flip(self::DNA_KEYS)));
+        $sig=implode(':',array_map(fn($k)=>(string)$d[$k],['riskTolerance','creativity','tacticalDiscipline','teamOrientation','leadershipInitiative','adaptability']));
+        $span=$table['jitterSpan'];
+        $jitter=function(string $key)use($p,$sig,$span): float {
+            $hash=2166136261;$value=$p['id'].':'.$sig.':'.$key;
+            for($i=0;$i<strlen($value);$i++)$hash=(($hash^ord($value[$i]))*16777619)&0xffffffff;
+            return (($hash%1000)/999-0.5)*$span;
+        };
+        $evaluate=function(array $terms)use(&$evaluate,$inputs,$d): float {
+            $sum=0.0;
+            foreach($terms as [$weight,$input,$inverted]){
+                $value=is_array($input)?$evaluate($input):(str_starts_with($input,'d.')?$d[substr($input,2)]:$inputs[$input]);
+                $sum+=$weight*($inverted?100-$value:$value);
+            }
+            return $sum;
+        };
+        $out=[];
+        foreach($keys as $key){
+            $base=isset($table['formulas'][$key])?$evaluate($table['formulas'][$key]):50;
+            $out[$key]=(int)round(max(0,min(100,$base+$jitter($key))));
+        }
+        return $out;
+    }
+    /** Scouting subset (20 keys) used for top tendencies and IGL leadership identity. */
+    public function deriveTendencies(array $p, array $dna): array
+    {
+        return $this->deriveTendencyValues($p,$dna,self::SCOUTING_TENDENCY_KEYS);
+    }
+    /** The derived values the manager's team diagnostics read (shared `diagnosticKeys`); never DNA. */
+    public function diagnosticTendencies(array $p, array $dna): array
+    {
+        return $this->deriveTendencyValues($p,$dna,$this->tendencyFormulas()['diagnosticKeys']);
+    }
+    /**
+     * Hidden capability trait (0..100), mirrored exactly from fpsConsistency.ts deriveFpsConsistency:
+     * 10 + .30 emotional stability + .25 (100 - confidence volatility) + .15 tactical discipline
+     * + .05 preparation + .15 (100 - pressure sensitivity). It scales execution variance only; it is not
+     * a tendency. Only its qualitative label leaves the server.
+     */
+    public function deriveConsistency(array $p, array $dna): int
+    {
+        $p=$this->personality($p);
+        $press=match($p['temperament']){'VOLATILE'=>1,'STEADY'=>.45,default=>.1}*100;
+        $d=array_replace(array_fill_keys(self::DNA_KEYS,50),array_intersect_key($dna,array_flip(self::DNA_KEYS)));
+        return (int)round(max(0,min(100,10+.30*$d['emotionalStability']+.25*(100-$d['confidenceVolatility'])+.15*$d['tacticalDiscipline']+.05*$d['preparationPreference']+.15*(100-$press))));
+    }
+    /** Manager-facing 1–10 scale, mirrored exactly from fpsScale10.ts (owner decision 2026-11-17). */
+    public const SKILL_SCALE_LABELS=['Erratic','Wretched','Poor','Weak','Passable','Solid','Steady','Excellent','Formidable','Metronomic'];
+    public const TENDENCY_SCALE_LABELS=['Never','Almost never','Rarely','Seldom','Sometimes','Often','Usually','Strongly','Very strongly','Always'];
+    public function scale10(float $value): int
+    {
+        return (int)max(1,min(10,ceil($value/10)));
+    }
+    /** @return array{value:int,label:string} */
+    public function rated(float $value, string $kind): array
+    {
+        $level=$this->scale10($value);
+        return ['value'=>$level,'label'=>($kind==='skill'?self::SKILL_SCALE_LABELS:self::TENDENCY_SCALE_LABELS)[$level-1]];
+    }
+    public function consistencyLabel(int $value): string
+    {
+        return $this->rated($value,'skill')['label'];
+    }
+    public function iglLeadershipIdentity(array $t): array
+    {
+        $groups=[
+            ['score'=>(($t['structuredCalling']??50)+($t['utilityHeavyCalling']??50)+($t['defaultPreference']??50))/3,'label'=>'Tactical Architect','summary'=>'Rehearsed defaults, synchronized utility, disciplined spacing and structured executes.','potentialWeakness'=>'Can struggle when opponents repeatedly disrupt structure.'],
+            ['score'=>(($t['leadFromFront']??50)+($t['rushCalling']??50)+($t['riskCalling']??50))/3,'label'=>'Fragging Playmaker','summary'=>'Fast commitments, aggressive openings, momentum-driven attacks and proactive combat.','potentialWeakness'=>'Risk of overcommitment and thin preparation against disciplined defenses.'],
+            ['score'=>(($t['midroundAdaptation']??50)+($t['tempoSwitching']??50)+($t['opportunityCalling']??50))/3,'label'=>'Adaptive Mastermind','summary'=>'Information-driven defaults, frequent mid-round pivots and opponent-specific adjustments.','potentialWeakness'=>'Teammates with low adaptability may struggle to keep up with frequent changes.'],
+            ['score'=>(($t['delegation']??50)+($t['playerAutonomy']??50)+($t['secondaryCallerTrust']??50))/3,'label'=>'Player-Centric Facilitator','summary'=>'Distributed decision-making, high player freedom and tactics built around roster strengths.','potentialWeakness'=>'Can lack direction when independent plays fail to create openings.'],
+        ];
+        usort($groups,fn($a,$b)=>$b['score']<=>$a['score']);
+        return ['label'=>$groups[0]['label'],'summary'=>$groups[0]['summary'],'potentialWeakness'=>$groups[0]['potentialWeakness']];
+    }
     public function personalities(): array
     {
         static $all;

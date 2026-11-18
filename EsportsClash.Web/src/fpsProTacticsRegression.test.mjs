@@ -1,4 +1,5 @@
 import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
+import { FpsUtilityLearner, createFpsUtilityBrain } from './fps/fpsUtilityBrain.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { FpsLiveSimulation } from './fps/fpsLiveSimulation.ts';
@@ -30,7 +31,10 @@ const identity = {
   teams: { blue: { coach, plan, chemistry }, red: { coach, plan, chemistry } },
 };
 
-const createSim = () => new FpsLiveSimulation(cards.slice(0, 5), cards.slice(5), 20261114, identity);
+// Coordination fixture: the authored examples as a fixed team smoke plan (live rounds calculate their own).
+const createSim = () => { const sim = new FpsLiveSimulation(cards.slice(0, 5), cards.slice(5), 20261114, identity); sim.roundSmokes = sim.map.authoredSmokeLineups.map((l) => ({...l})); return sim; };
+/** Items are passed physically: the donor turns to the teammate and then drops; advance that handoff. */
+const completeHandoffs = (sim) => { for (let i = 0; i < 60 && sim.actors.some((a) => a.handoff); i++) { sim.time += 1 / 30; for (const a of sim.actors) if (a.handoff) sim.stepHandoff(a, 1 / 30); } };
 
 test('Pro Regression 1: Sniper refuses to scope into close walls and Vitality/Spirit AWPer repositions around smoke', () => {
   const sim = createSim();
@@ -287,10 +291,11 @@ test('Pro Regression 5: Underhand nade throws, physics-based upward smoke lineup
   assert.equal(thrower.utilityPreparation?.throwStyle, 'underhand', 'Close smoke preparation should lock underhand style');
 
   // Part B: Physics-based upward smoke lineups (players look up and calculate trajectory)
-  const midWindowLineup = LIVE_AUTHORED_SMOKE_LINEUPS.find((l) => l.id === 'mid-window');
-  assert.ok(midWindowLineup, 'mid-window authored smoke lineup must exist');
+  // The mid window is a normal size since 2026-11-17, so the long upward example is the CT market smoke.
+  const midWindowLineup = LIVE_AUTHORED_SMOKE_LINEUPS.find((l) => l.id === 'guard-market');
+  assert.ok(midWindowLineup, 'guard-market authored smoke lineup must exist');
   const solved = solveLiveSmokeThrow(midWindowLineup.position, midWindowLineup.target, 1.55);
-  assert.ok(solved, 'solveLiveSmokeThrow should solve mid-window lineup');
+  assert.ok(solved, 'solveLiveSmokeThrow should solve the long upward lineup');
   assert.ok(solved.launchPitch > 0.25, `Expected positive upward launchPitch (> 0.25 rad), got ${solved.launchPitch}`);
   assert.ok(Number.isFinite(solved.launchYaw), 'Solved launchYaw must be finite');
 
@@ -305,7 +310,7 @@ test('Pro Regression 5: Underhand nade throws, physics-based upward smoke lineup
   Object.assign(smokenader, {
     x: midWindowLineup.position.x,
     z: midWindowLineup.position.z,
-    yaw: 0,
+    yaw: Math.atan2(midWindowLineup.target.x - midWindowLineup.position.x, midWindowLineup.target.z - midWindowLineup.position.z),
     pitch: 0,
     speed: 0,
     crouch: false,
@@ -319,6 +324,8 @@ test('Pro Regression 5: Underhand nade throws, physics-based upward smoke lineup
     utilityPreparation: undefined,
     smokeLineupRetryAt: 0,
   });
+  // Test the bot's own calculation from this spot, without experience from the shared utility brain.
+  lineupSim.utilityLearner = new FpsUtilityLearner({ mode: 'frozen', model: createFpsUtilityBrain() });
   lineupSim.aimSmokeLineup(smokenader, midWindowLineup, 1 / 15);
   assert.ok(
     (smokenader.utilityPreparation?.launchPitch ?? 0) > 0.25,
@@ -390,7 +397,7 @@ test('Pro Regression 6: Throw physics force hierarchy (jump & walk-jump > walk >
   assert.ok(dJump < dWalkJump, `walk-jump throw (${dWalkJump.toFixed(2)}m) should beat stationary jump throw (${dJump.toFixed(2)}m)`);
 
   // Part C: Cross-map authored lineups solve with jump / walk-jump and physically jump on release
-  const midWindow = LIVE_AUTHORED_SMOKE_LINEUPS.find((l) => l.id === 'mid-window');
+  const midWindow = LIVE_AUTHORED_SMOKE_LINEUPS.find((l) => l.id === 'guard-market');
   const crossMap = LIVE_AUTHORED_SMOKE_LINEUPS.find((l) => l.id === 'restaurant-civic');
   assert.ok(['jump', 'walk-jump'].includes(solveLiveSmokeThrow(midWindow.position, midWindow.target, 1.55)?.throwStyle ?? ''));
   assert.equal(solveLiveSmokeThrow(crossMap.position, crossMap.target, 1.55)?.throwStyle, 'walk-jump');
@@ -646,7 +653,7 @@ test('Pro Regression 8: Unobstructed throws skip sky-gazing, teammates pool smok
   Object.assign(support, { x: -19, z: 8, jumpY: 0, smoke: 1, flash: 1, reload: 0, weaponReady: 0, utilityAt: 0, channel: 0, bomb: false, utilityPreparation: undefined });
   Object.assign(donor, { x: -19.5, z: 5.5, jumpY: 0, smoke: 1, reload: 0, channel: 0, utilityPreparation: undefined, smokeLineupId: undefined });
   Object.assign(entry, { x: -18.5, z: 9, jumpY: 0, smoke: 0 });
-  poolSim.funnelTeamSmokes(support.team);
+  poolSim.funnelTeamSmokes(support.team); completeHandoffs(poolSim);
   assert.equal(donor.smoke, 0, 'Teammate should drop their spare smoke for the utility specialist');
   const pooled = poolSim.droppedUtility.find((w) => w.kind === 'smoke' && w.reservedFor === support.id);
   assert.ok(pooled, 'Dropped smoke should be reserved for the utility specialist');
@@ -840,7 +847,7 @@ test('Pro Regression 10: Smoke gunfire stays wiggle-free, Spectator/AI smoke wid
   dropSim.openingSmokeTeams.add(spec.team);
   Object.assign(spec, { x: -19, z: -10, smoke: 1, flash: 0, bomb: false, holsteredPrimary: undefined });
   Object.assign(donor, { x: -29, z: 6.5, smoke: 1, flash: 1, bomb: false, hp: 30, holsteredPrimary: undefined });
-  dropSim.funnelTeamSmokes(spec.team);
+  dropSim.funnelTeamSmokes(spec.team); completeHandoffs(dropSim);
   assert.equal(donor.smoke, 0, 'Donor should drop extra smoke for specialist');
   const stagedSpot = dropSim.droppedUtility.find((w) => w.kind === 'smoke' && w.reservedFor === spec.id);
   assert.ok(stagedSpot && distance(stagedSpot, libraryLineup.position) < 2.2, 'Spare smoke should be staged right on the upcoming lineup throw position on the ground');
@@ -865,7 +872,7 @@ test('Pro Regression 10: Smoke gunfire stays wiggle-free, Spectator/AI smoke wid
   Object.assign(spec, { x: 25, z: -30 }); // keep other attackers out of 12m range
   Object.assign(awpMate, { x: 25, z: -32, smoke: 0, flash: 0, he: 0, incendiary: 0, hp: 100, preferSniper: true, role: 'sniper' });
   dropSim.droppedUtility = [];
-  dropSim.stepLiveDrops();
+  dropSim.stepLiveDrops(); completeHandoffs(dropSim);
   const flashDrop = dropSim.droppedUtility.find((w) => w.kind === 'flash' && w.reservedFor === ecoMate.id);
   assert.ok(flashDrop, 'Low-HP teammate should share spare flash mid-round during live play');
 
@@ -873,7 +880,7 @@ test('Pro Regression 10: Smoke gunfire stays wiggle-free, Spectator/AI smoke wid
   donor.lastDropAt = -100;
   donor.flash = 0;
   donor.hp = 90;
-  dropSim.stepLiveDrops();
+  dropSim.stepLiveDrops(); completeHandoffs(dropSim);
   const deagleDrop = dropSim.droppedWeapons.find((w) => w.weapon === 'deagle' && w.reservedFor === ecoMate.id);
   assert.ok(deagleDrop, 'Rifler carrying upgraded Deagle sidearm should toss it to starter-pistol teammate mid-round');
   dropSim.time += 1.0;
@@ -887,7 +894,7 @@ test('Pro Regression 10: Smoke gunfire stays wiggle-free, Spectator/AI smoke wid
   Object.assign(ecoMate, { x: 25, z: -34 });
   Object.assign(awpMate, { x: -19, z: -5, hp: 100, weapon: 'glock', equipped: 'glock', ammo: 20, reserve: 120 });
   dropSim.droppedWeapons = [];
-  dropSim.stepLiveDrops();
+  dropSim.stepLiveDrops(); completeHandoffs(dropSim);
   const awpDrop = dropSim.droppedWeapons.find((w) => w.weapon === 'sniper' && w.reservedFor === awpMate.id);
   assert.ok(awpDrop, 'Non-sniper carrying an AWP should hand it off to nearby AWPer mid-round');
   assert.equal(donor.weapon, 'p250', 'Donor should switch cleanly to their sidearm after tossing the AWP');
@@ -1015,7 +1022,7 @@ test('Pro Regression 11: Carefree 0-left defuse, molotov escape, post-round upgr
     sidearmLoadout: { weapon: 'glock', ammo: 20, reserve: 120 },
     x: -19, z: -2, seenAt: -100, damageAt: -100, weaponReady: 0, reload: 0, channel: 0, utilityPreparation: undefined, smokeLineupId: undefined,
   });
-  dropSim.stepLiveDrops();
+  dropSim.stepLiveDrops(); completeHandoffs(dropSim);
   const droppedDeagle = dropSim.droppedWeapons.find((w) => w.weapon === 'deagle' && w.reservedFor === csMate.id);
   assert.ok(droppedDeagle, 'Healthy nearby mate should receive Deagle drop');
   const throwDist = distance(csDonor, droppedDeagle);

@@ -1,11 +1,12 @@
 import {WorldPlayerPortrait} from './WorldPlayerPortrait';
-import { Trophy, Shield, Users, GraduationCap, Swords, Package, History, Flag, Handshake } from 'lucide-react';
+import { Swords, Package, History } from 'lucide-react';
+import { ICONS } from './ui/icons';
 import type { PediaKind } from '../hexapedia';
 import type { ClubIdentity } from './ClubIdentityEditor';
 import { ClubCrest } from './ClubIdentityEditor';
 import {TournamentLogo} from './TournamentLogo';
 
-const icons = {tournaments:Trophy,teams:Shield,nations:Flag,players:Users,coaches:GraduationCap,avatars:Swords,items:Package,releases:History,organizers:Flag,sponsors:Handshake,talent:Users,managers:Users};
+const icons = {tournaments:ICONS.tournaments,teams:ICONS.teams,nations:ICONS.nations,players:ICONS.players,coaches:ICONS.coaches,avatars:Swords,items:Package,releases:History,organizers:ICONS.organizers,sponsors:ICONS.sponsors,talent:ICONS.talent,managers:ICONS.managers};
 export function ReferenceIcon({kind,size=16}: {kind:PediaKind;size?:number}) {
   const Icon=icons[kind];
   return <Icon size={size} strokeWidth={1.7} aria-hidden="true"/>;

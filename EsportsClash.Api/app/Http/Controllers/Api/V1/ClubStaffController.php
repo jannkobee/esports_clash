@@ -12,18 +12,19 @@ class ClubStaffController extends Controller
     {
         $club = $online->provision($request->user());
 
+        $engine = app(\App\Services\FpsIdentityEngine::class);
+        $gameplan = json_decode(\Illuminate\Support\Facades\DB::table('fps_team_systems')->where('club_id', $club->id)->value('gameplan') ?? 'null', true) ?? \App\Services\FpsIdentityEngine::PLAN;
+        $philosophy = $engine->ready() ? $engine->describePhilosophy($engine->coach($club)['profile'], $gameplan) : null;
+        $candidates = array_map(fn (array $c) => $c['role'] === 'head_coach' && $engine->ready() ? $c + ['philosophy' => $engine->describePhilosophy($engine->philosophy($c['id']), $gameplan)] : $c,
+            app(\App\Services\StaffContracts::class)->candidates($club));
         return response()->json(['data' => [
             'staff' => $staff->roster($club),
-            'candidates'=>app(\App\Services\StaffContracts::class)->candidates($club),
+            'candidates'=>$candidates,
+            'attribute_effects' => ClubStaffService::FPS_ATTRIBUTES,
+            'fps_effects' => $staff->fpsEffects($club),
+            'coach_philosophy' => $philosophy,
             'contracts'=>app(\App\Services\StaffContracts::class)->history($club->id),
-            'coach_effects' => $staff->coachCard($club),
             'training_bonus_percent' => $staff->trainingBonusPercent($club),
-            'draft_policy' => [
-                'starter_selection' => 'manager',
-                'avatar_selection' => 'staff',
-                'meta_source' => 'verified completed Arena drafts with per-player performance records',
-                'meta_minimum_samples' => 3,
-            ],
         ]]);
     }
     public function hire(Request $r,OnlineService $online,\App\Services\StaffContracts $contracts){

@@ -1,8 +1,14 @@
-import { readFile, rename, writeFile } from 'node:fs/promises';
+import { readFile, rename, writeFile, mkdir } from 'node:fs/promises';
+import { writeFileSync, renameSync, mkdirSync, existsSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const { simulateFpsMatch } = await import(pathToFileURL(resolve(process.cwd(), 'src', 'fps', 'index.ts')).href);
+// Production images ship a prebuilt engine bundle (no per-match TypeScript loading); development uses the sources.
+const bundlePath = process.env.FPS_ENGINE_BUNDLE ?? '/online/engine/fps-engine.mjs';
+const bundled = existsSync(bundlePath) ? await import(pathToFileURL(bundlePath).href) : null;
+const engine = file => bundled ? Promise.resolve(bundled) : import(pathToFileURL(resolve(process.cwd(), 'src', 'fps', file)).href);
+const { simulateFpsMatch } = await engine('index.ts');
 
 const folder = resolve(process.argv[2] ?? '');
 if (!process.argv[2]) throw new Error('Match allocation path is required.');
@@ -14,14 +20,55 @@ const atomic = async (name, value) => {
   await rename(temporary, target);
 };
 
+/**
+ * Version 5: the live 3D engine, headless and deterministic, recorded as a compact public replay
+ * (gzipped 10-second chunks plus a header) while it runs. The report keeps the recorded engine's contract.
+ */
+async function simulateLive(blue, red, plan) {
+  const { simulateOfficialLiveMatch } = await engine('fpsOfficialLiveMatch.ts');
+  const { FpsLiveReplayRecorder, FPS_REPLAY_FRAMES_PER_CHUNK, FPS_REPLAY_STEPS_PER_FRAME } = await engine('fpsLiveReplay.ts');
+  const replay = resolve(folder, 'replay');
+  mkdirSync(replay, { recursive: true });
+  // Atomic replace; a transient lock on the target (Windows indexers/scanners) is retried briefly.
+  const writeAtomic = (name, data) => {
+    const target = resolve(replay, name);
+    writeFileSync(`${target}.tmp`, data);
+    for (let attempt = 0; ; attempt++) {
+      try { renameSync(`${target}.tmp`, target); return; }
+      catch (error) {
+        if (attempt >= 20 || !['EPERM', 'EBUSY', 'EACCES'].includes(error.code)) throw error;
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25);
+      }
+    }
+  };
+  const players = [...blue.map(p => ({ id: p.id, name: p.name, team: 'blue' })), ...red.map(p => ({ id: p.id, name: p.name, team: 'red' }))];
+  const header = (frames, chunks, final, broadcastSeconds) => JSON.stringify({ version: 1, mapId: plan.fps.map_id, seed: plan.seed,
+    frameSeconds: FPS_REPLAY_STEPS_PER_FRAME / 30, framesPerChunk: FPS_REPLAY_FRAMES_PER_CHUNK, frames, chunks, final, broadcastSeconds, players });
+  // Viewers can follow a match while it is still being simulated: a provisional header after every chunk.
+  const recorder = new FpsLiveReplayRecorder(chunk => {
+    writeAtomic(`${String(chunk.index).padStart(5, '0')}.json.gz`, gzipSync(JSON.stringify(chunk)));
+    const written = chunk.index + 1;
+    // Provisional and best-effort: a missed update only delays live viewers by one chunk.
+    try { writeAtomic('header.json', header(written * FPS_REPLAY_FRAMES_PER_CHUNK, written, false, written * FPS_REPLAY_FRAMES_PER_CHUNK * FPS_REPLAY_STEPS_PER_FRAME / 30)); }
+    catch (error) { console.error(`Provisional replay header not updated: ${error.message}`); }
+  });
+  let last;
+  const report = simulateOfficialLiveMatch(blue, red, plan.seed, plan.fps.map_id, plan.fps_identity, {
+    onTick: ({ sim, cues }) => { last = sim; recorder.tick(() => sim.snapshot(), cues); },
+  });
+  const totals = recorder.finish(last.snapshot());
+  writeAtomic('header.json', header(totals.frames, totals.chunks, true, report.broadcastSeconds));
+  return report;
+}
+
 try {
   const allocation = JSON.parse(await readFile(resolve(folder, 'allocation.json'), 'utf8'));
   const { plan, plan_hash: planHash } = allocation;
   if (plan.game_mode !== 'fps_mr15_v1' || plan.fps?.format !== 'MR15_TACTICAL_FPS' || plan.fps.rules_version !== 1) {
     throw new Error('Unsupported FPS ruleset.');
   }
-  if (plan.fps.simulation_version!==4) throw new Error('Unsupported pinned FPS simulation revision.');
-  if (plan.fps.simulation_version === 4 && !plan.fps_identity) throw new Error('Missing pinned identity state.');
+  if (![4, 5].includes(plan.fps.simulation_version)) throw new Error('Unsupported pinned FPS simulation revision.');
+  if (!plan.fps_identity) throw new Error('Missing pinned identity state.');
   if (!Number.isInteger(plan.seed) || plan.seed <= 0 || !/^[a-f0-9]{64}$/.test(planHash)) {
     throw new Error('Invalid pinned match allocation.');
   }
@@ -55,7 +102,9 @@ try {
   const startedAt = new Date().toISOString();
   await atomic('state.json', { status: 'running', sequence: 0, started_at: startedAt, public_replay: Boolean(plan.fixture) });
 
-  const simulation = simulateFpsMatch(blue, red, plan.fps.map_id, plan.seed, plan.fps.simulation_version===4 ? {identityExperiment:plan.fps_identity} : {});
+  const simulation = plan.fps.simulation_version === 5
+    ? await simulateLive(blue, red, plan)
+    : simulateFpsMatch(blue, red, plan.fps.map_id, plan.seed, { identityExperiment: plan.fps_identity });
   // Private DNA and coach inputs stay in the trusted allocation, never in replay.
   delete simulation.identityExperiment;
   delete simulation.identityDevelopment;
@@ -96,10 +145,15 @@ try {
     status: 'completed',
     sequence: simulation.events.length,
     started_at: startedAt,
+    // Completion marker for replay retention (age counts from the later of this and the end of airing).
+    completed_at: new Date().toISOString(),
     public_replay: Boolean(plan.fixture),
     result
   });
-  console.log(JSON.stringify({ completed: plan.match_id, rounds: simulation.totalRounds, winner: result.winner }));
+  // Capacity accounting for operators (CPU seconds and peak memory of this match process).
+  const usage = process.resourceUsage();
+  console.log(JSON.stringify({ completed: plan.match_id, rounds: simulation.totalRounds, winner: result.winner, engine: plan.fps.simulation_version === 5 ? 'live-3d' : 'recorded-2d',
+    cpu_seconds: +((usage.userCPUTime + usage.systemCPUTime) / 1e6).toFixed(1), max_rss_mb: Math.round(usage.maxRSS / 1024) }));
 } catch (error) {
   await atomic('state.json', { status: 'failed', error: error instanceof Error ? error.message : String(error) });
   console.error(error);

@@ -60,19 +60,19 @@ export const CT_OPERATIVE_STYLES: readonly OperativeStyleProfile[] = [
     code: 'sas-fast',
     fabric: '#23374b',
     trousers: '#1f2c3a',
-    rig: '#18222c',
-    pouch: '#4e4d42',
+    rig: '#4f5a3e',
+    pouch: '#5c6648',
     hardware: '#64748b',
     trim: '#11171f',
     boot: '#151920',
     glove: '#161c24',
-    knuckle: '#334155',
+    knuckle: '#3b4a5e',
     skin: '#c99772',
-    headColor: '#2a3c4d',
-    eyePatchColor: '#1b242e',
+    headColor: '#1b242e',
+    eyePatchColor: '#181e24',
     accent: '#cbd5e1',
     secondaryAccent: '#dc2626',
-    lens: '#38bdf8',
+    lens: '#1b232c',
     headgear: 'fast-nvg',
     sleeveRolled: false,
     fingerless: false,
@@ -370,29 +370,48 @@ export function buildVariantOperativeDetails(
 
   // Exposed face / balaclava jaw anchor (guarantees every headPivot has a merged kit part first)
   part('jaw-chin', headPivot, 0, -.058, .024, .138 * face.jawWidth, .095 * face.jawHeight, .142, style.eyePatchColor, 'cylinder', -.12, 0, 0, 1.18);
+  part('chin-protuberance', headPivot, 0, -.086, .062, .068 * face.jawWidth, .042, .066, style.eyePatchColor, 'sphere', -.18, 0, 0);
+  const fullBalaclava = style.headgear === 'fast-nvg' || style.headgear === 'gign-shield' || style.headgear === 'swat-cap';
+  const mouthCovered = fullBalaclava || style.headgear === 'phoenix-hood' || style.headgear === 'recon-boonie' || style.headgear === 'anarchist-hoodie';
+  const eyesBehindOptics = style.headgear === 'fast-nvg' || style.headgear === 'gign-shield' || style.headgear === 'swat-cap' || style.headgear === 'phoenix-hood' || style.headgear === 'syndicate-suit';
   for (const side of [-1, 1]) {
-    part(`ear-${side}`, headPivot, side * .096 * face.headScaleX, .004, -.006, .024, .048, .032, style.eyePatchColor, 'sphere');
-    part(`brow-ridge-${side}`, headPivot, side * .035 * face.eyeSpacing, .038, .09, .052 * face.browWidth, .015, .022, hairOrFacial ?? '#3f2e24', 'box', 0, 0, side * face.browTilt);
-    part(`eye-iris-${side}`, headPivot, side * .034 * face.eyeSpacing, .02, .096, .022, .012, .012, '#1e1b18', 'sphere');
+    part(`ear-${side}`, headPivot, side * .096 * face.headScaleX, .004, -.006, .024, .052, .034, style.eyePatchColor, 'sphere', 0, side * -.18, 0);
+    part(`ear-lobe-${side}`, headPivot, side * .094 * face.headScaleX, -.02, -.004, .018, .02, .022, style.eyePatchColor, 'sphere');
+    part(`cheekbone-${side}`, headPivot, side * .048 * face.headScaleX, -.002, .072, .046, .034, .044, skin, 'sphere', .1, side * .3, 0);
+    part(`brow-ridge-${side}`, headPivot, side * .035 * face.eyeSpacing, .04, .089, .054 * face.browWidth, .016, .026, skin, 'sphere', .15, side * .18, side * face.browTilt);
+    part(`eyebrow-${side}`, headPivot, side * .035 * face.eyeSpacing, .042, .095, .046 * face.browWidth, .01, .014, hairOrFacial ?? '#3f2e24', 'box', 0, 0, side * face.browTilt);
+    if (!eyesBehindOptics) {
+      part(`eye-sclera-${side}`, headPivot, side * .033 * face.eyeSpacing, .021, .093, .026, .012, .01, '#cbd5e1', 'sphere');
+    }
+    part(`eye-iris-${side}`, headPivot, side * .033 * face.eyeSpacing, .021, .098, .014, .011, .008, '#1e1b18', 'sphere');
+    part(`eyelid-upper-${side}`, headPivot, side * .033 * face.eyeSpacing, .027, .096, .028, .007, .014, skin, 'box', -.18, 0, side * -.06);
   }
-  part('nose-bridge', headPivot, 0, .01, .102, .024 * face.noseWidth, .042 * face.noseLength, .028, skin, 'cylinder', -.22, 0, 0, .72);
+  part('nose-bridge', headPivot, 0, .012, .101, .024 * face.noseWidth, .044 * face.noseLength, .028, skin, 'cylinder', -.22, 0, 0, .72);
+  part('nose-tip', headPivot, 0, -.005, .112, .024 * face.noseWidth, .018, .024, skin, 'sphere');
+  for (const side of [-1, 1]) {
+    part(`nostril-wing-${side}`, headPivot, side * .011 * face.noseWidth, -.009, .105, .012, .012, .015, skin, 'sphere');
+  }
+  if (!mouthCovered) {
+    part('mouth-upper-lip', headPivot, 0, -.032, .094, .046 * face.jawWidth, .01, .016, skin, 'cylinder', .15, 0, 0, .85);
+    part('mouth-lower-lip', headPivot, 0, -.042, .092, .04 * face.jawWidth, .011, .016, skin, 'cylinder', -.1, 0, 0, .9);
+  }
 
   if (style.headgear === 'fast-nvg') {
-    part('hood-wrap', headPivot, 0, -.028, -.01, .192, .18, .196, style.eyePatchColor, 'sphere');
-    part('hood-eyelid-band', headPivot, 0, .025, .052, .175, .046, .115, skin, 'cylinder');
-    part('helmet-shell-main', headPivot, 0, .072, -.008, .224, .155, .238, headColor, 'sphere');
-    part('helmet-rim-back', headPivot, 0, .022, -.042, .218, .075, .165, fabric, 'cylinder', -.18, 0, 0, .98);
-    part('helmet-nvg-shroud', headPivot, 0, .088, .112, .044, .042, .026, hardware, 'box');
-    part('helmet-counterweight', headPivot, 0, .04, -.12, .068, .038, .022, rig, 'box');
-    part('helmet-ir-strobe', headPivot, 0, .152, -.02, .038, .022, .048, trim, 'box');
-    part('nvg-bridge', headPivot, 0, .118, .125, .116, .018, .032, hardware, 'box', -.25, 0, 0);
-    for (const [label, xOff, yOff] of [['l-out', -.048, .118], ['l-in', -.018, .128], ['r-in', .018, .128], ['r-out', .048, .118]] as const) {
-      part(`nvg-tube-${label}`, headPivot, xOff, yOff, .142, .026, .026, .06, trim, 'cylinder', -.25, 0, 0);
-      part(`nvg-lens-${label}`, headPivot, xOff, yOff + .005, .17, .02, .02, .012, lens, 'cylinder', -.25, 0, 0);
+    // Iconic SAS S10/FM12 rubber respirator gas mask & hood with convex dual ocular lenses, central snout & NBC canister
+    part('hood-wrap', headPivot, 0, -.018, -.008, .196, .194, .202, style.eyePatchColor, 'sphere');
+    part('respirator-hood-crown', headPivot, 0, .062, -.008, .204, .148, .218, headColor, 'sphere');
+    for (const side of [-1, 1]) {
+      part(`respirator-harness-${side}`, headPivot, side * .062, .052, .012, .016, .145, .175, trim, 'box', -.14, 0, side * -.12);
+      part(`goggles-frame-${side}`, headPivot, side * .038, .024, .094, .056, .054, .028, trim, 'cylinder', Math.PI / 2, side * -.14, 0, .92);
+      part(`goggles-lens-${side}`, headPivot, side * .038, .024, .105, .044, .042, .016, lens, 'sphere', 0, side * -.14, 0);
     }
-    part('goggles-lens', headPivot, 0, .026, .098, .154, .042, .044, lens, 'cylinder');
-    part('goggles-frame', headPivot, 0, .026, .086, .168, .048, .052, trim, 'cylinder');
-    part('radio-boom-mic', headPivot, -.075, -.025, .075, .012, .014, .095, trim, 'box', 0, -.45, 0);
+    part('respirator-brow-seal', headPivot, 0, .052, .084, .132, .026, .048, trim, 'cylinder', -.12, 0, 0, .92);
+    part('respirator-nose-bridge', headPivot, 0, .008, .106, .054, .052, .054, trim, 'sphere');
+    part('respirator-snout', headPivot, 0, -.026, .118, .064, .058, .058, trim, 'cylinder', Math.PI / 2 + .22, 0, 0, .86);
+    part('respirator-emitter-grille', headPivot, 0, -.032, .142, .044, .044, .016, hardware, 'cylinder', Math.PI / 2 + .22, 0, 0, .9);
+    part('respirator-filter-canister', headPivot, -.064, -.044, .086, .068, .068, .058, rig, 'cylinder', Math.PI / 2 + .35, -.52, 0, .96);
+    part('respirator-filter-collar', headPivot, -.054, -.040, .094, .048, .048, .022, hardware, 'cylinder', Math.PI / 2 + .35, -.52, 0, .95);
+    part('respirator-valve-exhaust', headPivot, 0, -.064, .112, .036, .036, .024, trim, 'cylinder', Math.PI / 2 + .35, 0, 0, .9);
   } else if (style.headgear === 'mich-visor') {
     part('gaiter-neck', headPivot, 0, -.078, .008, .168, .088, .168, style.eyePatchColor, 'cylinder', 0, 0, 0, .95);
     part('stubble-jaw', headPivot, 0, -.03, .03, .144, .055, .142, hairOrFacial ?? '#3f2e24', 'sphere');
@@ -438,8 +457,8 @@ export function buildVariantOperativeDetails(
         part('t-mustache', headPivot, 0, -.016, .098, .064 * face.noseWidth, .018, .024, hairOrFacial ?? '#2a1d17', 'box');
       }
     }
-    part('scarf-neck-wrap', headPivot, 0, -.112, -.004, .202, .082, .198, accent, 'cylinder', 0, 0, 0, .92);
-    part('scarf-pattern-trim', headPivot, 0, -.108, .002, .206, .024, .204, secondaryAccent, 'cylinder');
+    part('scarf-neck-wrap', headPivot, 0, -.076, -.002, .176, .068, .174, accent, 'cylinder', 0, 0, 0, .92);
+    part('scarf-pattern-trim', headPivot, 0, -.074, .004, .180, .020, .178, secondaryAccent, 'cylinder');
     part('knit-beanie-crown', headPivot, 0, .076, -.01, .206, .125, .218, headColor, 'sphere');
     part('knit-beanie-cuff', headPivot, 0, .048, -.008, .212, .038, .224, trim, 'cylinder');
     part('shades-lens', headPivot, 0, .024, .098, .148, .032, .032, lens, 'cylinder');
@@ -452,7 +471,7 @@ export function buildVariantOperativeDetails(
   } else if (style.headgear === 'elite-shemagh') {
     part('shemagh-drape-crown', headPivot, 0, .056, -.018, .224, .165, .238, headColor, 'sphere');
     part('shemagh-headband', headPivot, 0, .058, -.006, .226, .032, .232, accent, 'cylinder', -.08, 0, 0);
-    part('shemagh-neck-coil', headPivot, 0, -.108, 0, .208, .095, .208, accent, 'cylinder', 0, 0, 0, .92);
+    part('shemagh-neck-coil', headPivot, 0, -.078, 0, .182, .074, .182, accent, 'cylinder', 0, 0, 0, .92);
     part('shemagh-tail-chest', spine, .04, .22, .106, .175, .095, .038, headColor, 'box', .14, 0, -.12);
     part('elite-full-beard', headPivot, 0, -.058, .034, .146, .092, .142, hairOrFacial ?? '#241813', 'sphere');
     part('elite-mustache', headPivot, 0, -.016, .1, .068, .018, .024, hairOrFacial ?? '#241813', 'box');
@@ -489,13 +508,20 @@ export function buildVariantOperativeDetails(
     part('anarchist-rucksack', spine, 0, .08, -.148, .235, .285, .115, pouch, 'cylinder', 0, 0, 0, .86);
   }
 
-  // CT shoulder ear-pro / rails vs T rolled sleeve cuffs / wrist wraps
+  // CT shoulder ear-pro, helmet chin-straps & rails vs T rolled sleeve cuffs / wrist wraps
   if (style.force === 'ct') {
     part('ct-id-placard', spine, 0, .165, .118, .12, .038, .014, accent, 'box');
     part('ct-ptt-box', spine, -.088, .195, .116, .038, .052, .024, trim, 'box');
     part('ct-defuse-pouch', spine, .145, -.235, -.09, .055, .095, .052, rig, 'box');
     part('ct-cutter-handle-l', spine, .136, -.185, -.086, .012, .036, .014, lens, 'box', 0, 0, .16);
     part('ct-cutter-handle-r', spine, .154, -.185, -.086, .012, .036, .014, lens, 'box', 0, 0, -.16);
+    if (style.headgear === 'fast-nvg' || style.headgear === 'mich-visor' || style.headgear === 'gign-shield') {
+      part('chin-cup', headPivot, 0, -.092, .056, .072 * face.jawWidth, .024, .044, trim, 'cylinder', -.35, 0, 0, .92);
+      for (const side of [-1, 1]) {
+        part(`chin-strap-front-${side}`, headPivot, side * .066 * face.headScaleX, -.03, .034, .014, .118, .018, trim, 'box', -.22, 0, side * -.34);
+        part(`chin-strap-rear-${side}`, headPivot, side * .078 * face.headScaleX, -.026, -.018, .014, .116, .018, trim, 'box', .18, 0, side * -.28);
+      }
+    }
     for (const side of [-1, 1]) {
       part(`peltor-cup-${side}`, headPivot, side * .112, .004, -.005, .034, .068, .058, trim, 'sphere');
       part(`arc-rail-${side}`, headPivot, side * .114, .055, .006, .016, .022, .105, hardware, 'box');
@@ -504,34 +530,44 @@ export function buildVariantOperativeDetails(
   } else {
     for (const [side, armP, elbP] of [[-1, leftArmPivot, leftElbowPivot], [1, rightArmPivot, rightElbowPivot]] as const) {
       if (style.sleeveRolled) {
-        part(`rolled-sleeve-${side}`, armP, 0, -.22, 0, .112, .062, .112, fabric, 'cylinder', 0, 0, 0, .95);
-        part(`wrist-wrap-${side}`, elbP, 0, -.175, 0, .084, .052, .084, secondaryAccent, 'cylinder', 0, 0, 0, .96);
+        part(`rolled-sleeve-${side}`, armP, 0, -.22, 0, .128, .064, .128, fabric, 'cylinder', 0, 0, 0, .95);
+        part(`wrist-wrap-${side}`, elbP, 0, -.175, 0, .09, .052, .09, secondaryAccent, 'cylinder', 0, 0, 0, .96);
       }
     }
   }
 
   if (style.force === 'ct' && style.sleeveRolled) {
     for (const [side, armP] of [[-1, leftArmPivot], [1, rightArmPivot]] as const) {
-      part(`ct-rolled-cuff-${side}`, armP, 0, -.215, 0, .108, .055, .108, fabric, 'cylinder', 0, 0, 0, .95);
+      part(`ct-rolled-cuff-${side}`, armP, 0, -.215, 0, .124, .056, .124, fabric, 'cylinder', 0, 0, 0, .95);
     }
   }
 
   // Contoured boot toe-caps & guards + sculpted fingers
   for (const [side, kneeP] of [[-1, nodes.leftKneePivot], [1, nodes.rightKneePivot]] as const) {
-    part('boot-sole', kneeP, 0, -.394, .032, .104, .024, .22, trim, 'box');
-    part('boot-heel', kneeP, 0, -.39, -.052, .096, .032, .072, trim, 'box');
-    part('boot-toe-cap', kneeP, 0, -.362, .114, .088, .052, .072, style.boot, 'sphere');
-    part('boot-ankle-cuff', kneeP, 0, -.322, -.004, .098, .058, .104, style.boot, 'cylinder', 0, 0, 0, .92);
-    part(`boot-tongue-${side}`, kneeP, 0, -.35, .068, .058, .048, .045, trim, 'box', -.42, 0, 0);
+    // Chunky lace-up combat boot: lugged sole, raised heel, rounded toe box, padded collar above the ankle.
+    part('boot-sole', kneeP, 0, -.396, .042, .118, .026, .27, trim, 'box');
+    part('boot-heel', kneeP, 0, -.39, -.066, .108, .034, .08, trim, 'box');
+    part('boot-toe-cap', kneeP, 0, -.364, .14, .1, .058, .08, style.boot, 'sphere');
+    part('boot-ankle-cuff', kneeP, 0, -.31, -.004, .114, .066, .12, style.boot, 'cylinder', 0, 0, 0, .92);
+    part(`boot-tongue-${side}`, kneeP, 0, -.345, .078, .062, .05, .048, trim, 'box', -.42, 0, 0);
+    for (let lace = 0; lace < 3; lace++) part(`boot-lace-${lace}-${side}`, kneeP, 0, -.36 + lace * .022, .09 - lace * .008, .05, .008, .012, style.trim, 'box', -.42, 0, 0);
   }
   for (const [side, armP, elbP] of [[-1, leftArmPivot, leftElbowPivot], [1, rightArmPivot, rightElbowPivot]] as const) {
-    part(`deltoid-seam-${side}`, armP, side * .014, -.018, 0, .106, .112, .108, fabric, 'sphere');
-    part(`elbow-contour-${side}`, armP, 0, -.245, -.012, .088, .072, .086, trim, 'sphere');
+    // Deltoid cap follows the shoulder slope into the arm instead of sitting on it as a ball.
+    part(`deltoid-seam-${side}`, armP, side * .006, -.034, 0, .132, .1, .13, fabric, 'sphere', 0, 0, side * .32);
+    part(`elbow-contour-${side}`, armP, 0, -.245, -.014, .098, .07, .094, trim, 'sphere');
     part(`wrist-watch-${side}`, elbP, 0, -.19, 0, .074, .025, .074, hardware, 'cylinder');
     const fingerColor = style.fingerless ? skin : style.glove;
-    part(`glove-palm-${side}`, elbP, 0, -.242, .006, .064, .072, .078, style.glove, 'box');
-    part(`glove-knuckles-${side}`, elbP, 0, -.228, .044, .062, .022, .018, style.knuckle, 'box');
-    part(`glove-thumb-${side}`, elbP, side * -.034, -.252, .03, .022, .038, .024, fingerColor, 'box', .35, 0, -side * .3);
-    part(`glove-fingers-${side}`, elbP, 0, -.286, .012, .058, .034, .062, fingerColor, 'box', .12, 0, 0);
+    // Hand: glove cuff, dorsal metacarpal arch, thenar thumb pad, knuckle guard, opposable thumb & curled fingers.
+    part(`glove-cuff-${side}`, elbP, 0, -.206, .002, .068, .03, .062, style.glove, 'cylinder', 0, 0, 0, .96);
+    part(`glove-metacarpal-${side}`, elbP, 0, -.245, .008, .064, .052, .022, style.glove, 'sphere');
+    part(`glove-thenar-${side}`, elbP, side * -.02, -.242, -.008, .028, .044, .026, style.glove, 'sphere', 0, 0, side * -.2);
+    part(`glove-knuckles-${side}`, elbP, 0, -.274, .014, .062, .016, .02, style.knuckle, 'box');
+    part(`glove-thumb-${side}`, elbP, side * -.03, -.262, .004, .02, .046, .02, fingerColor, 'cylinder', .45, 0, -side * .55, .82);
+    for (let finger = 0; finger < 4; finger++) {
+      const x = -.023 + finger * .0155, reach = finger === 3 ? .82 : finger === 0 ? .94 : 1;
+      part(`glove-finger-${finger}-base-${side}`, elbP, x, -.292, .008, .0165, .036 * reach, .0165, fingerColor, 'cylinder', .38, 0, 0, .94);
+      part(`glove-finger-${finger}-tip-${side}`, elbP, x, -.316, -.01, .015, .03 * reach, .015, fingerColor, 'cylinder', 1.15, 0, 0, .86);
+    }
   }
 }

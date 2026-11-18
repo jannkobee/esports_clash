@@ -4,7 +4,7 @@ import { NullEngine, Scene, StandardMaterial, Vector3 } from '@babylonjs/core';
 import { getLiveMapRuntime, listLiveMaps } from './fps/fpsLiveMapRegistry.ts';
 import { FONTESSA_MAP_RUNTIME } from './fps/fpsLiveMap.ts';
 import { SPILLWAY_MAP_RUNTIME } from './fps/fpsSpillwayMap.ts';
-import { SPILLWAY_SHALLOW_WATERS, SPILLWAY_TERRAIN_RUNTIME } from './fps/fpsSpillwayTerrain.ts';
+import { SPILLWAY_GROUND_PATCHES, SPILLWAY_SHALLOW_WATERS, SPILLWAY_TERRAIN_RUNTIME } from './fps/fpsSpillwayTerrain.ts';
 import { buildLiveSky, LiveSurfaceLibrary } from './fps/fpsLiveGraphics.ts';
 import { buildSpillwayScenery } from './fps/fpsSpillwayScenery.ts';
 import { computeOverviewCameraPose } from './fps/fpsBroadcastDirector.ts';
@@ -50,7 +50,12 @@ test('Spillway exposes three elevation tiers and an overlapping Control Deck upp
   // Stair connectors traverse smoothly across tiers while sheer 2.8m drop walls block horizontal phasing
   assert.equal(t.terrainPathClear({ x: -12, z: -21 }, { x: -12, z: -14 }), true);
   assert.equal(t.terrainPathClear({ x: 18, z: 26, level: 'upper' }, { x: 18, z: 17, level: 'upper' }), true);
-  assert.equal(t.terrainPathClear({ x: -10, z: -44 }, { x: 18, z: -44 }), true); // via t-drainage-ramp
+  assert.equal(t.terrainPathClear({ x: 13, z: 42, level: 'upper' }, { x: 13, z: 31, level: 'upper' }), true); // A Under Stairs
+  assert.equal(t.terrainPathClear({ x: 10, z: -46 }, { x: 26, z: -46 }), true); // isolated T spawn -> t-drainage-ramp
+  assert.equal(SPILLWAY_MAP_RUNTIME.walkable({ x: -12, z: -48 }), false); // isolated T spawn west perimeter
+  assert.equal(t.terrainPathClear({ x: 8, z: -32 }, { x: 18, z: -32 }), true); // via lower-tunnel-stair
+  assert.equal(t.terrainPathClear({ x: 8, z: -21 }, { x: 8, z: -14 }), true); // via squeaky-service-stair
+  assert.equal(t.terrainPathClear({ x: 18, z: -12 }, { x: 29.5, z: -12 }), true); // via elevated canal bridge
   assert.equal(t.terrainPathClear({ x: -30, z: -18 }, { x: -30, z: -13 }, 2.8, false), false); // sheer retaining wall
 });
 
@@ -100,11 +105,19 @@ test('Spillway navigation graph connects all tactical zones without direct spawn
     { name: 'B Pump Station', point: sites.B },
     { name: 'CT Spawn', point: spawns.defenders },
     { name: 'Control Deck Upper', point: { x: 22, z: 31, level: 'upper' } },
+    { name: 'A Under Stairs Upper', point: { x: 13, z: 36, level: 'upper' } },
+    { name: 'Playground Deck', point: { x: -34, z: -38 } },
+    { name: 'Upper Tunnel', point: { x: 7, z: -28 } },
+    { name: 'Squeaky Corridor', point: { x: 7, z: -6 } },
+    { name: 'Parkhouse Toilets Interior', point: { x: -26, z: 8 } },
+    { name: 'Hydrology Bank Interior', point: { x: -12, z: 48 } },
     { name: 'Kiosk Interior', point: { x: -11, z: 19 } },
     { name: 'Mid Courtyard', point: { x: -10, z: 4 } },
     { name: 'Connector Landing', point: { x: 13.8, z: 3.5 } },
     { name: 'Canal Bridge', point: { x: 23.5, z: -12 } },
+    { name: 'Storm Pipe Culvert', point: { x: 28, z: 8 } },
     { name: 'Main Tunnel', point: { x: 40, z: 5 } },
+    { name: 'B East Jail', point: { x: 43, z: 20 } },
   ];
   for (const t of targets) {
     const d = shortestPathLen(spawns.attackers, t.point);
@@ -198,6 +211,10 @@ test('Spillway 3D scenery, shallow waters, cutaway roofs, and overview camera wo
     assert.ok(built.waterTextures.length >= 1);
     assert.ok(built.lights.length >= 3);
     assert.equal(SPILLWAY_SHALLOW_WATERS.length, 2);
+    const stairCount = SPILLWAY_GROUND_PATCHES.filter(patch => patch.stair).length;
+    assert.ok(stairCount > 0);
+    const treadBandBatch = built.meshes.find(mesh => mesh.material?.name === '#d7b239' && mesh.getTotalVertices() >= stairCount * 4);
+    assert.ok(treadBandBatch, 'Every Spillway stair tread should have a visible, batched safety band');
 
     for (const aspect of [16 / 9, 4 / 3, 9 / 16]) {
       const pose = computeOverviewCameraPose(aspect, SPILLWAY_MAP_RUNTIME);
@@ -279,6 +296,30 @@ test('describeNearbyDeathCover identifies tactical cover on Fontessa and Spillwa
       SPILLWAY_MAP_RUNTIME.terrain.groundHeight({ x: -19.9, z: 32.5 }),
     ),
     'behind truck',
+  );
+  assert.equal(
+    describeNearbyDeathCover(
+      SPILLWAY_MAP_RUNTIME.definition.solids,
+      { x: -35.8, z: 1.2 },
+      SPILLWAY_MAP_RUNTIME.terrain.groundHeight({ x: -35.8, z: 1.2 }),
+    ),
+    'behind rock',
+  );
+  assert.equal(
+    describeNearbyDeathCover(
+      SPILLWAY_MAP_RUNTIME.definition.solids,
+      { x: 35.5, z: 27.0 },
+      SPILLWAY_MAP_RUNTIME.terrain.groundHeight({ x: 35.5, z: 27.0 }),
+    ),
+    'behind barrels',
+  );
+  assert.equal(
+    describeNearbyDeathCover(
+      SPILLWAY_MAP_RUNTIME.definition.solids,
+      { x: -5.2, z: 37.8 },
+      SPILLWAY_MAP_RUNTIME.terrain.groundHeight({ x: -5.2, z: 37.8 }),
+    ),
+    'by bins',
   );
   assert.equal(
     describeNearbyDeathCover(

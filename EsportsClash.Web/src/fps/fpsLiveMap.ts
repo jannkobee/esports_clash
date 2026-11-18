@@ -315,19 +315,9 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     return { ...pool.reduce((best, node) => distance(clamped, node) < distance(clamped, best) ? node : best, pool[0]) };
   };
 
-  const findPath = (
-    from: FpsPoint, destination: FpsPoint, threats: readonly FpsPoint[] = [], caution = 0, heatAt?: (point: FpsPoint) => number,
-  ): FpsPoint[] => {
-    const to = walkable(destination) ? destination : safePoint(destination);
-    const fromHasMargin = walkable(from);
-    if (!fromHasMargin && !bodyPathClear(from, from, LIVE_ACTOR_RADIUS)) return [];
-    const departureClear = (target: FpsPoint) => fromHasMargin ? clear(from, target)
-      : terrain.terrainPathClear(from, target) && bodyPathClear(from, target, LIVE_ACTOR_RADIUS);
-    if (departureClear(to) && !threats.length && !heatAt) return [{ ...to }];
-    const pathKey = (threats.length || heatAt) ? '' : `${gridKey(from)}>${gridKey(to)}`;
-    const cached = pathKey ? staticPathCache.get(pathKey) : undefined;
-    if (cached) return cached.map(point => ({ ...point }));
-    const nearest = (p: FpsPoint, departing = false) => {
+  const departureCheck = (from: FpsPoint, fromHasMargin: boolean) => (target: FpsPoint) => fromHasMargin ? clear(from, target)
+    : terrain.terrainPathClear(from, target) && bodyPathClear(from, target, LIVE_ACTOR_RADIUS);
+  const nearestNode = (p: FpsPoint, departing: boolean, fromHasMargin: boolean, departureClear: (target: FpsPoint) => boolean): number => {
       const key = `${departing && !fromHasMargin ? 'physical' : 'margin'}:${gridKey(p)}`;
       const saved = endpointCache.get(key);
       if (saved !== undefined) return saved;
@@ -365,7 +355,44 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
         if (cost < step * (ring + 1) - offset) break;
       }
       return rememberBounded(endpointCache, key, best, 1024);
-    };
+  };
+  // Clearance between two nav nodes is static geometry; memoize it for path smoothing.
+  const nodeIndex = new Map<FpsPoint, number>(nodes.map((node, index) => [node, index]));
+  const nodePairClear = new Map<number, boolean>();
+  const clearBetween = (a: FpsPoint, b: FpsPoint): boolean => {
+    const i = nodeIndex.get(a), j = nodeIndex.get(b);
+    if (i === undefined || j === undefined) return clear(a, b);
+    const key = i * nodes.length + j, saved = nodePairClear.get(key);
+    if (saved !== undefined) return saved;
+    if (nodePairClear.size >= 400_000) nodePairClear.clear();
+    const result = clear(a, b);
+    nodePairClear.set(key, result);
+    return result;
+  };
+  const smoothPath = (from: FpsPoint, path: FpsPoint[], departureClear: (target: FpsPoint) => boolean, guarded: boolean): FpsPoint[] => {
+    const result: FpsPoint[] = [];
+    let anchor = from;
+    for (let i = 0; i < path.length;) {
+      let far = i;
+      while (far + 1 < path.length
+        && (anchor === from ? departureClear(path[far + 1]) : clearBetween(anchor, path[far + 1]))
+        && (!guarded || distance(anchor, path[far + 1]) < 4)) far++;
+      result.push({ ...path[far] }); anchor = path[far]; i = far + 1;
+    }
+    return result;
+  };
+
+  const findPath = (
+    from: FpsPoint, destination: FpsPoint, threats: readonly FpsPoint[] = [], caution = 0, heatAt?: (point: FpsPoint) => number,
+  ): FpsPoint[] => {
+    const to = walkable(destination) ? destination : safePoint(destination);
+    const fromHasMargin = walkable(from);
+    const departureClear = departureCheck(from, fromHasMargin);
+    if (departureClear(to) && !threats.length && !heatAt) return [{ ...to }];
+    const pathKey = (threats.length || heatAt) ? '' : `${gridKey(from)}>${gridKey(to)}`;
+    const cached = pathKey ? staticPathCache.get(pathKey) : undefined;
+    if (cached) return cached.map(point => ({ ...point }));
+    const nearest = (p: FpsPoint, departing = false) => nearestNode(p, departing, fromHasMargin, departureClear);
 
     const start = nearest(from, true), end = nearest(to);
     if (start < 0 || end < 0) { if (pathKey) rememberBounded(staticPathCache, pathKey, [], 256); return []; }
@@ -422,17 +449,95 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     const path: FpsPoint[] = [{ ...to }];
     for (let at = end; at !== start; at = parent[at]) path.push(nodes[at]);
     path.push(nodes[start]); path.reverse();
-    const result: FpsPoint[] = [];
-    let anchor = from;
-    for (let i = 0; i < path.length;) {
-      let far = i;
-      while (far + 1 < path.length
-        && (anchor === from ? departureClear(path[far + 1]) : clear(anchor, path[far + 1]))
-        && (!threats.length || distance(anchor, path[far + 1]) < 4)) far++;
-      result.push({ ...path[far] }); anchor = path[far]; i = far + 1;
-    }
+    const result = smoothPath(from, path, departureClear, threats.length > 0);
     if (pathKey) rememberBounded(staticPathCache, pathKey, result.map(point => ({ ...point })), 256);
     return result;
+  };
+
+  /**
+   * One origin, many destinations: a lazily expanded Dijkstra search over the same edge costs as
+   * `findPath` (distance + threat sight exposure + dynamic heat), so a decision that compares many
+   * candidate goals pays for one search instead of one per candidate. Costs are optimal like
+   * `findPath`'s consistent A*; endpoint snapping and path smoothing are shared with it.
+   */
+  const findPathsFrom = (
+    from: FpsPoint, threats: readonly FpsPoint[] = [], caution = 0, heatAt?: (point: FpsPoint) => number,
+  ): ((destination: FpsPoint) => FpsPoint[]) => {
+    const fromHasMargin = walkable(from);
+    const departureClear = departureCheck(from, fromHasMargin);
+    const start = nearestNode(from, true, fromHasMargin, departureClear);
+    if (start < 0) return destination => !threats.length && !heatAt && departureClear(walkable(destination) ? destination : safePoint(destination))
+      ? [{ ...(walkable(destination) ? destination : safePoint(destination)) }] : [];
+    const parent = new Int32Array(nodes.length).fill(-1);
+    const cost = new Float64Array(nodes.length).fill(Infinity);
+    const settled = new Uint8Array(nodes.length);
+    const exposure = new Float64Array(nodes.length).fill(-1);
+    const heapNode: number[] = [], heapScore: number[] = [];
+    const less = (i: number, j: number) => heapScore[i] < heapScore[j] || (heapScore[i] === heapScore[j] && heapNode[i] < heapNode[j]);
+    const swap = (i: number, j: number) => {
+      const n = heapNode[i]; heapNode[i] = heapNode[j]; heapNode[j] = n;
+      const c = heapScore[i]; heapScore[i] = heapScore[j]; heapScore[j] = c;
+    };
+    const push = (node: number, score: number) => {
+      let i = heapNode.length; heapNode.push(node); heapScore.push(score);
+      while (i > 0) { const up = (i - 1) >> 1; if (!less(i, up)) break; swap(i, up); i = up; }
+    };
+    const pop = (): number => {
+      const top = heapNode[0], lastNode = heapNode.pop()!, lastScore = heapScore.pop()!;
+      if (heapNode.length) {
+        heapNode[0] = lastNode; heapScore[0] = lastScore;
+        let i = 0;
+        for (;;) {
+          const l = i * 2 + 1, r = l + 1; let m = i;
+          if (l < heapNode.length && less(l, m)) m = l;
+          if (r < heapNode.length && less(r, m)) m = r;
+          if (m === i) break; swap(i, m); i = m;
+        }
+      }
+      return top;
+    };
+    const exposureAt = (next: number): number => {
+      if (exposure[next] >= 0) return exposure[next];
+      const point = nodes[next];
+      let sight = 0;
+      for (const t of threats) if (distance(t, point) < 45 && sightline(t, point)) sight += Math.max(0, caution) * 3;
+      const heat = heatAt ? Math.min(8, Math.max(0, heatAt(point)) * (1.2 + Math.max(0, caution) * 2.5)) : 0;
+      return exposure[next] = sight + heat;
+    };
+    cost[start] = 0; parent[start] = start; push(start, 0);
+    const settle = (end: number) => {
+      while (!settled[end] && heapNode.length) {
+        const node = pop();
+        if (settled[node]) continue;
+        settled[node] = 1;
+        for (const next of neighbors[node]) {
+          if (settled[next]) continue;
+          const value = cost[node] + distance(nodes[node], nodes[next]) + exposureAt(next);
+          if (value < cost[next]) { cost[next] = value; parent[next] = node; push(next, value); }
+        }
+      }
+    };
+    const results = new Map<string, FpsPoint[]>();
+    return (destination: FpsPoint): FpsPoint[] => {
+      const to = walkable(destination) ? destination : safePoint(destination);
+      const key = gridKey(to);
+      const saved = results.get(key);
+      if (saved) return saved.map(point => ({ ...point }));
+      if (!threats.length && !heatAt && departureClear(to)) return [{ ...to }];
+      const end = nearestNode(to, false, fromHasMargin, departureClear);
+      let result: FpsPoint[] = [];
+      if (end >= 0) {
+        settle(end);
+        if (parent[end] >= 0) {
+          const path: FpsPoint[] = [{ ...to }];
+          for (let at = end; at !== start; at = parent[at]) path.push(nodes[at]);
+          path.push(nodes[start]); path.reverse();
+          result = smoothPath(from, path, departureClear, threats.length > 0);
+        }
+      }
+      results.set(key, result);
+      return result.map(point => ({ ...point }));
+    };
   };
 
   const pathLength = (from: FpsPoint, to: FpsPoint): number => {
@@ -595,6 +700,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     actorSolids,
     supportHeight,
     findPath,
+    findPathsFrom,
     pathLength,
     wallSegmentHit,
     wallIntersections,
@@ -659,7 +765,8 @@ const fontessaSolids: LiveSolid[] = [
   fontessaSolid('mid-west-upper', -4.75, -5, 5.5, 6, 5.5, '#b6ac92'),
   fontessaSolid('apartments-south', -12.5, -12, 5, 12, 8, '#b6ac92'),
   fontessaSolid('apartments-north', -11.5, 14, 9, 16, 7, '#b0a38a'),
-  fontessaSolid('customs-warehouse-east', 8.5, -10, 11, 16, 8, '#98aaa8'),
+  // West face meets the bridge's south stair like the houses opposite (no dead strip beside the bridge).
+  fontessaSolid('customs-warehouse-east', 8, -10, 12, 16, 8, '#98aaa8'),
   fontessaSolid('freight-office-east', 10.3, 14, 11.4, 16, 7, '#90a6ac'),
   fontessaSolid('b-logs', 14, -11, 3, 4, 1.8, '#a36f50', .42),
   fontessaSolid('b-car', 18, -14.5, 4, 3, 2.4, '#537778'),
@@ -698,9 +805,15 @@ const fontessaSolids: LiveSolid[] = [
   fontessaSolid('mid-window-front-sill', .6, 17, 4.8, .24, LIVE_MID_WINDOW.sillY, '#ba8068'),
   fontessaSolid('mid-window-front-pier-west', -4.5, 17, .24, .24, 5.4, '#ba8068'),
   fontessaSolid('mid-window-front-pier-center', -1.65, 17, .3, .24, 5.4, '#ba8068'),
-  fontessaSolid('mid-window-front-pier-east', 3.75, 17, 1.5, .24, 5.4, '#ba8068'),
+  // A normal-sized window (2.6 m) on the same centre line, so the hold still looks straight down Mid.
+  fontessaSolid('mid-window-front-pier-window-west', LIVE_MID_WINDOW.windowMinX - .4 - .005, 17, .8, .24, 5.4, '#ba8068'),
+  fontessaSolid('mid-window-front-pier-east', (LIVE_MID_WINDOW.windowMaxX + 4.5) / 2, 17, 4.5 - LIVE_MID_WINDOW.windowMaxX, .24, 5.4, '#ba8068'),
   { ...fontessaSolid('mid-window-front-lintel', .6, 17, 4.8, .24, 5.4, '#ba8068'), baseY: LIVE_MID_WINDOW.lintelY },
-  { ...fontessaSolid('mid-window-t-door-lintel', -3.1, 17, 2.6, .24, 5.4, '#ba8068'), baseY: 2.6 },
+  // A normal street door (1.3 m by 2.25 m) into the stair hall, centred on the stair flight.
+  ...[-1, 1].map(side => fontessaSolid(`mid-window-t-door-jamb-${side < 0 ? 'west' : 'east'}`,
+    side < 0 ? (-4.38 + LIVE_MID_WINDOW.doorMinX) / 2 : (LIVE_MID_WINDOW.doorMaxX - 1.8) / 2, 17,
+    side < 0 ? LIVE_MID_WINDOW.doorMinX + 4.38 : -1.8 - LIVE_MID_WINDOW.doorMaxX, .24, 5.4, '#ba8068')),
+  { ...fontessaSolid('mid-window-t-door-lintel', -3.1, 17, 2.6, .24, 5.4, '#ba8068'), baseY: LIVE_MID_WINDOW.doorTopY },
   fontessaSolid('mid-window-t-stair-wall', -1.68, 19.7, .24, 5.4, 2.65, '#ba8068'),
   fontessaSolid('mid-window-side-1', 4.5, 21.75, .24, 9.74, 5.4, '#ba8068'),
   fontessaSolid('mid-window-side-west-front', -4.5, 19.54, .24, 5.32, 5.4, '#ba8068'),

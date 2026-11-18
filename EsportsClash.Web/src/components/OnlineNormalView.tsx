@@ -1,16 +1,19 @@
 import {workspacePath} from '../frontendRoutes';
-import {onWorldUpdate} from '../worldLive';
-import {TournamentLogo} from './TournamentLogo';
+import {matchDay, matchTime} from './matches/time';
+import {FixtureBoard} from './matches/FixtureBoard';
+import {onWorldUpdate,visibleInterval} from '../worldLive';
 import {SquadRoster} from './SquadRoster';
 import {FpsTacticalSystemEditor} from './FpsTacticalSystemEditor';
 import type {PlayerFormData} from '../playerForm';
 import {WorldPlayerPortrait} from './WorldPlayerPortrait';
 import {FixtureReport} from './FixtureReport';
+import {FixturePlanEditor} from './matches/FixturePlanEditor';
+import type {FixturePlan} from './matches/FixtureBoard';
 import { useEffect, useState } from 'react';
 import { isCloudPersistenceConfigured, request } from '../cloudPersistence';
+import { FpsOfficialBroadcast } from './FpsOfficialBroadcast';
 import { useAccount } from '../AccountContext';
 import { openAuthentication } from '../authNavigation';
-import { pediaHref } from '../hexapedia';
 import { FpsMatchView } from './FpsMatchView';
 import type { FpsMatchReport } from '../fps/fpsTypes';
 import { ClubCrest, ClubIdentityEditor, type ClubIdentity } from './ClubIdentityEditor';
@@ -21,7 +24,7 @@ type MatchClub = { logo?:string; id?:number;identity?:ClubIdentity; name: string
 interface FriendlyInvite { id: number; kickoff_at: string; home: MatchClub }
 
 interface Match { id: string; status: string; sequence: number; error?: string;
-  plan: { clubs: { blue: string; red: string }; game_mode?: string; fps?: { format: string; rules_version: number; map_id: string }; bot_sides?: ('blue'|'red')[]; fixture?: { id:number; clubs: { blue: MatchClub; red: MatchClub } }; versions: Record<string, string>;
+  plan: { clubs: { blue: string; red: string }; game_mode?: string; fps?: { format: string; rules_version: number; map_id: string; simulation_version?: number }; bot_sides?: ('blue'|'red')[]; fixture?: { id:number; clubs: { blue: MatchClub; red: MatchClub } }; versions: Record<string, string>;
     intelligence?:{controller:string;release?:{id:string;qualification?:string;generation?:number}|null} }; result?: { winner: string; report?: FpsMatchReport; execution?:{mode:string;notice?:string} } }
 interface Dashboard {
   club: { id: number; name: string; tag?: string | null; revision: number; lineup: { instance_id: string }[] };
@@ -42,6 +45,8 @@ interface Fixture {
   can_watch?:boolean;
   match_id: string | null;
   orders: Dashboard['club']['lineup'] | null;
+  side?: 'blue' | 'red'; outcome?: 'win' | 'loss' | null; score?: {blue: number; red: number} | null;
+  map?: {id: string; name: string} | null; opponent_id?: number | null; plan?: FixturePlan | null;
 }
 const button = 'cm-btn';
 const manilaTime = new Intl.DateTimeFormat('en-PH', {
@@ -56,9 +61,9 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
   const [refresh, setRefresh] = useState(0), [clubName, setClubName] = useState(''), [lineup, setLineup] = useState<Dashboard['club']['lineup']>([]);
   const [fixtures, setFixtures] = useState<Fixture[]>([]);
   useEffect(()=>onWorldUpdate(['fixtures','clubs','players'],()=>setRefresh(v=>v+1)),[]);
-  const [fixtureFilter,setFixtureFilter]=useState<'upcoming'|'completed'|'all'>('upcoming');
   const [invites, setInvites] = useState<FriendlyInvite[]>([]);
   const [editingFixture, setEditingFixture] = useState<Fixture | null>(null);
+  const [fixturePlan, setFixturePlan] = useState<FixturePlan | null>(null);
   const [clubTab, setClubTab] = useState<'calendar' | 'lineup' | 'identity' | 'friendly'>(()=>{
     if(initialTool)return initialTool;
     const tab=new URLSearchParams(workspacePath(window.location.hash).split('?')[1]??'').get('club');
@@ -78,8 +83,8 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         if (!closed) { setData(response.data); setFixtures(schedule?.data ?? []); setInvites(schedule?.invites ?? []); }
       } catch (problem) { if (!closed) setError((problem as Error).message); }
     };
-    void load(); const timer = window.setInterval(() => void load(), initialTool?30000:15000);
-    return () => { closed = true; controller.abort(); clearInterval(timer); };
+    void load(); const stopTimer=visibleInterval(() => void load(), initialTool?30000:15000);
+    return () => { closed = true; controller.abort(); stopTimer(); };
   }, [session, refresh, scheduled,broadcastOnly]);
   useEffect(() => { if (data && !editingFixture) { setClubName(data.club.name); setLineup(data.club.lineup); } }, [data?.club.revision, editingFixture]);
   useEffect(() => {
@@ -98,8 +103,8 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
       .then(result => { if (!controller.signal.aborted) setSelected(current => current?.id === selected.id ? result.data : current); })
       .catch(problem => { if (!controller.signal.aborted) setError((problem as Error).message); });
     refreshMatch();
-    const timer = window.setInterval(refreshMatch, 2000);
-    return () => { controller.abort(); window.clearInterval(timer); };
+    const stopTimer=visibleInterval(refreshMatch, 2000);
+    return () => { controller.abort(); stopTimer(); };
   }, [session, selected?.id, selected?.status, selected?.plan.game_mode]);
 
   const act = async (path: string, body?: unknown, method = 'POST', success = 'Changes saved.') => {
@@ -124,10 +129,6 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
   if (!isCloudPersistenceConfigured()) return <p className="cm-panel cm-panel-body text-sm cm-muted">Open the local Docker app at localhost:8088 for server-owned Normal matches.</p>;
   if (!session) return <section className="club-panel"><h2>Open your club</h2><p className="club-help mb-3">Sign in to manage your fixtures and match orders.</p><button className={button} onClick={() => openAuthentication('sign-in', 'play')}>Go to sign-in</button></section>;
   return <div className="club-workspace space-y-5 pb-10">
-    {!broadcastOnly&&<section className="club-panel club-account club-account--signed-in">
-      <div><p className="cm-eyebrow">Matchday</p><h2>{data?.club.tag?<a href={pediaHref('teams',data.club.id)}>{data.club.name}</a>:data?.club.name??'Your club calendar'}</h2></div>
-      <p className="club-help">Fixtures start automatically, even when you are offline.</p>
-    </section>}
     {error && <p role="alert" className="club-notice">{error}</p>}
     {notice && <p role="status" className="club-notice">{notice}</p>}
     {selected && <section className="club-panel space-y-3">
@@ -144,7 +145,11 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         })}
       </h3>
       <p className="club-status">{`${selected.status === 'completed' ? 'Final' : selected.status === 'failed' ? 'Failed' : selected.status === 'interrupted' ? 'Interrupted recording' : 'FPS match'}${selected.result ? ` · ${selected.plan.clubs[selected.result.winner as 'blue' | 'red']} wins` : ''}`}</p>
-      {selected.plan.game_mode === 'fps_mr15_v1' ? selected.result?.report
+      {selected.plan.game_mode === 'fps_mr15_v1' && selected.plan.fps?.simulation_version === 5
+        ? (selected.status === 'running' || selected.status === 'completed') && session
+          ? <FpsOfficialBroadcast matchId={selected.id} session={session} onExit={() => setSelected(null)} />
+          : <p className="club-help">{selected.status === 'failed' ? 'The match could not be simulated.' : 'The broadcast starts at kickoff.'}</p>
+        : selected.plan.game_mode === 'fps_mr15_v1' ? selected.result?.report
         ? <FpsMatchView
           report={selected.result.report}
           blueTeamName={selected.plan.clubs.blue}
@@ -166,23 +171,22 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
         {{ calendar: 'Fixtures', lineup: 'Lineup & orders', identity: 'Club identity', friendly: 'Scrimmages' }[tab]}
       </button>)}
     </nav>}
-    {!broadcastOnly && scheduled && data && clubTab === 'calendar' && <section className="club-panel space-y-3">
-      <div className="club-section-heading"><h3><Clock3 size={15}/> Your fixture calendar</h3><span className="club-help">Manila - UTC+8</span></div>
-      <nav className="fixture-filters" aria-label="Fixture filter">{(['upcoming','completed','all'] as const).map(f=><button className={fixtureFilter===f?'active':''} onClick={()=>setFixtureFilter(f)} key={f}>{f==='upcoming'?'Upcoming & live':f==='completed'?'Past games':'All games'} <span>{fixtures.filter(g=>f==='all'||(f==='completed'?['Completed','Interrupted'].includes(g.status):!['Completed','Interrupted'].includes(g.status))).length}</span></button>)}</nav>
-      {!fixtures.filter(f=>fixtureFilter==='all'||(fixtureFilter==='completed'?['Completed','Interrupted'].includes(f.status):!['Completed','Interrupted'].includes(f.status))).length&&<div className="club-empty"><h4>{fixtureFilter==='completed'?'No past games in this window':'Your calendar is clear'}</h4><p>Fixtures from the last 30 days and published upcoming games appear here.</p><div className="flex flex-wrap gap-2"><a className="cm-btn" href="#hexapedia/tournaments">Find a tournament</a><button className={button} onClick={()=>{setClubTab('friendly');if(matchCentre)window.location.hash='scrimmages';}}>Arrange a scrimmage</button><a className="cm-btn" href="#fps-simulation">3D Broadcast Practice</a></div></div>}
-      <div className="fixture-desk-list">{fixtures.filter(f=>fixtureFilter==='all'||(fixtureFilter==='completed'?['Completed','Interrupted'].includes(f.status):!['Completed','Interrupted'].includes(f.status))).sort((a,b)=>fixtureFilter==='completed'?Date.parse(b.kickoff_at)-Date.parse(a.kickoff_at):Date.parse(a.kickoff_at)-Date.parse(b.kickoff_at)).map(fixture=><article key={fixture.id} className="fixture-desk-row">
-        <header><TournamentLogo id={fixture.tournament_id??'scrimmage'} name={fixture.competition} size={23}/>{fixture.tournament_id?<a href={pediaHref('tournaments',fixture.tournament_id)}>{fixture.competition}</a>:<span>{fixture.competition}</span>}<span className={'fixture-status '+(fixture.status==='Live'?'is-live':'')}>{fixture.status}</span></header>
-        <div className="fixture-desk-teams"><span>{(fixture.clubs.blue.identity||(fixture.clubs.blue.crest&&fixture.clubs.blue.colors))&&<ClubCrest crest={fixture.clubs.blue.identity?.crest??fixture.clubs.blue.crest!} colors={fixture.clubs.blue.identity?.colors??fixture.clubs.blue.colors!} logo={fixture.clubs.blue.identity?.assets?.logo??fixture.clubs.blue.logo}/>}<strong>{fixture.clubs.blue.name}</strong></span><b>vs</b><span>{(fixture.clubs.red.identity||(fixture.clubs.red.crest&&fixture.clubs.red.colors))&&<ClubCrest crest={fixture.clubs.red.identity?.crest??fixture.clubs.red.crest!} colors={fixture.clubs.red.identity?.colors??fixture.clubs.red.colors!} logo={fixture.clubs.red.identity?.assets?.logo??fixture.clubs.red.logo}/>}<strong>{fixture.clubs.red.name}</strong></span></div>
-        <footer><div><time><Clock3 size={12}/>{manilaTime.format(new Date(fixture.kickoff_at))}</time>{fixture.can_submit&&<small>Orders close {manilaTime.format(new Date(fixture.orders_close_at))}</small>}</div><div>{fixture.can_submit&&<button className={`${button} cm-btn-primary`} onClick={()=>{setLineup(fixture.orders??data.club.lineup);setEditingFixture(fixture);setClubTab('lineup');}}><ClipboardList size={13}/>{fixture.orders?'Edit orders':'Set orders'}</button>}{fixture.match_id&&(fixture.can_watch??['Live','Completed'].includes(fixture.status))&&<button className={button} onClick={()=>void openMatch(fixture.match_id!)}>{fixture.status==='Live'?'Watch live':fixture.status==='Interrupted'?'Interrupted recording':'Replay & report'}</button>}</div></footer>
-      </article>)}</div>
-    </section>}
-    {!broadcastOnly && scheduled && data && clubTab === 'friendly' && <section className="club-panel space-y-3">
-      <header className="scrimmage-heading">
-        <div className="scrimmage-heading__icon"><Swords size={19}/></div>
-        <div><p className="scrimmage-eyebrow">CLUB VS CLUB · HUMAN MANAGERS</p><h3>Same-tier scrimmage</h3></div>
-        <span className="scrimmage-human-tag"><Users size={13}/> Invitations only</span>
-      </header>
-      <p className="club-help scrimmage-intro">Find a real club near your squad’s level. We compare server-calculated lineup ratings and only pair clubs in the same tier—never widen the search. A fixture is scheduled 30 minutes after pairing so both managers can review orders.</p>
+    {!broadcastOnly && scheduled && data && clubTab === 'calendar' && !selected && <FixtureBoard fixtures={fixtures} clubId={data.club.id}
+      onOrders={f => { const fixture = fixtures.find(x => x.id === f.id)!; setLineup(fixture.orders ?? data.club.lineup); setFixturePlan(fixture.plan ?? null); setEditingFixture(fixture); setClubTab('lineup'); }}
+      onWatch={f => { if (f.match_id) void openMatch(f.match_id); }} />}
+    {!broadcastOnly && scheduled && data && clubTab === 'friendly' && <div className="scrim-layout">
+      {invites.length > 0 && <section className="fx-group fx-group--orders" aria-labelledby="scrim-invites">
+        <header className="fx-group__head"><h3 id="scrim-invites">Invitations for you<span className="fx-count">{invites.length}</span></h3><p>Clubs that asked you for a scrimmage. Accepting puts the game on your calendar.</p></header>
+        <ol className="fx-list">{invites.map(invite => <li key={invite.id} className="fx-row scrim-invite-row">
+          <time className="fx-when" dateTime={invite.kickoff_at}><strong>{matchDay(invite.kickoff_at)}</strong><span>{matchTime(invite.kickoff_at)}</span></time>
+          <div className="fx-main"><span className="fx-competition">Scrimmage invitation</span><strong>{invite.home.name}</strong></div>
+          <div className="fx-action"><button className={`${button} cm-btn-primary`} disabled={busy} onClick={() => void act(`/online/fixtures/invites/${invite.id}/accept`, undefined, 'POST', 'Scrimmage accepted. The fixture is on your calendar.')}>Accept</button></div>
+        </li>)}</ol>
+      </section>}
+      <div className="scrim-options">
+        <section className="cm-panel scrim-card" aria-labelledby="scrim-quick">
+          <header><p className="ui-eyebrow">Fastest</p><h3 id="scrim-quick"><Swords size={16} aria-hidden="true"/> Quick match</h3>
+            <p className="club-help">We pair you with a human-managed club in your tier with a similar lineup rating. The game kicks off 30 minutes after pairing.</p></header>
       {data.scrimmage_ticket?.status === 'queued' && <div className="scrimmage-state" role="status" aria-live="polite">
         <div className="scrimmage-state__top">
           <span className="scrimmage-searching"><span className="scrimmage-pulse"/><Activity size={15}/> Searching for a club</span>
@@ -221,52 +225,55 @@ export function OnlineNormalView({ scheduled = false, initialMatchId, initialToo
           <a className="cm-btn scrimmage-switch" href="#match-centre?club=queue">Go to normal matchmaking <ArrowRight size={14}/></a>
         </div>
       </div>}
-      <h3>Invite a club directly</h3>
-      <p className="club-help">Invite a club by its tag and choose a future kickoff. The match is scheduled when they accept.</p>
-      <form className="flex flex-wrap items-end gap-3" onSubmit={async event => {
+        </section>
+        <section className="cm-panel scrim-card" aria-labelledby="scrim-invite">
+          <header><p className="ui-eyebrow">Pick your opponent</p><h3 id="scrim-invite"><Users size={16} aria-hidden="true"/> Invite a club</h3>
+            <p className="club-help">Send an invitation to a club by its tag. The game is scheduled when they accept.</p></header>
+      <form className="scrim-invite-form" onSubmit={async event => {
         event.preventDefault();
         const form = event.currentTarget;
         const fields = new FormData(form);
         const kickoff = String(fields.get('kickoff'));
         if (await act('/online/fixtures/invites', { tag: String(fields.get('tag')).toUpperCase(), kickoff_at: `${kickoff}:00+08:00` }, 'POST', 'Scrimmage invitation sent. Clubs respond when a suitable slot is available.')) form.reset();
       }}>
-        <label className="text-sm">Opponent club tag<input className="cm-input block" name="tag" required pattern="[A-Za-z0-9]{2,12}" /></label>
-        <label className="text-sm">Kickoff in Manila time<input className="cm-input block" name="kickoff" type="datetime-local" required /></label>
-        <button className={button} disabled={busy}>Send invitation</button>
+        <label><span className="ui-field-label">Opponent club tag</span><input className="cm-input" name="tag" required pattern="[A-Za-z0-9]{2,12}" placeholder="e.g. RATC" autoComplete="off" /></label>
+        <label><span className="ui-field-label">Kickoff · Manila time</span><input className="cm-input" name="kickoff" type="datetime-local" required /></label>
+        <button className={`${button} cm-btn-primary`} disabled={busy}>Send invitation</button>
       </form>
-      {invites.map(invite => <div key={invite.id} className="flex flex-wrap items-center gap-3">
-        <p>{invite.home.name} · {manilaTime.format(new Date(invite.kickoff_at))} Manila</p>
-        <button className={button} disabled={busy} onClick={() => void act(`/online/fixtures/invites/${invite.id}/accept`, undefined, 'POST', 'Scrimmage accepted. The fixture is on your calendar.')}>Accept scrimmage</button>
-      </div>)}
-    </section>}
+        </section>
+      </div>
+    </div>}
     {!broadcastOnly && data && session && (!scheduled || clubTab === 'identity') && <ClubIdentityEditor session={session} club={data.club} onSaved={() => setRefresh(value => value + 1)} />}
     {!broadcastOnly && data && (!scheduled || clubTab === 'lineup') && <section className="club-panel lineup-workbench">
-      <div className="lineup-workbench__heading">
+      {editingFixture && <div className="orders-context" role="region" aria-label="Fixture orders">
         <div>
-          <p className="lineup-workbench__eyebrow"><ClipboardList size={14}/>{editingFixture ? 'FIXTURE ORDERS' : 'SQUAD MANAGEMENT'}</p>
-          <h3>{editingFixture ? `${editingFixture.clubs.blue.name} vs ${editingFixture.clubs.red.name}` : 'Your starting five'}</h3>
-          <p className="club-help">{editingFixture ? 'Set the five players for this tactical FPS fixture.' : 'Set your starters and review their FPS skills, personalities and role fit.'}</p>
+          <p className="ui-eyebrow">Match orders · {editingFixture.competition}</p>
+          <h3>{editingFixture.clubs.blue.name} vs {editingFixture.clubs.red.name}</h3>
+          <p className="club-help">Kickoff {matchDay(editingFixture.kickoff_at)}, {matchTime(editingFixture.kickoff_at)} · orders close {matchDay(editingFixture.orders_close_at)}, {matchTime(editingFixture.orders_close_at)} Manila. {editingFixture.orders ? 'This game uses custom orders.' : 'This game uses your default lineup until you save different orders.'}</p>
         </div>
-        <div className="lineup-workbench__badge"><Swords size={15}/><span>STAFF-LED DRAFT</span></div>
-      </div>
+        <div className="orders-context__actions">
+          {editingFixture.orders && <button type="button" className="cm-btn" disabled={busy} onClick={async()=>{if(await act(`/online/fixtures/${editingFixture.id}/orders`,undefined,'DELETE','This fixture now uses your default lineup.')){setEditingFixture(null);if(matchCentre)setClubTab('calendar');}}}>Use default lineup</button>}
+          <button type="button" className="cm-btn cm-btn-ghost" onClick={()=>{setEditingFixture(null);setClubTab('calendar');}}>Back to fixtures</button>
+        </div>
+      </div>}
       <form onSubmit={async event => {
         event.preventDefault();
         if (editingFixture) {
-          if (await act(`/online/fixtures/${editingFixture.id}/orders`, { lineup }, 'PUT', 'Match orders saved.')) {setEditingFixture(null);if(matchCentre)setClubTab('calendar');}
+          if (await act(`/online/fixtures/${editingFixture.id}/orders`, { lineup, plan: fixturePlan }, 'PUT', 'Match orders saved.')) {setEditingFixture(null);if(matchCentre)setClubTab('calendar');}
         } else {
           await act('/online/club', { lineup, revision: data.club.revision, ...(scheduled ? {} : { name: clubName }) }, 'PUT', 'Default lineup saved.');
         }
       }}>
         {!scheduled && <label className="mt-3 block text-xs">Club name<input required minLength={2} maxLength={80} value={clubName} onChange={event => setClubName(event.target.value)} className="cm-input ml-3 max-w-full" /></label>}
+        {editingFixture && <FixturePlanEditor plan={fixturePlan} onChange={setFixturePlan} map={editingFixture.map} starters={lineup.map(s=>({id:s.instance_id,name:data.cards.find(c=>c.id===s.instance_id)?.definition.name??'Player'}))}/>}
         <SquadRoster cards={data.cards} lineup={lineup} saved={editingFixture?.orders??data.club.lineup} onChange={setLineup} busy={busy||(!editingFixture&&(data.ticket?.status==='queued'||data.scrimmage_ticket?.status==='queued'))} fixture={!!editingFixture} onReset={()=>setLineup(editingFixture?.orders??data.club.lineup)}/>
-        {editingFixture&&<button type="button" className="cm-btn" onClick={()=>{setEditingFixture(null);setClubTab('calendar');}}>Back to fixtures</button>}
       </form>
       {!scheduled && <div className="mt-4 flex flex-wrap items-center gap-3">
         <button className={button} disabled={busy || data.ticket?.status === 'queued' || data.matches.some(match => ['allocated', 'running'].includes(match.status))} onClick={() => void act('/online/queue')}>Find opponent</button>
         {data.ticket?.status === 'queued' && <><p className="text-sm text-[var(--hx-copper)]">Searching for another manager. If no one joins in 15 seconds, we’ll match you with an available bot.</p><button className={button} onClick={() => void act('/online/queue', undefined, 'DELETE')}>Leave queue</button></>}
       </div>}
     </section>}
-    {!broadcastOnly && data && session && (!scheduled || clubTab === 'lineup') && !editingFixture && <FpsTacticalSystemEditor session={session} players={data.cards}/>}
+    {!broadcastOnly && data && session && (!scheduled || clubTab === 'lineup') && !editingFixture && <div id="tactical-system" className="scroll-mt-4"><FpsTacticalSystemEditor session={session} players={data.cards} onSaved={()=>setRefresh(v=>v+1)}/></div>}
     {!scheduled && !!data?.matches.length && <section className="cm-panel cm-panel-body"><h3 className="font-black">Match history</h3><div className="mt-3 flex flex-wrap gap-2">{data.matches.map(match => <button key={match.id} className={button} onClick={() => void openMatch(match.id)}>{match.status} · {match.id.slice(0, 8)}</button>)}</div></section>}
   </div>;
 }

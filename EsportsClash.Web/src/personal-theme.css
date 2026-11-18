@@ -565,3 +565,12 @@ html[data-hx-density="compact"] .wire-post {
     flex-wrap: wrap;
   }
 }
+
+/* Supporter membership (billing). */
+.supporter-billing h3 { display: flex; align-items: center; gap: 8px; }
+.studio-test-mode { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px dashed var(--cm-border-strong); border-radius: 6px; font-size: 13px; }
+.studio-checkout { margin: 10px 0; padding: 12px; border: 2px solid var(--cm-border-strong); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.studio-checkout h4, .studio-checkout p { flex-basis: 100%; margin: 0; }
+.studio-prices { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 10px 0; }
+.studio-prices > div { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid var(--cm-border); border-radius: 8px; }
+.studio-prices span { color: var(--cm-text-muted); font-size: 13px; }

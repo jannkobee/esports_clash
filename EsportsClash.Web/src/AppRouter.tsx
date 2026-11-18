@@ -7,6 +7,7 @@ import { authenticationDestination, isWorkspaceRoute, openAuthentication, readRo
 import { PublicSiteLayout } from './components/PublicSiteLayout';
 import { LandingPage } from './components/LandingPage';
 import { AuthenticationPage } from './components/AuthenticationPage';
+import { PasswordRecoveryPage } from './components/PasswordRecoveryPage';
 import './components/club-management.css';
 
 const FpsSimulationLab=lazy(()=>import('./components/FpsSimulationLab').then(module=>({default:module.FpsSimulationLab})));
@@ -55,6 +56,7 @@ function RouterContent() {
   if (route==='fps-simulation') return <PublicSiteLayout><Suspense fallback={<ClubLoader label="Opening the FPS simulation"/>}><FpsSimulationLab/></Suspense></PublicSiteLayout>;
   if (workspace) return session ? <Suspense fallback={<ClubLoader label="Opening your club"/>}><Workspace /></Suspense> : <ClubLoader label="Opening sign-in"/>;
   if (route === 'sign-in' || route === 'register') return session ? <AccountRedirect /> : <PublicSiteLayout><AuthenticationPage mode={route} /></PublicSiteLayout>;
+  if (referencePath === 'forgot-password' || referencePath === 'reset-password') return <PublicSiteLayout><PasswordRecoveryPage mode={referencePath} query={route.split('?')[1] ?? ''} /></PublicSiteLayout>;
   if (reference) return <PublicSiteLayout><section className="public-avatarpedia"><Suspense fallback={<ClubLoader label="Opening Hexapedia"/>}><Hexapedia onWatch={id => {
     const destination = `match-centre?match=${encodeURIComponent(id)}`;
     if (session) window.location.hash = destination;

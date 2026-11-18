@@ -119,28 +119,34 @@ class CompetitionEngine
     {
         $calendar=app(CompetitionCalendar::class);$recovery=$calendar->settings()['recovery_hours'];
         $latest=ClubFixture::where('tournament_id',$e->id)->max('kickoff_at');
-        $start=max(CarbonImmutable::parse($e->starts_at),now('UTC')->toImmutable()->addHour()->startOfHour());
+        $start=max(CarbonImmutable::parse($e->starts_at),now('UTC')->toImmutable()->addMinutes(ClubFixture::ordersLeadMinutes())->addHour()->startOfHour());
         if($latest)$start=max($start,CarbonImmutable::parse($latest)->addHours(max($recovery,$e->regulations['round_interval_hours']??$recovery)));
         $entries=DB::table('club_tournament_entries')->where('tournament_id',$e->id)->get()->keyBy('id');
         // Lock participating clubs in one order, also used by direct friendly scheduling.
         $clubIds=$entries->pluck('club_id')->filter()->sort()->values()->all();
         OnlineClub::whereKey($clubIds)->orderBy('id')->lockForUpdate()->get(['id']);
         $slot=(int)(ClubFixture::where('tournament_id',$e->id)->max('bracket_slot')??0);
+        // Broadcast day: each stream airs one game at a time, a full slot apart (a game waits for the previous one).
+        $spacing=max(60*(int)($e->regulations['fixture_interval_hours']??1),(int)config('competitions.broadcast_slot_minutes',90));
+        $streams=max(1,(int)($e->regulations['broadcast_streams']??ceil(count($pairs)/max(1,(int)config('competitions.games_per_stream',8)))));
         foreach($pairs as $offset=>$pair){
             [$a,$b]=$pair;$home=$entries[$a];$away=$entries[$b];
-            // A single-worker deployment can serialize every fixture; concurrency is explicit configuration.
-            $kickoff=$start->addHours($offset*($e->regulations['fixture_interval_hours']??1));
+            $stream=$offset%$streams;
+            $kickoff=$start->addMinutes(intdiv($offset,$streams)*$spacing);
             $attempt=0;
             while(true){
                 try{$calendar->validateSlot($e,$kickoff);}catch(\Symfony\Component\HttpKernel\Exception\HttpException $error){if(++$attempt>800)throw $error;$kickoff=$kickoff->addHours(3);continue;}
                 if($e->participant_type==='club' && ClubFixture::conflicts([$home->club_id,$away->club_id],$kickoff)){$kickoff=$kickoff->addHours($recovery);if(++$attempt>800)abort(409,'Calendar conflict requires review.');continue;}
                 if($e->participant_type==='national' && ClubFixture::whereBetween('kickoff_at',[$kickoff->subHours($recovery),$kickoff->addHours($recovery)])->where(fn($q)=>$q->whereIn('home_national_team_id',[$home->national_team_id,$away->national_team_id])->orWhereIn('away_national_team_id',[$home->national_team_id,$away->national_team_id]))->exists()){$kickoff=$kickoff->addHours($recovery);if(++$attempt>800)abort(409,'National calendar conflict requires review.');continue;}
+                if(ClubFixture::streamBusy($e->id,$stream,$kickoff)){$kickoff=$kickoff->addMinutes($spacing);if(++$attempt>800)abort(409,'Broadcast stream conflict requires review.');continue;}
+                // Worker capacity: a full clock hour pushes the game to the next hour with room.
+                if(ClubFixture::hourFull($kickoff)){$kickoff=$kickoff->addHour();if(++$attempt>800)abort(409,'Kickoff capacity is exhausted; review the calendar.');continue;}
                 break;
             }
             ClubFixture::create(['tournament_id'=>$e->id,'stage_id'=>$stageId,'round'=>$round,'group_key'=>$pair[2]??null,
                 'home_entry_id'=>$a,'away_entry_id'=>$b,'home_club_id'=>$home->club_id,'away_club_id'=>$away->club_id,
                 'home_national_team_id'=>$home->national_team_id,'away_national_team_id'=>$away->national_team_id,
-                'competition'=>$e->title(),'bracket_slot'=>++$slot,'kickoff_at'=>$kickoff,'orders_close_at'=>$kickoff->subMinutes(15)]);
+                'competition'=>$e->title(),'bracket_slot'=>++$slot,'broadcast_stream'=>$stream,'kickoff_at'=>$kickoff,'orders_close_at'=>ClubFixture::ordersCloseAt($kickoff)]);
         }
     }
 

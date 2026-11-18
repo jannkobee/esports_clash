@@ -29,7 +29,7 @@ import {
 import { executeSetPiece, generateSetPieceCall } from './fpsSetPieceRules.ts';
 import { assignFpsTeamRoles, initialFpsPsychology, rankFpsPlayers, updateFpsPsychology, updateContextualFpsPsychology } from './fpsPersonality.ts';
 import { developFpsChemistry, developFpsFamiliarity, evaluatePlayerAction, evolveFpsTeamIdentity } from './fpsIdentity.ts';
-import {createFpsIdentityContext,assignContextualRoles,hydrateFpsIdentityContext} from './fpsIdentityMatch.ts';
+import {createFpsIdentityContext,assignContextualRoles,assignRecordedRoundDuties,hydrateFpsIdentityContext} from './fpsIdentityMatch.ts';
 
 export function createFpsPrng(seed: number): () => number {
   let state = seed >>> 0;
@@ -273,8 +273,11 @@ export function simulateFpsMatch(
       assignFpsTeamRoles(attackingTeam);
       assignFpsTeamRoles(defendingTeam);
     }
-    // Support carries the device so the opening duel does not routinely drop it.
-    const carrier = (settings.identityExperiment ? attackingTeam.find(p=>p.tactics?.role==='support') : rankFpsPlayers(attackingTeam.filter(p => p.tactics?.role === 'support'), 'support')[0])
+    // Contextual matches: the device goes to a player whose round job keeps him off first contact and
+    // off the utility lineups (same allocator as the live engine). Legacy matches keep the support carrier.
+    if(settings.identityExperiment){for(const p of attackingTeam)p.loadout.hasBomb=false;assignRecordedRoundDuties(attackingTeam,settings.identityExperiment);assignRecordedRoundDuties(defendingTeam,settings.identityExperiment);}
+    const carrierOrder=['trade','lurker','sniper','support','entry'];
+    const carrier = (settings.identityExperiment ? [...attackingTeam].sort((a,b)=>carrierOrder.indexOf(a.tactics?.duty??'entry')-carrierOrder.indexOf(b.tactics?.duty??'entry'))[0] : rankFpsPlayers(attackingTeam.filter(p => p.tactics?.role === 'support'), 'support')[0])
       ?? attackingTeam[0];
     carrier.loadout.hasBomb = true;
 
@@ -324,6 +327,8 @@ export function simulateFpsMatch(
       });
     }
 
+    // Bought weapons and grenades are known now: settle this round's jobs before the call.
+    if(settings.identityExperiment){assignRecordedRoundDuties(attackingTeam,settings.identityExperiment);assignRecordedRoundDuties(defendingTeam,settings.identityExperiment);}
     // Tactical Execution: Generate & Execute "Set Piece"
     const setPieceCall = generateSetPieceCall(attackingTeam, defendingTeam, map, currentRound, prng, settings.identityExperiment);
     const liveStartedAt = currentSecond;

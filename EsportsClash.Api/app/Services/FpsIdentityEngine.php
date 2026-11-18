@@ -11,7 +11,10 @@ class FpsIdentityEngine
     public const PLAN = ['tempo'=>.5,'structure'=>.5,'aggression'=>.5,'preparation'=>.5,'freedom'=>.5,'economy'=>.5];
     public const CHEMISTRY = ['trust'=>.5,'communication'=>.5,'understanding'=>.5,'leadershipAcceptance'=>.5,'roleCompetition'=>.5];
 
-    public function ready(): bool { return Schema::hasColumn('fps_player_identities','personality'); }
+    private ?bool $ready = null;
+
+    /** Schema check once per request (the service is request-scoped): directories call this per player. */
+    public function ready(): bool { return $this->ready ??= Schema::hasColumn('fps_player_identities','personality'); }
     public function enabled(): bool { return $this->ready(); }
 
     public function coach(OnlineClub $club): array
@@ -20,18 +23,40 @@ class FpsIdentityEngine
         $head=$staff['head_coach'];
         $member=\App\Models\ClubStaff::where('club_id',$club->id)->where('role','head_coach')->firstOrFail();
         $key=$member->contract_id ? (DB::table('club_staff_contracts')->where('id',$member->contract_id)->value('candidate_key')??'staff:'.$member->id) : 'staff:'.$member->id.':founding';
-        $dna=app(FpsIdentityProfiles::class)->dna('coach:'.$key);
         // Philosophy is a stable preference of the employed person, not a rating bonus.
-        return ['key'=>hash('sha256',$key),'name'=>$head['name'],'profile'=>[
-            'tempo'=>$dna['riskTolerance']/100,'rigidity'=>$dna['tacticalDiscipline']/100,
+        return ['key'=>hash('sha256',$key),'name'=>$head['name'],'profile'=>$this->philosophy($key)+['development'=>($staff['performance_coach']['attributes']['development']??5)/10]];
+    }
+
+    /** A coach's stable philosophy (0–1 per dimension) from their private DNA key. Shown to managers only as whole 1–10 levels. */
+    public function philosophy(string $key): array
+    {
+        $dna=app(FpsIdentityProfiles::class)->dna('coach:'.$key);
+        return ['tempo'=>$dna['riskTolerance']/100,'rigidity'=>$dna['tacticalDiscipline']/100,
             'aggression'=>$dna['competitiveDrive']/100,'preparation'=>$dna['preparationPreference']/100,
             'freedom'=>$dna['creativity']/100,'economy'=>1-$dna['riskTolerance']/100,
             'communication'=>$dna['teamOrientation']/100,'leadership'=>$dna['leadershipInitiative']/100,
-            'adaptability'=>$dna['adaptability']/100,'development'=>($staff['performance_coach']['attributes']['development']??5)/10,
-        ]];
+            'adaptability'=>$dna['adaptability']/100];
     }
 
-    public function pin(array $blue, array $red, ?int $blueUser, ?int $redUser, array $templates): array
+    public const PHILOSOPHY_LABELS=['tempo'=>'Tempo','rigidity'=>'Structure','aggression'=>'Contact risk','preparation'=>'Preparation','freedom'=>'Individual freedom','economy'=>'Economy discipline','communication'=>'Team orientation','leadership'=>'Leadership initiative','adaptability'=>'Adaptability'];
+
+    /** Whole 1–10 levels of a philosophy and how well it fits a gameplan (same wording as player scouting). */
+    public function describePhilosophy(array $profile,?array $gameplan=null): array
+    {
+        $arch=app(FpsPlayerArchitecture::class);$levels=[];
+        foreach(self::PHILOSOPHY_LABELS as $key=>$label)if(isset($profile[$key]))$levels[]=['key'=>$key,'label'=>$label]+$arch->rated($profile[$key]*100,'tendency');
+        $fit=null;
+        if($gameplan){$pairs=['tempo'=>'tempo','structure'=>'rigidity','aggression'=>'aggression','preparation'=>'preparation','freedom'=>'freedom','economy'=>'economy'];$gap=0;
+            foreach($pairs as $plan=>$coach)$gap+=abs(($gameplan[$plan]??.5)-($profile[$coach]??.5));$score=1-$gap/count($pairs);
+            $fit=$score>=.75?'promising':($score>=.55?'mixed':'potential friction');}
+        return ['levels'=>$levels,'gameplan_fit'=>$fit];
+    }
+
+    /**
+     * @param array $fixturePlans optional per-fixture overrides by side: ['gameplan' => six dimensions, 'instructions' => [player => instruction]].
+     *  Validated when saved (FpsTacticalSystemController::fixturePlan); only the gameplan and individual instructions can differ.
+     */
+    public function pin(array $blue, array $red, ?int $blueUser, ?int $redUser, array $templates, array $fixturePlans = []): array
     {
         $profiles=app(FpsIdentityProfiles::class); $players=[]; $teams=[];
         foreach (['blue'=>[$blue,$blueUser],'red'=>[$red,$redUser]] as $side=>[$slots,$user]) {
@@ -47,6 +72,10 @@ class FpsIdentityEngine
             $plan=$system ? json_decode($system->gameplan,true) : self::PLAN;
             $culture=$system ? json_decode($system->culture,true) : self::PLAN;
             $instructions=$system?->instructions ? json_decode($system->instructions,true) : [];
+            $override=$fixturePlans[$side]??null;$clubPlan=$plan;
+            if(is_array($override['gameplan']??null))$plan=array_replace($plan,array_intersect_key(array_map('floatval',$override['gameplan']),self::PLAN));
+            $carry=$plan!==$clubPlan?ClubStaffService::learningRates(app(ClubStaffService::class)->snapshot($club))['carry']:0;
+            foreach((array)($override['instructions']??[]) as $id=>$instruction)if(isset($instructions[$id])&&in_array($instruction,['balanced','hold','initiative','support'],true))$instructions[$id]['instruction']=$instruction;
             $coach=$this->coach($club); $ids=array_column($slots,'instance_id');
             try{$assignments=app(FpsPlayerArchitecture::class)->assignments($ids,$instructions);}
             catch(\Illuminate\Validation\ValidationException $error){
@@ -68,6 +97,8 @@ class FpsIdentityEngine
                 $dna=json_decode($row->dna,true); $development=json_decode($row->development,true);
                 $key=hash('sha256',json_encode($plan));
                 $familiarity=$development['systems'][$key]??0;
+                // A fixture-specific gameplan is new to the players; the coach's preparation carries part of the club plan's familiarity.
+                if($carry>0)$familiarity=max($familiarity,($development['systems'][hash('sha256',json_encode($clubPlan))]??0)*$carry);
                 if (($development['coach_key']??$coach['key'])!==$coach['key']) $familiarity*=.8;
                 $players[$player->id]=['id'=>$player->id,'personality'=>json_decode($row->personality,true),'assignments'=>$assignments[$player->id],
                     'observed'=>json_decode($row->behavior??'null',true),'dna'=>$dna,
@@ -80,24 +111,31 @@ class FpsIdentityEngine
 
     public function apply(OnlineMatch $match): void
     {
-        if (($match->plan['fps']['simulation_version']??0)!==4) return;
+        if (!in_array($match->plan['fps']['simulation_version']??0,[4,5],true)) return;
         abort_unless($match->status==='completed',409,'Identity development requires a verified completed match.');
         if (!DB::table('fps_identity_applications')->insertOrIgnore(['match_id'=>$match->id,'created_at'=>now()])) return;
         $pin=$match->plan['fps_identity']; $events=$match->result['report']['events'];
         $rounds=$match->result['report']['totalRounds'];
         foreach (['blue','red'] as $side) {
             $team=$pin['teams'][$side];if(empty($team['clubId']))continue; $ids=array_column($match->plan[$side],'instance_id');
+            // Staff ratings pinned at allocation set learning rates only (decision-side); plans without staff stay neutral.
+            $rates=ClubStaffService::learningRates($match->plan['staff'][$side]??null);
             foreach ($ids as $id) {
                 $row=DB::table('fps_player_identities')->where('player_id',$id)->lockForUpdate()->first();
                 $dev=json_decode($row->development,true); $dna=json_decode($row->dna,true);
                 $systemKey=hash('sha256',json_encode($team['plan']));
                 $old=$dev['systems'][$systemKey]??0;
-                if (($dev['coach_key']??$team['coachKey'])!==$team['coachKey']) $old*=.8;
-                $dev['systems'][$systemKey]=min(1,$old+(1-$old)*min(.08,$rounds*(.002+.003*.5)));
+                if (($dev['coach_key']??$team['coachKey'])!==$team['coachKey']) $old*=$rates['retention'];
+                $dev['systems'][$systemKey]=min(1,$old+(1-$old)*min(.08*$rates['system'],$rounds*(.002+.003*.5)*$rates['system']));
                 // Keep bounded history of systems without changing permanent personality.
                 if (count($dev['systems'])>24) array_shift($dev['systems']);
                 $behavior=json_decode($row->behavior??'null',true)??['version'=>4,'matches'=>0,'metrics'=>[]];
                 $behavior['matches']++;
+                // Live 3D reports (v5) carry aggregated counts; recorded reports carry one event per observation.
+                foreach(($match->result['report']['behaviorSummary'][$id]??[]) as $metric=>$counts){
+                    $item=$behavior['metrics'][$metric]??['opportunities'=>0,'attempts'=>0];
+                    $item['opportunities']+=(int)$counts['opportunities'];$item['attempts']+=(int)$counts['attempts'];$behavior['metrics'][$metric]=$item;
+                }
                 foreach($events as $event)if(($event['type']??'')==='behavior_observation'&&($event['actorId']??null)===$id){
                     $o=$event['observation'];$metric=$o['metric'];$item=$behavior['metrics'][$metric]??['opportunities'=>0,'attempts'=>0];
                     $item['opportunities']++;if($o['attempted'])$item['attempts']++;$behavior['metrics'][$metric]=$item;
@@ -108,7 +146,7 @@ class FpsIdentityEngine
                 $dev['recent_observations']=array_slice($observations,-5);
                 foreach ($match->result['report']['roundSnapshots']??[] as $snapshot) if ($snapshot['playerId']===$id) {
                     $role=$snapshot['tactics']['position']??null;
-                    if ($role) { $value=$dev['role_familiarity'][$role]??0; $dev['role_familiarity'][$role]=$value+(1-$value)*.002; }
+                    if ($role) { $value=$dev['role_familiarity'][$role]??0; $dev['role_familiarity'][$role]=$value+(1-$value)*.002*$rates['role']; }
                 }
 
                 DB::table('fps_player_identities')->where('player_id',$id)->update(['dna'=>json_encode($dna),'development'=>json_encode($dev),'behavior'=>json_encode($behavior),'updated_at'=>now()]);
@@ -122,7 +160,7 @@ class FpsIdentityEngine
                     DB::table('fps_player_relationships')->insertOrIgnore(['player_id'=>$a,'teammate_id'=>$b,'relationship'=>json_encode(self::CHEMISTRY),'observations'=>0,'updated_at'=>now()]);
                     $relation=DB::table('fps_player_relationships')->where('player_id',$a)->where('teammate_id',$b)->lockForUpdate()->first();
                     $values=json_decode($relation->relationship,true);
-                    foreach (['trust','communication','understanding'] as $key) $values[$key]+=(1-$values[$key])*.004;
+                    foreach (['trust','communication','understanding'] as $key) $values[$key]+=(1-$values[$key])*.004*$rates[$key];
                     DB::table('fps_player_relationships')->where('id',$relation->id)->update(['relationship'=>json_encode($values),'observations'=>$relation->observations+1,'updated_at'=>now()]);
                 }
             }
@@ -134,7 +172,7 @@ class FpsIdentityEngine
                 $other=$caller['playerId'];
                 DB::table('fps_player_relationships')->insertOrIgnore(['player_id'=>$id,'teammate_id'=>$other,'relationship'=>json_encode(self::CHEMISTRY),'observations'=>0,'updated_at'=>now()]);
                 $relation=DB::table('fps_player_relationships')->where('player_id',$id)->where('teammate_id',$other)->lockForUpdate()->first();
-                $values=json_decode($relation->relationship,true);$values['leadershipAcceptance']+=($acceptance-$values['leadershipAcceptance'])*.01;
+                $values=json_decode($relation->relationship,true);$values['leadershipAcceptance']+=($acceptance-$values['leadershipAcceptance'])*min(.02,.01*$rates['leadership']);
                 DB::table('fps_player_relationships')->where('id',$relation->id)->update(['relationship'=>json_encode($values),'observations'=>$relation->observations+1,'updated_at'=>now()]);
             }
             DB::table('fps_team_systems')->insertOrIgnore(['club_id'=>$team['clubId'],'revision'=>1,'gameplan'=>json_encode($team['plan']),'culture'=>json_encode($team['culture']),'created_at'=>now(),'updated_at'=>now()]);
@@ -153,7 +191,7 @@ class FpsIdentityEngine
     {
         if(!$this->ready())return;
         $match=OnlineMatch::find($matchId);
-        if(($match?->plan['fps']['simulation_version']??0)!==4)return;
+        if(!in_array($match?->plan['fps']['simulation_version']??0,[4,5],true))return;
         $pin=$match->plan['fps_identity'];$identity=$pin['players'][$playerId]??null;
         if(!$identity)return;
         $row=DB::table('fps_player_identities')->where('player_id',$playerId)->lockForUpdate()->first();

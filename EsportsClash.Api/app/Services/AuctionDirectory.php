@@ -14,7 +14,8 @@ class AuctionDirectory {
   if(($filters['view']??'all')==='mine')$q->where('club_auctions.seller_id',$club->id);
   if(($filters['view']??'all')==='leading')$q->where('club_auctions.bidder_id',$club->id);
   $overall=$this->overallExpression();$band=(int)($filters['minimum']??0);
-  if($band>0){$threshold=[1=>1,2=>20,3=>30,4=>40,5=>50,6=>60,7=>70,8=>80,9=>88,10=>95][$band];$q->whereRaw("$overall >= ?",[$threshold]);}
+  if($band>0){// Level b on the manager-facing scale (fpsScale10) covers values above (b-1)*10.
+  $threshold=($band-1)*10+1;$q->whereRaw("$overall >= ?",[$threshold]);}
   match($filters['sort']??'closing'){'price'=>$q->orderByRaw('COALESCE(club_auctions.bid,club_auctions.opening_bid) ASC'),'skill'=>$q->orderByRaw("$overall DESC"),'name'=>$q->orderByRaw('LOWER(p.persona_name) ASC'),default=>$q->orderBy('club_auctions.closes_at')};
   $page=$q->with(['card','seller:id,name,tag,is_bot','bidder:id,name,tag,is_bot'])->orderBy('club_auctions.id')->paginate($filters['per_page']??20,['*'],'page',$filters['page']??1);
   $items=$page->getCollection()->map(function($a)use($cards,$club){$p=app(WorldPlayerProfiles::class)->definition($a->card,$cards[$a->card->definition_id]);return ['id'=>$a->id,'player'=>$a->card->persona_name,'player_id'=>$a->card_id,'seller'=>$a->seller->name,'seller_id'=>$a->seller_id,'seller_tag'=>$a->seller->tag,'seller_is_bot'=>$a->seller->is_bot,'bidder'=>$a->bidder?->only(['id','name','tag','is_bot']),'your_listing'=>$a->seller_id===$club->id,'leading'=>$a->bidder_id===$club->id,'bid'=>$a->bid,'minimum'=>$a->bid===null?$a->opening_bid:$a->bid+ClubMarketService::BID_INCREMENT,'closes_at'=>$a->closes_at,'overall'=>$p['ovr'],'role'=>$p['preferredRole']??$p['role']??null,'nationality'=>$p['nationality']??null,'age'=>$p['age']??null,'wage'=>$p['wage']??null,'stats'=>$p['stats']??[],'presentation'=>$p['presentation']??null,'fpsIdentity'=>$p['fpsIdentity']??null];});
@@ -29,7 +30,8 @@ class AuctionDirectory {
    return "CAST($expression AS DOUBLE PRECISION)";
   };
   $step=(int)config('world_players.training_xp_per_step');$growth="FLOOR(SQRT($max(0, p.training_xp-COALESCE(".$json('training_baseline').",0))/$step.0))";$parts=[];
-  foreach(WorldPlayerProfiles::ATTRIBUTES as $key)$parts[]="$min(COALESCE(".$json('potential').",99),$max(1,COALESCE(".$json('stats.'.$key).",18))+$growth)";
+  // Focused training stores allocated points per attribute (WorldPlayerProfiles::stats); unallocated steps grow evenly.
+  foreach(WorldPlayerProfiles::ATTRIBUTES as $key)$parts[]="$min(COALESCE(".$json('potential').",99),$max(1,COALESCE(".$json('stats.'.$key).",18))+COALESCE(".$json('allocation.'.$key)."+$max(0,$growth-COALESCE(".$json('allocated_steps').",0)),$growth))";
   return 'ROUND(('.implode('+',$parts).')/6.0)';
  }
 }

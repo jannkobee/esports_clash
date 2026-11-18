@@ -21,9 +21,9 @@ const plantChoices={
  B:[{x:23,z:18.1,style:'for main'},{x:20.1,z:21,style:'for catwalk'},{x:23,z:23.9,style:'for guard street'},{x:25.9,z:21,style:'for gallery'}]
 };
 /** Choose an actual open plant and its defensible direction using only personal evidence. */
-export function planLivePlant(from:FpsPoint,site:LivePlantSite,beliefs:readonly LiveIntelBelief[]=[],previous?:FpsPoint,coverage:readonly FpsPoint[]=[],runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):LivePlantPlan|undefined {
+export function planLivePlant(from:FpsPoint,site:LivePlantSite,beliefs:readonly LiveIntelBelief[]=[],previous?:FpsPoint,coverage:readonly FpsPoint[]=[],runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,routePlanner?:(point:FpsPoint)=>LiveRoutePlan):LivePlantPlan|undefined {
  const siteChoices=runtime.definition.tactical[site].plantChoices.length?runtime.definition.tactical[site].plantChoices:plantChoices[site];
- const routeTo=createLiveRoutePlanner(from,beliefs,0,undefined,runtime),valid=(p:FpsPoint)=>livePlantSite(p,runtime)===site&&runtime.walkable(p);
+ const routeTo=routePlanner??createLiveRoutePlanner(from,beliefs,0,undefined,runtime),valid=(p:FpsPoint)=>livePlantSite(p,runtime)===site&&runtime.walkable(p);
  const saved=previous&&valid(previous)?siteChoices.find(p=>distance(p,previous)<.2):undefined;
  const choices=saved?[saved]:siteChoices.filter(valid);
  const plans=choices.map(point=>({site,point:{x:point.x,z:point.z},style:point.style,route:routeTo(point)})).filter(p=>Number.isFinite(p.route.seconds));
@@ -38,15 +38,21 @@ export function planLivePlant(from:FpsPoint,site:LivePlantSite,beliefs:readonly 
  plans.sort((a,b)=>score(a)-score(b)||a.style.localeCompare(b.style));
  const best=plans[0];return best?{...best,seconds:best.route.seconds+LIVE_PLANT_RULES.seconds}:undefined;
 }
-export function planLivePostPlant(from:FpsPoint,site:LivePlantSite,bomb:FpsPoint,slot:number,beliefs:readonly LiveIntelBelief[],occupied:readonly FpsPoint[],quality:number,cheeky=false,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):{point:FpsPoint;watch:FpsPoint;reason:string} {
+/** Minimum distance from the device for a post-plant hold (metres). */
+export const LIVE_POST_PLANT_OFF_DEVICE=3.5;
+export function planLivePostPlant(from:FpsPoint,site:LivePlantSite,bomb:FpsPoint,slot:number,beliefs:readonly LiveIntelBelief[],occupied:readonly FpsPoint[],quality:number,cheeky=false,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,routePlanner?:(point:FpsPoint)=>LiveRoutePlan):{point:FpsPoint;watch:FpsPoint;reason:string} {
  const entrances=runtime.definition.tactical[site].retakeEntrances;
  const evidence=beliefs.filter(b=>b.age<8&&b.certainty>.4);
  const pressure=entrances.map((p,i)=>({p,i,w:evidence.reduce((n,b)=>n+b.certainty*Math.max(0,1-distance(b,p)/24),0)})).sort((a,b)=>b.w-a.w||a.i-b.i);
  // Every lane has a cover player before extra players reinforce the evidence-led lane.
  let watch=slot<3&&entrances.length?entrances[(pressure[0].i+slot)%entrances.length]:(pressure[0]?.p??runtime.definition.sites[site]);
  const extras=runtime.definition.tactical[site].postPlantCheeky;
- const candidates=[...runtime.definition.tactical[site].postPlant,...(cheeky?extras:[]),from].map(p=>runtime.safePoint(p));
- const route=createLiveRoutePlanner(from,beliefs,0,undefined,runtime);
+ // Standing on the device is not a post-plant position: the planter's own spot (zero travel, perfect
+ // view of the bomb) would otherwise always win and the planter would never leave it.
+ const allCandidates=[...runtime.definition.tactical[site].postPlant,...(cheeky?extras:[]),from].map(p=>runtime.safePoint(p));
+ const offDevice=allCandidates.filter(p=>distance(p,bomb)>=LIVE_POST_PLANT_OFF_DEVICE);
+ const candidates=offDevice.length?offDevice:allCandidates;
+ const route=routePlanner??createLiveRoutePlanner(from,beliefs,0,undefined,runtime);
  const bombWatched=occupied.some(a=>distance(a,bomb)<24&&runtime.sightline(a,bomb));
  const scored=candidates.filter(p=>Number.isFinite(route(p).seconds)&&route(p).seconds<12&&runtime.sightline(p,watch,runtime.terrain.groundHeight(p)+1.55,runtime.terrain.groundHeight(watch)+1.55)&&distance(p,bomb)<24).map(point=>{
   const spacing=occupied.reduce((n,a)=>n+Math.max(0,3-distance(a,point))*12,0);
@@ -73,17 +79,29 @@ export function planLivePostPlant(from:FpsPoint,site:LivePlantSite,bomb:FpsPoint
 export function createLiveRoutePlanner(from:FpsPoint,beliefs:readonly LiveIntelBelief[]=[],caution=0,heatAt?:(point:FpsPoint)=>number,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME) {
   const origin:FpsPoint={x:from.x,z:from.z,level:from.level},cache=new Map<string,LiveRoutePlan>();
   const threats=beliefs.filter(b=>b.certainty>.35&&b.radius<16);
+  const searchThreats=caution>0?threats:[];
+  // Heat/threat-weighted routes share one lazily expanded search from this origin.
+  // A single static query keeps findPath's goal-directed search and cache.
+  let pathsFrom:((destination:FpsPoint)=>FpsPoint[])|undefined,queries=0;
+  const pathTo=(destination:FpsPoint)=>{
+    if(!searchThreats.length&&!heatAt&&queries++===0)return runtime.findPath(origin,destination);
+    pathsFrom??=runtime.findPathsFrom(origin,searchThreats,caution,heatAt);
+    return pathsFrom(destination);
+  };
   return (destination:FpsPoint):LiveRoutePlan=>{
     const key=`${destination.x},${destination.z},${destination.level??'street'}`;
     const cached=cache.get(key);if(cached)return cached;
-    const path=runtime.findPath(origin,destination,caution>0?threats:[],caution,heatAt);
+    const path=pathTo(destination);
     let length=0,exposure=0,previous=origin;
     for(const point of path){
-      const leg=distance(previous,point),samples=Math.max(1,Math.ceil(leg/2));
-      for(let i=0;i<samples;i++){
-        const t=(i+.5)/samples,sample={x:previous.x+(point.x-previous.x)*t,z:previous.z+(point.z-previous.z)*t,level:point.level};
-        for(const threat of threats)if(distance(sample,threat)<45&&runtime.sightline(threat,sample))
-          exposure+=leg/samples*threat.certainty/(1+threat.radius*.15);
+      const leg=distance(previous,point);
+      if(threats.length>0){
+        const samples=Math.max(1,Math.ceil(leg/2.5));
+        for(let i=0;i<samples;i++){
+          const t=(i+.5)/samples,sample={x:previous.x+(point.x-previous.x)*t,z:previous.z+(point.z-previous.z)*t,level:point.level};
+          for(const threat of threats)if(distance(sample,threat)<45&&runtime.sightline(threat,sample))
+            exposure+=leg/samples*threat.certainty/(1+threat.radius*.15);
+        }
       }
       length+=leg;previous=point;
     }

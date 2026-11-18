@@ -252,7 +252,9 @@
   border-bottom: 1px solid var(--cm-border);
 }
 
-.office-message > .label-icon {
+.office-message__icon {
+  display: flex;
+  justify-content: center;
   color: var(--hx-accent);
   margin-top: 3px;
 }
@@ -457,3 +459,19 @@
     padding: 11px 6px;
   }
 }
+
+.staff-philosophy h3 { font-size: 14px; margin: 0 0 6px; }
+.staff-philosophy h3 small { font-weight: 400; color: var(--cm-text-muted); margin-left: 8px; }
+.staff-philosophy dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px 16px; margin: 0 0 6px; }
+.staff-philosophy dt { font-size: 11px; font-weight: 700; color: var(--cm-text-subtle); }
+.staff-philosophy dd { margin: 0; font-size: 14px; }
+.staff-philosophy dd small { color: var(--cm-text-muted); }
+.staff-candidate-philosophy { margin-top: 4px; color: var(--cm-text-muted); }
+
+.email-prefs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.email-prefs li { display: grid; gap: 2px; }
+.email-prefs small { color: var(--cm-text-muted); margin-left: 24px; }
+.verify-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+
+.season-budget.is-warn { border-left: 3px solid var(--hx-warning); }
+.season-budget.is-danger { border-left: 3px solid var(--hx-negative); }

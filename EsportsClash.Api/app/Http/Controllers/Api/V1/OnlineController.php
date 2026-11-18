@@ -21,7 +21,7 @@ class OnlineController extends Controller
             unset($definition['realName']);
             $definition['name']=$owned->persona_name??$definition['name'];
             return ['id' => $owned->id, 'definition' => $definition, 'catalog_version' => $owned->catalog_id,
-                'training_xp' => $owned->training_xp,'training_progress'=>app(\App\Services\WorldPlayerProfiles::class)->progress($owned)];
+                'training_xp' => $owned->training_xp];
         });
         $cardIds = $cards->pluck('id')->all();
         $rankedRatings = DB::query()->fromSub(
@@ -114,8 +114,82 @@ class OnlineController extends Controller
         $service->participant($request->user(), $id);
         $data = $request->validate(['after' => ['sometimes', 'integer', 'min:0', 'max:7200'], 'limit' => ['sometimes', 'integer', 'min:1', 'max:8']]);
         $frames = Http::withToken(config('online.worker_token'))->connectTimeout(3)->timeout(10)
-            ->get(rtrim(config('online.worker_url'), '/').'/matches/'.$id.'/replay', $data)->throw()->json();
+            ->get(OnlineMatch::findOrFail($id)->workerUrl().'/matches/'.$id.'/replay', $data)->throw()->json();
         return response()->json(['data' => $frames]);
+    }
+
+    /**
+     * Live 3D broadcast header, capped to what has already been broadcast: viewers of a match that was
+     * simulated ahead never learn how long it is (or how it ends) before playback reaches it.
+     */
+    public function liveReplayHeader(Request $request, string $id, OnlineService $service)
+    {
+        $match = $service->participant($request->user(), $id);
+        abort_unless($match->usesLiveEngine(), 404);
+        $header = $this->liveReplayPart($match, 'header');
+        [$frames, $complete] = $this->visibleLiveFrames($match, $header);
+        $perChunk = (int) $header['framesPerChunk'];
+        $complete = $complete && ($header['final'] ?? false);
+        // Only whole chunks are served, so a viewer can never read ahead of the broadcast.
+        $chunks = $complete ? (int) $header['chunks'] : intdiv($frames, $perChunk);
+        return response()->json(['data' => [...array_diff_key($header, array_flip(['frames', 'chunks', 'broadcastSeconds'])),
+            'frames' => $complete ? (int) $header['frames'] : $chunks * $perChunk, 'chunks' => $chunks, 'complete' => $complete,
+            'broadcastSeconds' => $complete ? $header['broadcastSeconds'] : null,
+            'liveSeconds' => $complete ? null : round(min($match->broadcastSecondsVisible(), (float) $header['broadcastSeconds']), 1)]]);
+    }
+
+    public function liveReplayChunk(Request $request, string $id, int $chunk, OnlineService $service)
+    {
+        $match = $service->participant($request->user(), $id);
+        abort_unless($match->usesLiveEngine() && $chunk >= 0 && $chunk < 100000, 404);
+        $header = $this->liveReplayPart($match, 'header');
+        [$frames, $complete] = $this->visibleLiveFrames($match, $header);
+        $complete = $complete && ($header['final'] ?? false);
+        abort_unless($complete ? $chunk < (int) $header['chunks'] : ($chunk + 1) * (int) $header['framesPerChunk'] <= $frames, 404, 'Not broadcast yet.');
+        $body = \Illuminate\Support\Facades\Cache::remember("online:live-replay:$id:$chunk", 600, fn () => $this->liveReplayPart($match, (string) $chunk, true));
+        return response($body, 200, ['Content-Type' => 'application/json', 'Cache-Control' => 'private, max-age=86400, immutable']);
+    }
+
+    /** @return array{0:int,1:bool} frames a viewer may see now, and whether the whole broadcast is visible */
+    private function visibleLiveFrames(\App\Models\OnlineMatch $match, array $header): array
+    {
+        $total = (int) $header['frames'];
+        $visible = $match->broadcastSecondsVisible();
+        if (is_infinite($visible)) return [$total, true];
+        $frames = min($total, (int) floor($visible / max(0.001, (float) $header['frameSeconds'])) + 1);
+        return [$frames, $frames >= $total];
+    }
+
+    private function liveReplayPart(\App\Models\OnlineMatch $match, string $part, bool $raw = false): array|string
+    {
+        $load = fn () => Http::withToken(config('online.worker_token'))->connectTimeout(3)->timeout(15)
+            ->get($match->workerUrl().'/matches/'.$match->id.'/replay3d/'.$part);
+        $key = 'online:live-replay:'.$match->id.':header';
+        if ($raw) { $reply = $load(); $this->abortIfReplayGone($match, $reply, $key); abort_unless($reply->successful(), 404, 'Replay part not available.'); return $reply->body(); }
+        // Only the final header is immutable; a provisional one (still simulating) is re-read.
+        if (\Illuminate\Support\Facades\Cache::has($key)) return \Illuminate\Support\Facades\Cache::get($key);
+        $reply = $load();
+        $this->abortIfReplayGone($match, $reply, $key);
+        abort_unless($reply->successful(), 404, 'The broadcast is still being prepared.');
+        $header = $reply->json();
+        if ($header['final'] ?? false) \Illuminate\Support\Facades\Cache::put($key, $header, 3600);
+        return $header;
+    }
+
+    /**
+     * The worker removed this replay after its retention period (410), or a settled match's replay is missing
+     * from its worker: answer 410 with a reason. The result and fixture report are stored here and stay intact.
+     */
+    private function abortIfReplayGone(\App\Models\OnlineMatch $match, \Illuminate\Http\Client\Response $reply, string $key): void
+    {
+        $reason = $reply->status() === 410 ? 'replay_expired'
+            : ($reply->status() === 404 && $match->status === 'completed' ? 'replay_missing' : null);
+        if ($reason === null) return;
+        \Illuminate\Support\Facades\Cache::forget($key);
+        throw new \Illuminate\Http\Exceptions\HttpResponseException(response()->json([
+            'message' => 'This replay is no longer available. The result and match report are kept.',
+            'reason' => $reason,
+        ], 410));
     }
 
     public function authorizeStream(Request $request)

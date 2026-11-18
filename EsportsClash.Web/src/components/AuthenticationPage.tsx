@@ -44,6 +44,7 @@ export function AuthenticationPage({ mode }: { mode: 'sign-in' | 'register' }) {
         {registering && <label htmlFor="account-confirmation">Confirm password<input id="account-confirmation" name="password_confirmation" type={visible ? 'text' : 'password'} autoComplete="new-password" required minLength={12} value={confirmation} onChange={event => setConfirmation(event.target.value)} disabled={busy} /></label>}
         <button type="submit" className="public-button public-button-primary" disabled={busy || !isCloudPersistenceConfigured()}>{busy ? 'Connecting…' : registering ? 'Create account & continue' : 'Sign in to your club'}{!busy && <ArrowRight size={17} />}</button>
       </form>
+      {!registering && <p className="auth-footnote"><a href="#forgot-password">Forgot your password?</a></p>}
       <p className="auth-footnote">{registering ? 'Your starter club and five players are included. You can customize the club after signing up.' : 'Use the same account for Matchday, Money, and your club settings.'}</p>
     </div>
   </section>;

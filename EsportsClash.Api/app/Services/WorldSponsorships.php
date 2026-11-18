@@ -20,8 +20,12 @@ class WorldSponsorships {
         $young=0;$roster=\App\Models\OwnedPlayerCard::where('user_id',$club->user_id)->limit(20)->get();
         foreach($roster as $p)if(!empty($p->world_profile['birth_date'])&&\Carbon\Carbon::parse($p->world_profile['birth_date'])->diffInYears(now(),true)<=22)$young++;
         $exposure=min(1,($games+$fixtures)/8);$fit=match($sponsor->objective){'development'=>$young/max(1,$roster->count()),'competition'=>(6-$club->tier)/5,'regional'=>$club->geography_id?1:.2};
-        $utility=.6*$exposure+.4*$fit;
-        return ['utility'=>round($utility,4),'verified_games_90d'=>$games,'published_fixtures_60d'=>$fixtures,'objective'=>$sponsor->objective,'fit'=>round($fit,3),'weekly_amount'=>(int)(10000+40000*$utility),'weeks'=>4];
+        // Dynamic pricing: verified recent results and the club's tier move what a sponsor will pay.
+        $recent=\App\Models\ClubFixture::where(fn($q)=>$q->where('home_club_id',$club->id)->orWhere('away_club_id',$club->id))->whereNotNull('result_winner')->orderByDesc('kickoff_at')->limit(10)->get();
+        $form=$recent->isEmpty()?.5:$recent->filter(fn($f)=>$f->outcomeFor($club->id)==='win')->count()/$recent->count();
+        $utility=.5*$exposure+.3*$fit+.2*$form;
+        $tierFactor=1+.5*max(0,5-max(1,min(5,(int)$club->tier)));
+        return ['utility'=>round($utility,4),'verified_games_90d'=>$games,'published_fixtures_60d'=>$fixtures,'objective'=>$sponsor->objective,'fit'=>round($fit,3),'form'=>round($form,3),'tier_factor'=>$tierFactor,'weekly_amount'=>(int)round((10000+40000*$utility)*$tierFactor),'weeks'=>4];
     }
     public function offer(OnlineClub $club,string $request,bool $autonomous=false,?int $epoch=null):int {
         return DB::transaction(function()use($club,$request,$autonomous,$epoch){

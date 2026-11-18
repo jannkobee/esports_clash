@@ -1,14 +1,16 @@
 import {fpsRoleFit} from '../fps/fpsRoleFit';
-import {onWorldUpdate} from '../worldLive';
+import {onWorldUpdate,visibleInterval} from '../worldLive';
 import { useEffect, useState } from 'react';
 import { isCloudPersistenceConfigured, request } from '../cloudPersistence';
 import { useAccount } from '../AccountContext';
 import { openAuthentication } from '../authNavigation';
-import { toScale10 } from '../marketBatchEngine';
+// Manager-facing 1–10 levels use the one owner-mandated conversion (fpsScale10).
+import {fpsScale10 as toScale10} from '../fps/fpsScale10';
 import {TransferAuctionBoard} from './TransferAuctionBoard';
 import {ReserveTransferListing} from './ReserveTransferListing';
 import './transfer-exchange.css';
-import { ArrowLeftRight, Coins, Gavel, GraduationCap, Handshake, Users } from 'lucide-react';
+import { ArrowLeftRight, Binoculars, Coins, Gavel, GraduationCap, Handshake, Tag, Users } from 'lucide-react';
+import { ScoutingDesk } from './ScoutingDesk';
 
 export interface PlayerCard {fpsIdentity?:import('../fps/fpsIdentity').FpsScoutingProfile;
   presentation?:import('../supporter').PlayerPresentation|null;
@@ -44,9 +46,9 @@ export function ClubMarketView() {
   const [notice, setNotice] = useState('');
   const [noticeIsError, setNoticeIsError] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [marketTab,setMarketTab]=useState(()=>{const tab=new URLSearchParams(location.hash.split('?')[1]??'').get('tab');return tab&&['auctions','sell','trades','academy'].includes(tab)?tab:'auctions';});
+  const [marketTab,setMarketTab]=useState(()=>{const tab=new URLSearchParams(location.hash.split('?')[1]??'').get('tab');return tab&&['auctions','sell','trades','academy','scouting'].includes(tab)?tab:'auctions';});
   const [ownAuctions,setOwnAuctions]=useState(false);
-  useEffect(()=>{const change=()=>{const tab=new URLSearchParams(location.hash.split('?')[1]??'').get('tab');if(tab&&['auctions','sell','trades','academy'].includes(tab))setMarketTab(tab);};window.addEventListener('hashchange',change);return()=>window.removeEventListener('hashchange',change);},[]);
+  useEffect(()=>{const change=()=>{const tab=new URLSearchParams(location.hash.split('?')[1]??'').get('tab');if(tab&&['auctions','sell','trades','academy','scouting'].includes(tab))setMarketTab(tab);};window.addEventListener('hashchange',change);return()=>window.removeEventListener('hashchange',change);},[]);
   const [tradeTag, setTradeTag] = useState('');
   const [target, setTarget] = useState<TradeTarget | null>(null);
   const [offeredIds, setOfferedIds] = useState<string[]>([]);
@@ -66,8 +68,8 @@ export function ClubMarketView() {
     });
     void load();
     const stopLive=onWorldUpdate(['market'],()=>void load());
-    const timer = window.setInterval(() => void load(), 60000);
-    return () => { controller.abort(); window.clearInterval(timer);stopLive(); };
+    const stopTimer=visibleInterval(() => void load(), 60000);
+    return () => { controller.abort(); stopTimer();stopLive(); };
   }, [session, configured]);
 
   async function submit(path: string, success: string, body?: object, method = 'POST') {
@@ -109,7 +111,8 @@ export function ClubMarketView() {
         <div className="exchange-account-facts"><span><Gavel size={15}/><strong>{market.auctions.length}</strong> open auctions</span><span><Users size={15}/><strong>{market.reserves.length}</strong> eligible reserves</span><a href="#hexapedia/guide"><ArrowLeftRight size={15}/> Transfer guide</a></div>
       </section>
 
-      <nav className="exchange-tabs" aria-label="Transfer Exchange sections">{([['auctions','Auctions',Gavel],['sell','Sell a player',Users],['trades','Direct trades',Handshake],['academy','Youth academy',GraduationCap]] as const).map(([key,label,Icon])=><button key={String(key)} className={marketTab===key?'active':''} aria-pressed={marketTab===key} onClick={()=>{setMarketTab(String(key));location.hash='transfer-exchange?tab='+key;}}><Icon size={16}/>{String(label)}</button>)}</nav>
+      <nav className="exchange-tabs" aria-label="Transfer Exchange sections">{([['auctions','Auctions',Gavel],['sell','Sell a player',Tag],['trades','Direct trades',Handshake],['academy','Youth academy',GraduationCap],['scouting','Scouting',Binoculars]] as const).map(([key,label,Icon])=><button key={String(key)} className={marketTab===key?'active':''} aria-pressed={marketTab===key} onClick={()=>{setMarketTab(String(key));location.hash='transfer-exchange?tab='+key;}}><Icon size={16}/>{String(label)}</button>)}</nav>
+      {marketTab==='scouting'&&<ScoutingDesk onSigned={()=>void loadMarket()}/>}
       {marketTab==='academy'&&<section className="club-panel exchange-academy">
 
         <div className="club-section-heading"><h3 className="flex items-center gap-2"><GraduationCap size={16}/> Youth academy</h3><span className="club-status">{market.academy_opened_at ? 'Open' : 'Optional'}</span></div>

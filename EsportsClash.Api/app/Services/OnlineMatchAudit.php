@@ -17,7 +17,7 @@ class OnlineMatchAudit
             foreach($plan[$side]??[] as $slot){$ids[]=$slot['instance_id'];$expectedXp[$slot['instance_id']]=$minutes+(int)round($minutes*$bonus/100);}
         }
         $ratings=DB::table('club_player_match_ratings')->where('match_id',$id)->get();
-        $training=DB::table('club_training_sessions')->where('match_id',$id)->get();
+        $training=DB::table('club_training_sessions')->where('match_id',$id)->where('kind','match')->get();
         $same=function(array $actual)use($ids):bool{$expected=$ids;sort($actual);sort($expected);return $actual===$expected;};
         $fixture=ClubFixture::where('match_id',$id)->first();
         $exhibition=$fixture?->tournament_id&&ClubTournament::find($fixture->tournament_id)?->provenance==='launch_simulation';

@@ -8,7 +8,9 @@ class ClubOffice
 {
     public function notify(int $club,string $key,string $kind,string $title,string $body,array $action=[],mixed $deadline=null,mixed $occurred=null):void{
         if(!Schema::hasTable('club_inbox'))return;
-        DB::table('club_inbox')->insertOrIgnore(['club_id'=>$club,'event_key'=>$key,'kind'=>$kind,'title'=>$title,'body'=>$body,'action'=>json_encode($action),'deadline_at'=>$deadline,'occurred_at'=>$occurred??now()]);
+        $inserted=DB::table('club_inbox')->insertOrIgnore(['club_id'=>$club,'event_key'=>$key,'kind'=>$kind,'title'=>$title,'body'=>$body,'action'=>json_encode($action),'deadline_at'=>$deadline,'occurred_at'=>$occurred??now()]);
+        // New inbox events of emailing kinds also reach the manager by email (once, by event key).
+        if($inserted)app(ManagerMail::class)->forInbox($club,$key,$kind,$title,$body,$action);
     }
     public function sync(OnlineClub $club):void{
         $active=[];
@@ -26,8 +28,10 @@ class ClubOffice
         }
         DB::table('club_inbox')->where('club_id',$club->id)->whereNull('resolved_at')->whereIn('kind',['invitation','scrimmage','orders'])->whereNotIn('event_key',$active)->update(['resolved_at'=>now()]);
         foreach(ClubFixture::where(fn($q)=>$q->where('home_club_id',$club->id)->orWhere('away_club_id',$club->id))->whereHas('match',fn($q)=>$q->where('status','completed')->where('completed_at','>=',now()->subDays(14)))->with('match')->limit(30)->get() as $f){
-            $m=$f->match;$won=($m->result['winner']==='blue'?$f->home_club_id:$f->away_club_id)===$club->id;
-            $this->notify($club->id,'result:'.$m->id,'result',($won?'Victory':'Match completed').' — '.$f->competition,'The verified Arena result and exact event report are available.', ['type'=>'match','id'=>$m->id],null,$m->completed_at);
+            $m=$f->match;$outcome=$f->outcomeFor($club->id);if($outcome===null)continue;
+            $side=$f->home_club_id===$club->id?'blue':'red';$score=$f->result_score;$opponent=$m->plan['clubs'][$side==='blue'?'red':'blue']??'your opponent';
+            $line=($outcome==='win'?'Won':'Lost').($score?' '.$score[$side].'–'.$score[$side==='blue'?'red':'blue']:'').' vs '.$opponent;
+            $this->notify($club->id,'result:'.$m->id,'result',$line.' — '.$f->competition,$line.($score['map_name']??null?' on '.$score['map_name']:'').'. The verified report, round by round, is ready.', ['type'=>'match','id'=>$m->id],null,$m->completed_at);
         }
         foreach(DB::table('club_money_entries')->where('club_id',$club->id)->whereIn('kind',['Weekly payroll','Staff payroll'])->where('created_at','>=',now()->subDays(14))->get() as $e)$this->notify($club->id,'payroll:'.$e->id,'money','Weekly wages posted','Your money ledger records the actual payroll charge.',['type'=>'route','route'=>'market'],null,$e->created_at);
     }

@@ -1,0 +1,371 @@
+{
+  "version": 4,
+  "iglCategories": [
+    {
+      "id": "tacticalCalling",
+      "label": "Tactical calling",
+      "tendencies": [
+        { "key": "structuredCalling", "label": "Structured calling", "high": "Organized, rehearsed executions", "low": "Loose tactical frameworks" },
+        { "key": "defaultPreference", "label": "Default preference", "high": "Map control before committing", "low": "Early tactical commitments" },
+        { "key": "rushCalling", "label": "Rush calling", "high": "Frequently considers fast attacks", "low": "Methodical openings" },
+        { "key": "contactCalling", "label": "Contact calling", "high": "Quiet approaches and sudden engagements", "low": "Utility-heavy attacks" },
+        { "key": "splitCalling", "label": "Split calling", "high": "Attacks from multiple directions", "low": "Consolidated attacks" },
+        { "key": "fakeCalling", "label": "Fake calling", "high": "Deceptive executes", "low": "Direct attacks" },
+        { "key": "utilityHeavyCalling", "label": "Utility-heavy calling", "high": "Coordinated utility as tactical foundation", "low": "Mechanically driven engagements" },
+        { "key": "mapControlCalling", "label": "Map control calling", "high": "Territorial control", "low": "Immediate objectives" },
+        { "key": "pickBasedCalling", "label": "Pick-based calling", "high": "Progression around opening kills", "low": "Coordinated engagements" },
+        { "key": "lateRoundCalling", "label": "Late-round calling", "high": "Delays commitment for developing information", "low": "Earlier commitments" },
+        { "key": "tacticalComplexity", "label": "Tactical complexity", "high": "Multi-stage tactical plans", "low": "Simple, reliable plans" },
+        { "key": "strategyVariation", "label": "Strategy variation", "high": "Changes tactical approaches", "low": "Reuses successful strategies" }
+      ]
+    },
+    {
+      "id": "leadership",
+      "label": "Leadership",
+      "tendencies": [
+        { "key": "micromanagement", "label": "Micromanagement", "high": "Specific player instructions", "low": "Delegates individual decisions" },
+        { "key": "delegation", "label": "Delegation", "high": "Substantial teammate responsibility", "low": "Centralizes decision-making" },
+        { "key": "playerAutonomy", "label": "Player autonomy", "high": "Independent opportunities", "low": "Maintains assigned structure" },
+        { "key": "consultativeCalling", "label": "Consultative calling", "high": "Considers teammates' suggestions", "low": "Independent calling" },
+        { "key": "decisiveCalling", "label": "Decisive calling", "high": "Rapid decisions under uncertainty", "low": "Waits for additional information" },
+        { "key": "informationDemand", "label": "Information demand", "high": "Frequently requests updates", "low": "Relies on volunteered information" },
+        { "key": "communicationIntensity", "label": "Communication intensity", "high": "Frequent tactical communication", "low": "Concise, selective calls" },
+        { "key": "conflictResolution", "label": "Conflict resolution", "high": "Addresses conflicting intentions", "low": "Players resolve conflicts independently" },
+        { "key": "responsibilitySharing", "label": "Responsibility sharing", "high": "Distributes tactical responsibilities", "low": "Personally manages most decisions" },
+        { "key": "leadFromFront", "label": "Lead from front", "high": "Participates in aggressive space creation", "low": "Leads from supporting positions" },
+        { "key": "teamProtection", "label": "Team protection", "high": "Keeps teammates in favorable situations", "low": "Accepts greater individual risks" },
+        { "key": "authorityAssertion", "label": "Authority assertion", "high": "Strongly reinforces instructions", "low": "More tactical freedom" }
+      ]
+    },
+    {
+      "id": "midroundCalling",
+      "label": "Mid-round calling",
+      "tendencies": [
+        { "key": "midroundAdaptation", "label": "Mid-round adaptation", "high": "Reevaluates developing plans", "low": "Maintains original intentions" },
+        { "key": "rotationCalling", "label": "Rotation calling", "high": "Readily redirects team", "low": "Requires stronger evidence" },
+        { "key": "opportunityCalling", "label": "Opportunity calling", "high": "Exploits emerging weaknesses immediately", "low": "Maintains established structure" },
+        { "key": "failedExecuteRecovery", "label": "Failed execute recovery", "high": "Quickly reorganizes failed attacks", "low": "Attempts to salvage execution" },
+        { "key": "regroupPreference", "label": "Regroup preference", "high": "Reorganizes scattered teammates", "low": "Permits independent pressure" },
+        { "key": "tempoSwitching", "label": "Tempo switching", "high": "Changes pace mid-round", "low": "Maintains consistent tempo" },
+        { "key": "riskCalling", "label": "Risk calling", "high": "Accepts high-risk solutions", "low": "Prefers conservative solutions" },
+        { "key": "uncertaintyTolerance", "label": "Uncertainty tolerance", "high": "Calls with incomplete information", "low": "Seeks stronger confirmation" },
+        { "key": "timeManagement", "label": "Time management", "high": "Structures calls around round timer", "low": "Prioritizes combat opportunities" },
+        { "key": "numericalAdvantageProtection", "label": "Advantage protection", "high": "Protects advantageous player counts", "low": "Presses for additional advantages" },
+        { "key": "comebackCalling", "label": "Comeback calling", "high": "Unconventional recovery solutions", "low": "Conventional recovery attempts" },
+        { "key": "saveCalling", "label": "Save calling", "high": "Considers economic preservation", "low": "Attempts difficult round recoveries" }
+      ]
+    },
+    {
+      "id": "playerUtilization",
+      "label": "Player utilization",
+      "tendencies": [
+        { "key": "starUtilization", "label": "Star utilization", "high": "Builds opportunities around mechanically strong teammates", "low": "Spreads engagements evenly" },
+        { "key": "balancedUtilization", "label": "Balanced utilization", "high": "Distributes opportunities throughout the roster", "low": "Concentrates roles on key carries" },
+        { "key": "strengthExploitation", "label": "Strength exploitation", "high": "Assigns situational responsibilities based on strengths", "low": "Applies uniform role expectations" },
+        { "key": "weaknessProtection", "label": "Weakness protection", "high": "Reduces exposure of vulnerable teammates", "low": "Leaves exposed teammates to hold" },
+        { "key": "spawnExploitation", "label": "Spawn exploitation", "high": "Adjusts opening assignments based on spawns", "low": "Keeps fixed opening lanes" },
+        { "key": "utilityDelegation", "label": "Utility delegation", "high": "Redistributes utility responsibilities based on positioning and needs", "low": "Keeps fixed throw assignments" },
+        { "key": "secondaryCallerTrust", "label": "Secondary caller trust", "high": "Allows local tactical leadership by teammates", "low": "Keeps all calling centralized" },
+        { "key": "lurkTrust", "label": "Lurk trust", "high": "Gives lurkers greater independence", "low": "Pulls lurkers into main executes" },
+        { "key": "sniperPriority", "label": "Sniper priority", "high": "Allocates resources and tactical support to the AWPer", "low": "Treats sniper rifles as situational" },
+        { "key": "entrySupportPriority", "label": "Entry support priority", "high": "Prioritizes flashes and trading support for entry players", "low": "Spreads utility across angles" },
+        { "key": "roleFlexibility", "label": "Role flexibility", "high": "Temporarily changes tactical responsibilities as situations demand", "low": "Maintains fixed round roles" },
+        { "key": "individualPlayAllowance", "label": "Individual play allowance", "high": "Permits valuable independent opportunities", "low": "Requires synchronized team actions" }
+      ]
+    }
+  ],
+  "individualCategories": [
+    {
+      "id": "peeking",
+      "label": "Peeking and engagement",
+      "tendencies": [
+        { "key": "wideSwing", "label": "Wide swing", "high": "Prefers committed wide swings", "low": "Prefers tight peeks" },
+        { "key": "jigglePeek", "label": "Jiggle peek", "high": "Frequently jiggle-peeks for information", "low": "Prefers direct engagements" },
+        { "key": "shoulderBait", "label": "Shoulder bait", "high": "Baits enemy shots before committing", "low": "Rarely baits shots" },
+        { "key": "jumpPeek", "label": "Jump peek", "high": "Uses jump spotting for information", "low": "Prefers grounded information gathering" },
+        { "key": "crouchPeek", "label": "Crouch peek", "high": "Changes elevation when peeking", "low": "Prefers standing peeks" },
+        { "key": "prefire", "label": "Prefire", "high": "Fires at anticipated enemy positions", "low": "Waits for visual confirmation" },
+        { "key": "repeekPersistence", "label": "Re-peek persistence", "high": "Frequently re-challenges contested angles", "low": "Prefers disengaging after contact" },
+        { "key": "duelInitiative", "label": "Duel initiative", "high": "Proactively seeks engagements", "low": "Waits for enemies to engage" },
+        { "key": "peekDelay", "label": "Peek delay", "high": "Varies or delays peek timing", "low": "Prefers immediate peeks" },
+        { "key": "angleIsolation", "label": "Angle isolation", "high": "Clears opponents one angle at a time", "low": "More willing to expose multiple angles" },
+        { "key": "advantageSeeking", "label": "Advantage seeking", "high": "Prefers fights with favorable conditions", "low": "Accepts more neutral fights" },
+        { "key": "distractionPeek", "label": "Distraction peek", "high": "Uses brief exposure to divert enemy attention", "low": "Avoids exposure without intent to fight" }
+      ]
+    },
+    {
+      "id": "gunfight",
+      "label": "Gunfight and shooting",
+      "tendencies": [
+        { "key": "sprayCommitment", "label": "Spray commitment", "high": "Commits to sustained sprays", "low": "Prefers shorter firing sequences" },
+        { "key": "burstPreference", "label": "Burst preference", "high": "Favors controlled bursts", "low": "Favors taps or longer sprays" },
+        { "key": "tapPreference", "label": "Tap preference", "high": "Prefers individual accurate shots", "low": "Prefers bursts or sprays" },
+        { "key": "crouchSpray", "label": "Crouch spray", "high": "Frequently crouches during sprays", "low": "Prefers standing or repositioning" },
+        { "key": "sprayTransfer", "label": "Spray transfer", "high": "Attempts to transfer sprays between enemies", "low": "Resets before acquiring another target" },
+        { "key": "triggerPatience", "label": "Trigger patience", "high": "Waits for a favorable shot opportunity", "low": "Fires immediately upon identifying a target" },
+        { "key": "smokeSpam", "label": "Smoke spam", "high": "Fires through smoke based on available cues", "low": "Conserves ammunition and holds fire" },
+        { "key": "wallbang", "label": "Wallbang", "high": "Attempts penetration shots when information supports them", "low": "Waits for direct engagement" },
+        { "key": "suppressiveFire", "label": "Suppressive fire", "high": "Fires to discourage enemy movement", "low": "Reserves shots for likely eliminations" },
+        { "key": "reloadFrequency", "label": "Reload frequency", "high": "Frequently replenishes partially depleted magazines", "low": "Conserves reload opportunities until necessary" },
+        { "key": "sidearmTransition", "label": "Sidearm transition", "high": "Switches to a pistol under immediate pressure", "low": "Prefers preserving the primary weapon" },
+        { "key": "targetSwitching", "label": "Target switching", "high": "Quickly changes target priorities", "low": "Prefers finishing the current engagement" },
+        { "key": "postShotReposition", "label": "Post-shot reposition", "high": "Relocates after revealing a firing position", "low": "Frequently maintains the same position" }
+      ]
+    },
+    {
+      "id": "movement",
+      "label": "Movement",
+      "tendencies": [
+        { "key": "knifeMobility", "label": "Knife mobility", "high": "Frequently switches to a knife for movement speed", "low": "Keeps a firearm equipped" },
+        { "key": "silentMovement", "label": "Silent movement", "high": "Prefers walking through uncertain areas", "low": "Prioritizes movement speed" },
+        { "key": "movementTricks", "label": "Movement tricks", "high": "Attempts bunny hops, air strafes and movement shortcuts", "low": "Uses conventional movement" },
+        { "key": "elevationSeeking", "label": "Elevation seeking", "high": "Frequently seeks higher ground", "low": "Prefers ground-level positioning" },
+        { "key": "boostSeeking", "label": "Boost seeking", "high": "Looks for teammate-assisted elevation opportunities", "low": "Uses independently accessible positions" },
+        { "key": "shortcutPreference", "label": "Shortcut preference", "high": "Uses available shortcuts and jumps", "low": "Prefers conventional routes" },
+        { "key": "routeVariation", "label": "Route variation", "high": "Frequently changes traversal routes", "low": "Reuses familiar routes" },
+        { "key": "movementBaiting", "label": "Movement baiting", "high": "Uses movement cues to manipulate enemies", "low": "Avoids unnecessary movement" },
+        { "key": "exposureMinimization", "label": "Exposure minimization", "high": "Prioritizes movement through cover", "low": "Accepts exposed routes for faster progression" },
+        { "key": "weaponReadyTravel", "label": "Weapon-ready travel", "high": "Keeps weapons ready in uncertain areas", "low": "Switches equipment more readily for mobility" }
+      ]
+    },
+    {
+      "id": "positioning",
+      "label": "Positioning and map control",
+      "tendencies": [
+        { "key": "earlyAggression", "label": "Early aggression", "high": "Contests space immediately off spawn", "low": "Establishes passive opening positions" },
+        { "key": "offAnglePreference", "label": "Off-angle preference", "high": "Uses unconventional defensive angles", "low": "Uses established angles" },
+        { "key": "forwardPositioning", "label": "Forward positioning", "high": "Positions close to enemy-controlled territory", "low": "Prefers deeper positions" },
+        { "key": "anchorPersistence", "label": "Anchor persistence", "high": "Maintains assigned defensive territory", "low": "Gives up territory more readily" },
+        { "key": "lurkFlank", "label": "Lurk flank", "high": "Seeks isolated routes and late timings", "low": "Prefers operating near teammates" },
+        { "key": "flankWatch", "label": "Flank watch", "high": "Proactively covers rear approaches", "low": "Focuses on immediate objectives" },
+        { "key": "repositionFrequency", "label": "Reposition frequency", "high": "Frequently changes holding positions", "low": "Remains in established positions" },
+        { "key": "mapControlInitiative", "label": "Map control initiative", "high": "Independently claims uncontested territory", "low": "Waits for team instructions" },
+        { "key": "deepControl", "label": "Deep control", "high": "Extends control into enemy territory", "low": "Maintains safer territorial boundaries" },
+        { "key": "positionConcealment", "label": "Position concealment", "high": "Prefers positions that conceal presence", "low": "Accepts positions that reveal presence" },
+        { "key": "spaceCreation", "label": "Space creation", "high": "Willingly exposes themselves to create opportunities", "low": "Prioritizes personal safety" },
+        { "key": "retreatTiming", "label": "Retreat timing", "high": "Disengages early when conditions deteriorate", "low": "Remains committed to contested positions" },
+        { "key": "informationPush", "label": "Information push", "high": "Advances to confirm uncertain enemy positions", "low": "Relies on information from safer positions" }
+      ]
+    },
+    {
+      "id": "utility",
+      "label": "Utility usage",
+      "tendencies": [
+        { "key": "openingUtility", "label": "Opening utility", "high": "Uses utility during early map control", "low": "Preserves utility for later stages" },
+        { "key": "utilityConservation", "label": "Utility conservation", "high": "Retains grenades for valuable situations", "low": "Uses available grenades readily" },
+        { "key": "selfFlash", "label": "Self flash", "high": "Creates personal engagement opportunities with flashes", "low": "Relies on teammate flashes or dry peeks" },
+        { "key": "supportFlash", "label": "Support flash", "high": "Frequently flashes for teammates", "low": "Prioritizes personal engagements" },
+        { "key": "popFlashPreference", "label": "Pop-flash preference", "high": "Seeks sudden, difficult-to-avoid flashes", "low": "Uses conventional flashes" },
+        { "key": "flashFollowup", "label": "Flash follow-up", "high": "Immediately exploits useful flash timing", "low": "Advances more cautiously after flashes" },
+        { "key": "visionDenial", "label": "Vision denial", "high": "Frequently uses smokes to isolate angles", "low": "Accepts more open engagements" },
+        { "key": "smokePush", "label": "Smoke push", "high": "Willingly advances through smoke", "low": "Waits for visibility or another route" },
+        { "key": "smokeClearing", "label": "Smoke clearing", "high": "Looks for HE-assisted smoke-clearing opportunities", "low": "Waits for dissipation or repositions" },
+        { "key": "smokeExtinguish", "label": "Smoke extinguish", "high": "Uses smokes to counter incendiary utility", "low": "Waits or avoids the affected area" },
+        { "key": "damageUtility", "label": "Damage utility", "high": "Prioritizes grenades that inflict damage", "low": "Prioritizes vision control and support" },
+        { "key": "displacementUtility", "label": "Displacement utility", "high": "Uses incendiaries to force enemies out of cover", "low": "Prefers clearing positions directly" },
+        { "key": "delayUtility", "label": "Delay utility", "high": "Uses grenades to stall enemy progression", "low": "Reserves utility for engagements" },
+        { "key": "counterUtility", "label": "Counter utility", "high": "Responds to enemy utility with appropriate grenades", "low": "Relies more on movement and positioning" },
+        { "key": "predictiveUtility", "label": "Predictive utility", "high": "Throws grenades based on inferred enemy positions", "low": "Prefers confirmed targets" },
+        { "key": "utilitySharing", "label": "Utility sharing", "high": "Frequently redistributes grenades among teammates", "low": "Retains personal inventory" },
+        { "key": "utilityStockpiling", "label": "Utility stockpiling", "high": "Participates in pooled grenade setups", "low": "Prefers individually distributed utility" },
+        { "key": "utilityRecovery", "label": "Utility recovery", "high": "Retrieves grenades from the battlefield", "low": "Prioritizes other responsibilities" },
+        { "key": "utilityCombination", "label": "Utility combination", "high": "Coordinates grenades into combined effects", "low": "Prefers independent grenade usage" },
+        { "key": "lineupPreference", "label": "Lineup preference", "high": "Favors established grenade lineups", "low": "Prefers situational throws" },
+        { "key": "postPlantUtility", "label": "Post-plant utility", "high": "Preserves utility specifically for post-plants", "low": "Uses utility to secure the initial plant" }
+      ]
+    },
+    {
+      "id": "teamwork",
+      "label": "Teamwork and coordination",
+      "tendencies": [
+        { "key": "tradePriority", "label": "Trade priority", "high": "Immediately looks for trading opportunities", "low": "Prioritizes other threats and responsibilities" },
+        { "key": "packSpacing", "label": "Pack spacing", "high": "Maintains close trading formations", "low": "Prefers wider independent spacing" },
+        { "key": "synchronizedPeek", "label": "Synchronized peek", "high": "Coordinates simultaneous engagements", "low": "Frequently engages independently" },
+        { "key": "crossfirePreference", "label": "Crossfire preference", "high": "Establishes cooperative firing angles", "low": "Prefers individual defensive angles" },
+        { "key": "teammateCover", "label": "Teammate cover", "high": "Protects exposed or occupied teammates", "low": "Prioritizes personal engagements" },
+        { "key": "contactFollowup", "label": "Contact follow-up", "high": "Reacts aggressively to teammate contact", "low": "Reassesses threats before committing" },
+        { "key": "baitAndSwitch", "label": "Bait and switch", "high": "Coordinates distraction and ambush setups", "low": "Prefers conventional engagements" },
+        { "key": "sacrificialEntry", "label": "Sacrificial entry", "high": "Volunteers for dangerous space-creating actions", "low": "Prefers preserving own combat potential" },
+        { "key": "supportInitiative", "label": "Support initiative", "high": "Independently recognizes teammate support needs", "low": "Waits for explicit requests" },
+        { "key": "supportRequest", "label": "Support request", "high": "Frequently requests flashes, boosts and coverage", "low": "Solves situations independently" },
+        { "key": "equipmentSharing", "label": "Equipment sharing", "high": "Redistributes weapons and other equipment", "low": "Prefers retaining available equipment" },
+        { "key": "teammateRescue", "label": "Teammate rescue", "high": "Repositions to help isolated teammates", "low": "Maintains existing responsibilities" },
+        { "key": "teamRegroup", "label": "Team regroup", "high": "Seeks to reconnect with separated teammates", "low": "Continues independent operations" },
+        { "key": "jointDisengagement", "label": "Joint disengagement", "high": "Coordinates retreats with teammates", "low": "Disengages individually" }
+      ]
+    },
+    {
+      "id": "information",
+      "label": "Information and communication",
+      "tendencies": [
+        { "key": "activeInformation", "label": "Active information", "high": "Actively searches for new information", "low": "Waits for information to become available" },
+        { "key": "visualConfirmation", "label": "Visual confirmation", "high": "Seeks direct visual evidence before acting", "low": "Accepts indirect evidence more readily" },
+        { "key": "audioInvestigation", "label": "Audio investigation", "high": "Investigates relevant enemy sound cues", "low": "Maintains position unless evidence strengthens" },
+        { "key": "utilityTracking", "label": "Utility tracking", "high": "Prioritizes monitoring enemy grenade usage", "low": "Focuses on other information" },
+        { "key": "enemyAccounting", "label": "Enemy accounting", "high": "Frequently considers missing opponent positions", "low": "Focuses on immediate visible threats" },
+        { "key": "calloutFrequency", "label": "Callout frequency", "high": "Frequently communicates relevant observations", "low": "Communicates selectively" },
+        { "key": "uncertainCallouts", "label": "Uncertain callouts", "high": "Shares speculative information with uncertainty labels", "low": "Shares primarily confirmed information" },
+        { "key": "informationVerification", "label": "Information verification", "high": "Seeks additional evidence for assumptions", "low": "Acts on existing information" },
+        { "key": "reactionTesting", "label": "Reaction testing", "high": "Probes opponents to observe their response", "low": "Avoids unnecessary probing" },
+        { "key": "patternAttention", "label": "Pattern attention", "high": "Pays attention to repeated enemy behaviors", "low": "Focuses on the immediate round" },
+        { "key": "informationSharing", "label": "Information sharing", "high": "Proactively informs teammates of discoveries", "low": "Shares information mainly when requested" },
+        { "key": "informationRetention", "label": "Information retention", "high": "Continues considering older observations", "low": "Quickly deprioritizes stale information" }
+      ]
+    },
+    {
+      "id": "deception",
+      "label": "Deception and manipulation",
+      "tendencies": [
+        { "key": "fakePeek", "label": "Fake peek", "high": "Frequently uses false engagement cues", "low": "Peeks primarily with genuine intent" },
+        { "key": "fakeFootsteps", "label": "Fake footsteps", "high": "Intentionally produces misleading sounds", "low": "Conceals movement intentions" },
+        { "key": "fakeRotation", "label": "Fake rotation", "high": "Attempts to misrepresent rotation direction", "low": "Rotates conventionally" },
+        { "key": "fakeUtility", "label": "Fake utility", "high": "Uses utility to suggest nonexistent attacks", "low": "Uses grenades primarily for direct effects" },
+        { "key": "fakeExecute", "label": "Fake execute", "high": "Favors creating false bombsite pressure", "low": "Prefers straightforward executions" },
+        { "key": "fakeRetreat", "label": "Fake retreat", "high": "Suggests withdrawal before re-engaging", "low": "Disengages more definitively" },
+        { "key": "fakePlant", "label": "Fake plant", "high": "Uses planting cues to bait defenders", "low": "Prefers committing to plants" },
+        { "key": "fakeDefuse", "label": "Fake defuse", "high": "Uses defuse taps to provoke attackers", "low": "Prefers committing to defuses" },
+        { "key": "decoyUsage", "label": "Decoy usage", "high": "Looks for misleading decoy opportunities", "low": "Rarely purchases or uses decoys" },
+        { "key": "soundMasking", "label": "Sound masking", "high": "Times actions around other audible events", "low": "Moves without deliberately masking sound" },
+        { "key": "conditioning", "label": "Conditioning", "high": "Deliberately establishes and breaks patterns", "low": "Approaches rounds more independently" },
+        { "key": "intentConcealment", "label": "Intent concealment", "high": "Conceals tactical intentions until necessary", "low": "Uses more direct and observable actions" }
+      ]
+    },
+    {
+      "id": "objective",
+      "label": "Bomb and objective",
+      "tendencies": [
+        { "key": "plantUrgency", "label": "Plant urgency", "high": "Plants as soon as conditions are acceptable", "low": "Prefers securing more territory first" },
+        { "key": "safePlant", "label": "Safe plant", "high": "Prefers protected planting positions", "low": "Accepts exposed but strategically valuable plants" },
+        { "key": "openPlant", "label": "Open plant", "high": "Prioritizes plants defendable from distant angles", "low": "Favors locally protected plants" },
+        { "key": "bombProtection", "label": "Bomb protection", "high": "Prioritizes covering the bomb carrier", "low": "Focuses on creating additional space" },
+        { "key": "bombRecovery", "label": "Bomb recovery", "high": "Actively seeks recovery opportunities", "low": "Waits until safer recovery conditions exist" },
+        { "key": "postPlantHide", "label": "Post-plant hide", "high": "Conceals presence and plays the timer", "low": "Maintains active defensive engagements" },
+        { "key": "postPlantHunt", "label": "Post-plant hunt", "high": "Seeks eliminations during post-plants", "low": "Protects existing objective control" },
+        { "key": "postPlantReposition", "label": "Post-plant reposition", "high": "Changes positions after planting", "low": "Holds established post-plant angles" },
+        { "key": "defuseCommitment", "label": "Defuse commitment", "high": "More willing to complete a defuse under pressure", "low": "Frequently interrupts to address threats" },
+        { "key": "smokeDefuse", "label": "Smoke defuse", "high": "Seeks concealed defuse opportunities", "low": "Prefers securing the area first" },
+        { "key": "defuseProtection", "label": "Defuse protection", "high": "Prioritizes covering teammates who defuse", "low": "Focuses on clearing surrounding threats" },
+        { "key": "timerPressure", "label": "Timer pressure", "high": "Actively exploits time constraints against opponents", "low": "Focuses primarily on direct engagements" },
+        { "key": "objectivePriority", "label": "Objective priority", "high": "Prioritizes objective completion over kills", "low": "Favors securing combat advantages first" }
+      ]
+    },
+    {
+      "id": "sniper",
+      "label": "Sniper-specific",
+      "tendencies": [
+        { "key": "aggressiveAWP", "label": "Aggressive AWP", "high": "Takes proactive sniper engagements", "low": "Holds defensive sniper angles" },
+        { "key": "openingPick", "label": "Opening pick", "high": "Seeks early-round sniper eliminations", "low": "Preserves sniper presence for later engagements" },
+        { "key": "scopePersistence", "label": "Scope persistence", "high": "Remains scoped while holding an angle", "low": "Frequently unscopes to reposition" },
+        { "key": "sniperRepeek", "label": "Sniper re-peek", "high": "Re-challenges after firing", "low": "Relocates or waits for support" },
+        { "key": "sniperRotation", "label": "Sniper rotation", "high": "Frequently changes sniper lanes", "low": "Defends a designated lane" },
+        { "key": "closeRangeAWP", "label": "Close-range AWP", "high": "Accepts close-range sniper engagements", "low": "Maintains favorable distance" },
+        { "key": "noScopeAttempt", "label": "No-scope attempt", "high": "Considers emergency unscoped shots", "low": "Prefers sidearms or scoped engagements" },
+        { "key": "sniperPreservation", "label": "Sniper preservation", "high": "Prioritizes preserving expensive sniper equipment", "low": "Risks the weapon more readily" },
+        { "key": "sniperOffAngle", "label": "Sniper off-angle", "high": "Occupies unconventional sniper positions", "low": "Uses established sniper lanes" },
+        { "key": "secondShotCommitment", "label": "Second-shot commitment", "high": "Remains positioned for follow-up shots", "low": "Breaks line of sight after firing" }
+      ]
+    },
+    {
+      "id": "roundPacing",
+      "label": "Round pacing and tactics",
+      "tendencies": [
+        { "key": "fastTempo", "label": "Fast tempo", "high": "Favors rapid tactical progression", "low": "Favors slower development" },
+        { "key": "contactPlay", "label": "Contact play", "high": "Approaches silently before sudden engagement", "low": "Prefers utility-supported announcements" },
+        { "key": "delayedExecution", "label": "Delayed execution", "high": "Waits for defensive resources or timings to change", "low": "Prefers earlier execution windows" },
+        { "key": "rotationProactivity", "label": "Rotation proactivity", "high": "Initiates rotations from preliminary evidence", "low": "Requires stronger confirmation" },
+        { "key": "rotationCommitment", "label": "Rotation commitment", "high": "Continues chosen rotations under uncertainty", "low": "Frequently reassesses rotation decisions" },
+        { "key": "siteRehit", "label": "Site re-hit", "high": "Looks for opportunities to attack a previously contested site", "low": "Prefers redirecting attacks" },
+        { "key": "splitPreference", "label": "Split preference", "high": "Favors multiple attack directions", "low": "Favors consolidated attacks" },
+        { "key": "retakePreference", "label": "Retake preference", "high": "Willingly concedes territory for coordinated retakes", "low": "Prefers defending territory immediately" },
+        { "key": "counterAggression", "label": "Counter-aggression", "high": "Responds to pressure with aggression elsewhere", "low": "Reinforces threatened areas" },
+        { "key": "territoryRecovery", "label": "Territory recovery", "high": "Actively attempts to reclaim lost map control", "low": "Preserves remaining territory" },
+        { "key": "planPersistence", "label": "Plan persistence", "high": "Continues tactical plans through setbacks", "low": "Changes plans more readily" },
+        { "key": "midroundInitiative", "label": "Mid-round initiative", "high": "Proposes or initiates tactical adjustments", "low": "Waits for leadership" },
+        { "key": "playDiscipline", "label": "Play discipline", "high": "Closely follows assigned tactical instructions", "low": "Frequently exercises tactical freedom" },
+        { "key": "opportunityExploitation", "label": "Opportunity exploitation", "high": "Breaks structure for valuable emerging opportunities", "low": "Preserves the team's original structure" },
+        { "key": "tacticalVariation", "label": "Tactical variation", "high": "Favors changing approaches between rounds", "low": "Reuses established successful approaches" }
+      ]
+    },
+    {
+      "id": "economy",
+      "label": "Economy and equipment",
+      "tendencies": [
+        { "key": "economicRisk", "label": "Economic risk", "high": "Prefers financially aggressive rounds", "low": "Prefers long-term economic stability" },
+        { "key": "forceBuyPreference", "label": "Force-buy preference", "high": "Frequently advocates force buys", "low": "Prefers coordinated full buys" },
+        { "key": "weaponInvestment", "label": "Weapon investment", "high": "Prioritizes stronger primary weapons", "low": "Allocates more budget to supporting equipment" },
+        { "key": "utilityInvestment", "label": "Utility investment", "high": "Prioritizes purchasing grenades", "low": "Preserves more budget for weapons" },
+        { "key": "armorPriority", "label": "Armor priority", "high": "Prioritizes personal protection", "low": "Accepts equipment trade-offs" },
+        { "key": "weaponScavenge", "label": "Weapon scavenge", "high": "Actively seeks dropped weapon upgrades", "low": "Maintains current tactical responsibilities" },
+        { "key": "weaponDenial", "label": "Weapon denial", "high": "Prevents opponents from recovering equipment", "low": "Prioritizes other objectives" },
+        { "key": "weaponJuggling", "label": "Weapon juggling", "high": "Attempts to transport recoverable weapons through drops", "low": "Carries only active equipment" },
+        { "key": "savePreference", "label": "Save preference", "high": "Preserves equipment in unfavorable rounds", "low": "Continues attempting low-probability victories" },
+        { "key": "exitFrag", "label": "Exit frag", "high": "Seeks kills against retreating survivors", "low": "Avoids unnecessary engagements" },
+        { "key": "saveHunting", "label": "Save hunting", "high": "Pursues opponents attempting to save", "low": "Preserves team equipment" },
+        { "key": "teamEconomicSupport", "label": "Team economic support", "high": "Prioritizes teammates' equipment requirements", "low": "Prioritizes personal purchasing needs" },
+        { "key": "loadoutExperimentation", "label": "Loadout experimentation", "high": "Uses situational and unconventional purchases", "low": "Prefers familiar loadouts" }
+      ]
+    },
+    {
+      "id": "clutch",
+      "label": "Clutch and high-pressure",
+      "tendencies": [
+        { "key": "clutchIsolation", "label": "Clutch isolation", "high": "Attempts to separate opponents into individual duels", "low": "Accepts more direct engagements" },
+        { "key": "clutchAggression", "label": "Clutch aggression", "high": "Actively seeks opponents during clutches", "low": "Waits for opponents to reveal themselves" },
+        { "key": "clutchPatience", "label": "Clutch patience", "high": "Deliberately consumes time to create opportunities", "low": "Resolves situations more quickly" },
+        { "key": "clutchReposition", "label": "Clutch reposition", "high": "Frequently changes position after contact", "low": "Maintains secure positions" },
+        { "key": "clutchDeception", "label": "Clutch deception", "high": "Uses fake cues to manipulate remaining opponents", "low": "Relies on conventional approaches" },
+        { "key": "clutchUtility", "label": "Clutch utility", "high": "Prioritizes available grenades during clutches", "low": "Relies more on weapons" },
+        { "key": "outnumberedRisk", "label": "Outnumbered risk", "high": "Attempts difficult comebacks", "low": "Preserves resources when odds deteriorate" },
+        { "key": "advantageProtection", "label": "Advantage protection", "high": "Protects favorable numerical situations", "low": "Continues seeking additional advantages" },
+        { "key": "soloInitiative", "label": "Solo initiative", "high": "Independently creates opportunities when isolated", "low": "Waits for support whenever possible" },
+        { "key": "desperationCommitment", "label": "Desperation commitment", "high": "Attempts unconventional high-risk solutions when few options remain", "low": "Prefers conventional remaining options" }
+      ]
+    },
+    {
+      "id": "adaptation",
+      "label": "Adaptation and opponent exploitation",
+      "tendencies": [
+        { "key": "opponentAdaptation", "label": "Opponent adaptation", "high": "Readily changes behavior based on observed evidence", "low": "Relies on established methods" },
+        { "key": "failedExecuteAdjustment", "label": "Failed execute adjustment", "high": "Quickly abandons or modifies unsuccessful approaches", "low": "Continues trying familiar solutions" },
+        { "key": "antiAggression", "label": "Anti-aggression", "high": "Actively develops responses to aggressive opponents", "low": "Maintains normal tactical approaches" },
+        { "key": "passivityExploitation", "label": "Passivity exploitation", "high": "Actively claims space against passive opponents", "low": "Preserves standard territorial structure" },
+        { "key": "weakLinkTargeting", "label": "Weak-link targeting", "high": "Exploits repeatedly observed defensive weaknesses", "low": "Distributes pressure more evenly" },
+        { "key": "starAvoidance", "label": "Star avoidance", "high": "Attempts to isolate or bypass dangerous opponents", "low": "Accepts direct confrontations" },
+        { "key": "timingExploitation", "label": "Timing exploitation", "high": "Looks for recurring opponent timing windows", "low": "Relies on immediate circumstances" },
+        { "key": "counterConditioning", "label": "Counter-conditioning", "high": "Changes patterns when opponents appear to anticipate them", "low": "Continues familiar patterns" },
+        { "key": "selfCorrection", "label": "Self-correction", "high": "Changes habits after repeated personal failures", "low": "Remains committed to preferred behaviors" },
+        { "key": "improvisation", "label": "Improvisation", "high": "Attempts unconventional responses to unexpected situations", "low": "Prefers established tactical solutions" }
+      ]
+    }
+  ],
+  "iglPresets": [
+    {
+      "id": "tactical_architect",
+      "name": "Tactical Architect",
+      "summary": "Rehearsed defaults, synchronized utility, disciplined spacing and carefully prepared executions.",
+      "weakness": "Can struggle when opponents repeatedly disrupt structure.",
+      "values": { "structuredCalling": 96, "micromanagement": 85, "utilityHeavyCalling": 93, "tacticalComplexity": 90, "playerAutonomy": 30, "defaultPreference": 88, "midroundAdaptation": 65, "delegation": 25, "leadFromFront": 30, "rushCalling": 28, "saveCalling": 78 }
+    },
+    {
+      "id": "fragging_playmaker",
+      "name": "Fragging Playmaker",
+      "summary": "Fast commitments, aggressive openings, momentum-driven attacks and proactive combat.",
+      "weakness": "Overcommitment and insufficient preparation against disciplined defenses.",
+      "values": { "leadFromFront": 97, "rushCalling": 85, "riskCalling": 87, "decisiveCalling": 94, "playerAutonomy": 75, "micromanagement": 25, "opportunityCalling": 90, "structuredCalling": 38, "utilityHeavyCalling": 40, "saveCalling": 24 }
+    },
+    {
+      "id": "adaptive_mastermind",
+      "name": "Adaptive Mastermind",
+      "summary": "Information-driven defaults, frequent mid-round changes and opponent-specific responses.",
+      "weakness": "Players may struggle to keep up with constantly changing instructions.",
+      "values": { "midroundAdaptation": 98, "tempoSwitching": 94, "informationDemand": 90, "consultativeCalling": 88, "opportunityCalling": 95, "strategyVariation": 92, "structuredCalling": 65, "rotationCalling": 90, "uncertaintyTolerance": 72 }
+    },
+    {
+      "id": "player_centric_facilitator",
+      "name": "Player-Centric Facilitator",
+      "summary": "Distributed decision-making, individual freedom and tactics designed around player strengths.",
+      "weakness": "Lack of direction when independent players cannot create opportunities.",
+      "values": { "delegation": 95, "playerAutonomy": 94, "starUtilization": 90, "secondaryCallerTrust": 92, "strengthExploitation": 96, "consultativeCalling": 88, "micromanagement": 15, "individualPlayAllowance": 92, "lurkTrust": 90 }
+    }
+  ]
+}

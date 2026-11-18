@@ -237,6 +237,7 @@ export interface LiveMapRuntime {
   readonly actorSolids: (point: FpsPoint, feetY?: number, height?: number, crouchJump?: boolean) => LiveSolid[];
   readonly supportHeight: (point: FpsPoint, feetY: number, crouchJump?: boolean) => number;
   readonly findPath: (from: FpsPoint, destination: FpsPoint, threats?: readonly FpsPoint[], caution?: number, heatAt?: (point: FpsPoint) => number) => FpsPoint[];
+  readonly findPathsFrom: (from: FpsPoint, threats?: readonly FpsPoint[], caution?: number, heatAt?: (point: FpsPoint) => number) => (destination: FpsPoint) => FpsPoint[];
   readonly pathLength: (from: FpsPoint, to: FpsPoint) => number;
   readonly wallSegmentHit: (from: LiveWorldPoint, to: LiveWorldPoint, wall: LiveSolid) => number | undefined;
   readonly wallIntersections: (from: LiveWorldPoint, to: LiveWorldPoint) => LiveWallIntersection[];

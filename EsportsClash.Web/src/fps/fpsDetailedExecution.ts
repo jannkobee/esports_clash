@@ -14,7 +14,8 @@ export interface FpsSkillDiagnostics {
 }
 export const emptyFpsSkillDiagnostics=():FpsSkillDiagnostics=>({noticedAt:-1,cueAt:-1,responseAt:-1,reactionDelay:0,preAimError:0,inputErrorSum:0,inputSamples:0,reportDelaySum:0,reports:0,throwErrorSum:0,throws:0,recoilSamples:0,recoilResidualSum:0,brakeDelay:0,peekError:0,planAssessments:0,commands:0,decisions:0,timingWindows:0,inputErrorSquareSum:0,trackingErrorSum:0,trackingSamples:0,flickAngleRemoved:0,fineAngleRemoved:0,coverChoices:0,coverExposureSum:0,followSpacing:0,entryReleaseDelay:0,commandDelay:0,planAssessmentDelay:0});
 export const ability=(p:FpsSkillProfile,key:FpsExecutionChannel,sniper=false)=>fpsAbilityUnit(p,key,sniper);
-export const detailedReactionDelay=(p:FpsSkillProfile,sniper=false)=>.16+.64*Math.pow(1-ability(p,'reactions',sniper),1.25);
+/** Visual reaction to a new enemy: about 0.13 s for the sharpest players up to about 0.55 s at the bottom of the scale. */
+export const detailedReactionDelay=(p:FpsSkillProfile,sniper=false)=>.13+.42*Math.pow(1-ability(p,'reactions',sniper),1.25);
 export function tickFpsMentalState(p:FpsSkillProfile,state:FpsMentalState,dt:number,speed:number,engaged:boolean,quiet:number):FpsMentalState {
   const stamina=ability(p,'stamina'),focus=ability(p,'concentration'),resilience=ability(p,'resilience');
   return {setback:Math.max(0,state.setback-dt*(.018+resilience*.075)),
@@ -32,10 +33,11 @@ export function detailedAimYaw(yaw:number,desired:number,p:FpsSkillProfile,phase
   return Math.abs(error)<.001?targetYaw:liveAimAngle(yaw+Math.max(-maxStep,Math.min(maxStep,eased)));
 }
 /** Symmetric input error has zero mean. No clipping of latent skill or favorable-outcome selection. */
-export function detailedInputError(p:FpsSkillProfile,pressure:number,random:()=>number,sniper=false):number {
+export function detailedInputError(p:FpsSkillProfile,pressure:number,random:()=>number,sniper=false,consistency?:number):number {
   const precision=.001+(1-ability(p,'precision',sniper))*.016;
   const pressureNoise=pressure*(1-ability(p,'composure'))*.013;
-  const variance=.65+(1-ability(p,'consistency'))*.7;
+  // Per-player hidden consistency (with match form) when the live simulation supplies it.
+  const variance=.65+(1-(consistency??ability(p,'consistency')))*.7;
   return (random()+random()-1)*(precision+pressureNoise)*variance;
 }
 export const preparedAngleError=(p:FpsSkillProfile,random:()=>number,sniper=false)=>(random()*2-1)*(.004+(1-ability(p,'crosshairPlacement',sniper))*.16);

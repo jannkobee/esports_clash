@@ -11,11 +11,12 @@ use Tests\TestCase;
 
 class CoachDraftTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, \Tests\Support\AssignsManagerRoles;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->assignManagerRolesOnSave();
         Queue::fake();
         $this->artisan('online:install-catalog')->assertSuccessful();
     }
@@ -91,8 +92,9 @@ class CoachDraftTest extends TestCase
     {
         Sanctum::actingAs($this->account());
         $this->getJson('/api/v1/online/staff')->assertOk()
-            ->assertJsonPath('data.draft_policy.starter_selection', 'manager')
-            ->assertJsonPath('data.draft_policy.avatar_selection', 'staff')
-            ->assertJsonCount(5, 'data.staff');
+            ->assertJsonCount(5, 'data.staff')
+            // Staff effects in the FPS game are learning rates and report depth (decision-side), described per rating.
+            ->assertJsonPath('data.attribute_effects.head_coach.tactics.0', 'System teaching')
+            ->assertJsonStructure(['data' => ['fps_effects' => ['system_learning', 'role_learning', 'chemistry', 'training_bonus_percent', 'reserve_practice_percent', 'opponent_report_categories']]]);
     }
 }

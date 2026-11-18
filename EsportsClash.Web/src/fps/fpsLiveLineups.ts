@@ -47,7 +47,9 @@ export function solveLiveGrenadeThrow(
               :dist<=36.2
                 ?['jump','walk-jump','run-jump']
                 :['walk-jump','run-jump','jump'];
-  const key=[runtime.id,kind,from.x,from.z,from.level??'',target.x,target.z,target.level??'',height,maxError,styleOrder[0],unobstructed?'clear':'blocked'].join(':');
+  // 1cm buckets: sub-centimetre hand drift must not trigger a fresh arc search; landing differences are negligible.
+  const q=(v:number)=>Math.round(v*100);
+  const key=[runtime.id,kind,q(from.x),q(from.z),from.level??'',q(target.x),q(target.z),target.level??'',q(height),maxError,styleOrder[0],unobstructed?'clear':'blocked'].join(':');
   if(solutionCache.has(key))return copySolution(solutionCache.get(key));
   const targetEye={x:target.x,y:floor+1.5,z:target.z};
   const aimScales=kind!=='smoke'?[1]:dist>28?[1,.92,.84,.76,.68,.96,.88,.80,.72,.64,1.06,1.14]:[1,.92,.84,.76,.68,.96,.88,.80,.72,.64];
@@ -202,3 +204,4 @@ export function solveLivePopFlash(
   }
   return best;
 }
+

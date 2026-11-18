@@ -1,7 +1,5 @@
-import {RouteErrorBoundary} from './components/RouteErrorBoundary';
 import {backendPageUrl} from './cloudPersistence';
 import {useGameModes} from './gameModes';
-import {WorldDesk} from './components/WorldDesk';
 import {canonicalRoute,sectionHref,workspacePath} from './frontendRoutes';
 import {ClubMatchHistory} from './components/ClubMatchHistory';
 import {SupporterStudio} from './components/SupporterStudio';
@@ -10,6 +8,9 @@ import {CommunityCups} from './components/CommunityCups';
 import {ClubFinances} from './components/ClubFinances';
 import {ClubInboxLink} from './components/ClubOfficeDesk';
 import {LabelIcon} from './components/LabelIcon';
+import {AppIcon} from './components/ui/AppIcon';
+import {PageHeader} from './components/ui/PageHeader';
+import {WORKSPACE_NAV, activeNavKey, areaHeading, navTrail} from './components/ui/navigation';
 import {NewsFeed,BroadcastHub,LaunchArchive} from './components/WorldMedia';
 import { useEffect, useState } from 'react';
 import { useAccount } from './AccountContext';
@@ -24,6 +25,7 @@ import { OnlineNormalView } from './components/OnlineNormalView';
 import { Hexapedia } from './components/Hexapedia';
 import { CompetitionHub } from './components/CompetitionHub';
 import { ClubTrainingView } from './components/ClubTrainingView';
+import { EmailSettings, VerifyEmailBanner } from './components/EmailSettings';
 import { ClubStaffRoom } from './components/ClubStaffRoom';
 import { HexatrickMark } from './components/HexatrickBrand';
 import { ClubHome } from './components/ClubHome';
@@ -39,18 +41,15 @@ import type { FpsIdentityExperiment, FpsMapId, FpsMatchReport } from './fps/fpsT
 import { ClubMarketView } from './components/ClubMarketView';
 import { sound } from './audio';
 import {
-  Users,
-  Swords,
-  Trophy,
-  Package,
+  Menu,
+  X,
+  ClipboardList,
+  Dumbbell,
+  GraduationCap,
   Globe,
-  FlaskConical,
   Volume2,
   VolumeX,
-  Home,
-  Settings as SettingsIcon,
   Clock,
-  BookOpen,
   LogOut
 } from 'lucide-react';
 
@@ -231,6 +230,12 @@ export function App() {
     settings: 'Settings · Club Options & Diagnostics'
   };
 
+  const [locationHash, setLocationHash] = useState(() => window.location.hash);
+  useEffect(() => { const sync = () => setLocationHash(window.location.hash); window.addEventListener('hashchange', sync); return () => window.removeEventListener('hashchange', sync); }, []);
+  const navKey = activeNavKey(activeSection, playSubTab, locationHash);
+  const [navOpen, setNavOpen] = useState(false);
+  const heading = areaHeading(navKey);
+
   return (
     <div className="cm-shell">
       <a href="#main-content" className="cm-skip-link" onClick={event => { event.preventDefault(); document.getElementById('main-content')?.focus(); }}>Skip to content</a>
@@ -238,129 +243,35 @@ export function App() {
         <div className="cm-brand">
           <a href="#welcome" className="cm-brand-title" aria-label="Hexatrick landing page"><HexatrickMark/><span>hexatrick</span></a>
           <div className="cm-brand-sub">Your club. Every matchday.</div>
+          <button type="button" className="cm-nav-toggle" aria-expanded={navOpen} aria-controls="workspace-nav" onClick={() => setNavOpen(open => !open)}>
+            {navOpen ? <X size={16} aria-hidden="true" /> : <Menu size={16} aria-hidden="true" />}
+            <span>{navOpen ? 'Close menu' : navTrail(navKey)[1]}</span>
+          </button>
         </div>
 
-        <nav className="cm-nav">
-          <div className="cm-nav-section">Club Management</div>
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              setActiveSection('home');
-              setInBattle(false);
-            }}
-            className={`cm-nav-btn ${activeSection === 'home' ? 'active' : ''}`}
-            aria-current={activeSection === 'home' ? 'page' : undefined}
-          >
-            <span className="flex items-center gap-2">
-              <Home className="w-4 h-4 shrink-0" />
-              <span>Home</span>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              setActiveSection('squad');
-              setInBattle(false);
-            }}
-            className={`cm-nav-btn ${activeSection === 'squad' ? 'active' : ''}`}
-            aria-current={activeSection === 'squad' ? 'page' : undefined}
-          >
-            <span className="flex items-center gap-2">
-              <Users className="w-4 h-4 shrink-0" />
-              <span>Squad</span>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              setActiveSection('play');
-            }}
-            className={`cm-nav-btn ${activeSection === 'play' ? 'active' : ''}`}
-            aria-current={activeSection === 'play' ? 'page' : undefined}
-          >
-            <span className="flex items-center gap-2">
-              <Swords className="w-4 h-4 shrink-0" />
-              <span>Play</span>
-            </span>
-            {inBattle && <span className="cm-nav-badge">LIVE</span>}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              setActiveSection('market');
-              setInBattle(false);
-            }}
-            className={`cm-nav-btn ${activeSection === 'market' ? 'active' : ''}`}
-            aria-current={activeSection === 'market' ? 'page' : undefined}
-          >
-            <span className="flex items-center gap-2">
-              <Package className="w-4 h-4 shrink-0" />
-              <span>Transfer Exchange</span>
-            </span>
-          </button>
-
-          <button className={`cm-nav-btn ${activeSection === 'finances' ? 'active' : ''}`} aria-current={activeSection === 'finances' ? 'page' : undefined} onClick={() => { setActiveSection('finances'); setInBattle(false); }}><span className="flex items-center gap-2"><LabelIcon name="money"/>Finances</span></button>
-          <button className={`cm-nav-btn ${activeSection === 'history' ? 'active' : ''}`} aria-current={activeSection === 'history' ? 'page' : undefined} onClick={() => { setActiveSection('history'); setInBattle(false); }}><span className="flex items-center gap-2"><LabelIcon name="history"/>Match history</span></button>
-          <div className="cm-nav-section">Living world</div>
-          {([['news', 'The Wire'], ['broadcasts', 'Hexacast'], ['archive', 'Crown 2026']] as const).map(([tab, label]) => <button key={tab} className={`cm-nav-btn ${activeSection === 'play' && playSubTab === tab ? 'active' : ''}`} onClick={() => { setActiveSection('play'); setPlaySubTab(tab); setInBattle(false); window.location.hash = ({ news: 'wire', broadcasts: 'hexacast', archive: 'launch-championship' })[tab]; }}><span className="flex items-center gap-2"><LabelIcon name={label}/>{label}</span></button>)}
-          <a className="cm-nav-btn" href="#fps-simulation"><span className="flex items-center gap-2"><Swords className="w-4 h-4 shrink-0" /><span>3D Broadcast Lab</span></span></a>
-          <div className="cm-nav-section">Scouting &amp; System</div>
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              setActiveSection('hexapedia');
-              setInBattle(false);
-            }}
-            className={`cm-nav-btn ${activeSection === 'hexapedia' ? 'active' : ''}`}
-            aria-current={activeSection === 'hexapedia' ? 'page' : undefined}
-          >
-            <span className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 shrink-0" />
-              <span>Hexapedia</span>
-            </span>
-          </button>
-
-          <button className={`cm-nav-btn ${activeSection === 'supporter' ? 'active' : ''}`} aria-current={activeSection === 'supporter' ? 'page' : undefined} onClick={() => { setActiveSection('supporter'); setInBattle(false); }}><span className="flex items-center gap-2"><LabelIcon name="supporter"/>Supporter studio</span></button>
-          <button
-            type="button"
-            onClick={() => {
-              sound.playClick();
-              setActiveSection('settings');
-              setInBattle(false);
-            }}
-            className={`cm-nav-btn ${activeSection === 'settings' ? 'active' : ''}`}
-            aria-current={activeSection === 'settings' ? 'page' : undefined}
-          >
-            <span className="flex items-center gap-2">
-              <SettingsIcon className="w-4 h-4 shrink-0" />
-              <span>Settings</span>
-            </span>
-          </button>
+        <nav id="workspace-nav" className={`cm-nav ${navOpen ? 'is-open' : ''}`} aria-label="Workspace">
+          {WORKSPACE_NAV.map(group => <div className="cm-nav-group-block" key={group.id} role="group" aria-labelledby={'nav-group-' + group.id}>
+            <div className="cm-nav-section" id={'nav-group-' + group.id}>{group.label}</div>
+            {group.items.map(item => <a key={item.key} href={item.href} title={item.hint} aria-current={navKey === item.key ? 'page' : undefined}
+              className={`cm-nav-btn ${navKey === item.key ? 'active' : ''}`}
+              onClick={() => { sound.playClick(); setNavOpen(false); if (item.key !== 'practice') setInBattle(false); }}>
+              <span className="flex items-center gap-2"><AppIcon name={item.icon} size={16} /><span>{item.label}</span></span>
+              {item.key === 'matches' && inBattle && <span className="cm-nav-badge">LIVE</span>}
+            </a>)}
+          </div>)}
         </nav>
 
         <div className="cm-sidebar-footer">
-          <div className="flex items-center justify-between mb-1">
-            <span>World records:</span>
-            <a href="#hexapedia">Hexapedia</a>
-          </div>
           <div className="flex items-center justify-between">
-            <span>Training:</span>
-            <span>Scheduled matches</span>
+            <span>New here?</span>
+            <a href="#hexapedia/guide">Read the game guide</a>
           </div>
         </div>
       </aside>
 
       <div className="cm-main">
         <header className="cm-topbar">
-          <div className="cm-breadcrumb" title={sectionTitle[activeSection]}>Club management <span>Manila · UTC+8</span></div>
+          <div className="cm-breadcrumb" title={sectionTitle[activeSection]}>{navTrail(navKey)[0]} <span aria-hidden="true">/</span> <strong>{navTrail(navKey)[1]}</strong> <span>Manila · UTC+8</span></div>
 
           <div className="cm-topbar-stats">{accountSession?.user.supporter?.active && <SupporterBadge trial={accountSession.user.supporter.kind === 'trial'} level={accountSession.user.supporter.level} unlimited={accountSession.user.supporter.unlimited}/>}<ClubInboxLink/>
             <span className="hidden lg:inline text-xs cm-muted max-w-36 truncate" title={accountSession?.user.email}>{accountSession?.user.name}</span>
@@ -378,17 +289,6 @@ export function App() {
               <Clock className="w-3.5 h-3.5" aria-hidden="true" /> Fixture calendar
             </button>
 
-            <button
-              type="button"
-              aria-label={audioMuted ? 'Enable all sounds' : 'Mute all sounds'}
-              aria-pressed={!audioMuted}
-              onClick={() => setAudioMuted(sound.toggleMuted())}
-              className="cm-btn py-1 px-2 text-xs"
-              title={audioMuted ? 'Enable sound effects' : 'Mute sound effects'}
-            >
-              {audioMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-              <span className="hidden sm:inline">{audioMuted ? 'Muted' : 'Sound'}</span>
-            </button>
             <button type="button" className="cm-btn py-1 px-2 text-xs" disabled={accountBusy} aria-label="Sign out of your account" title="Sign out" onClick={async () => {
               setAccountBusy(true); setAccountError('');
               try { await signOut(); } catch (error) { setAccountError((error as Error).message); } finally { setAccountBusy(false); }
@@ -398,21 +298,14 @@ export function App() {
 
         <main id="main-content" tabIndex={-1} className={`cm-content ${activeSection === 'play' && inBattle ? 'cm-content--arena max-w-[1640px]' : 'max-w-7xl'} mx-auto w-full`}>
           {accountError && <p role="alert" className="club-notice mb-4">{accountError}</p>}
-          {!inBattle && activeSection !== 'hexapedia' && !['news', 'broadcasts', 'archive'].includes(activeSection === 'play' ? playSubTab : '') && <div className="cm-page-heading">
-            <p className="cm-eyebrow">Hexatrick / Club management</p>
-            <h1><LabelIcon name={activeSection} size={24}/>{({ home: 'Club home', squad: 'Your squad', play: 'Match centre', market: 'Transfer Exchange', finances: 'Finances', hexapedia: 'Hexapedia', history: 'Club match history', supporter: 'Supporter studio', settings: 'Settings' })[activeSection]}</h1>
-            <p>{({
-              home: 'Prepare your club for the next matchday.',
-              squad: 'Manage your contracted players, training and official match orders.',
-              play: 'Prepare your orders, follow matchdays, and revisit every result.',
-              finances: 'Review income, expenses and your payroll commitments.',
-              market: 'Buy, sell and develop your club roster.',
-              hexapedia: 'Clubs, competitions, players, and tactical FPS references.',
-              history: 'Follow every fixture, result and recording in your club archive.',
-              supporter: 'Your membership, club cosmetics and player presentation.',
-              settings: 'Manage your account, audio, and practice preferences.',
-            })[activeSection]}</p>
-          </div>}
+          {!inBattle && <VerifyEmailBanner/>}
+          {!inBattle && heading && <PageHeader eyebrow={heading.group} icon={heading.icon} title={heading.title} description={heading.description} />}
+          {!inBattle && navKey === 'matches' && <nav className="cm-tabs matches-nav" aria-label="Matches">
+            {([['fixtures', 'Fixtures', '#match-centre?club=calendar', activeSection === 'play' && !workspacePath(window.location.hash).includes('club=friendly')],
+              ['scrimmages', 'Scrimmages', '#scrimmages', activeSection === 'play' && workspacePath(window.location.hash).includes('club=friendly')],
+              ['history', 'Results', '#match-history', activeSection === 'history']] as const).map(([icon, label, href, current]) =>
+              <a key={icon} href={href} className={`cm-tab ${current ? 'active' : ''}`} aria-current={current ? 'page' : undefined} onClick={() => setWatchMatchId(undefined)}><AppIcon name={icon} size={14} />{label}</a>)}
+          </nav>}
 
           {activeSection === 'finances' && <ClubFinances/>}
           {activeSection === 'history' && <ClubMatchHistory onWatch={id => { setWatchMatchId(id); setInBattle(false); setPlaySubTab('split'); setActiveSection('play'); window.location.hash = 'match-centre?match=' + encodeURIComponent(id); }}/>}
@@ -434,7 +327,7 @@ export function App() {
                   }}
                   className={`cm-tab ${squadSubTab === 'lineup' ? 'active' : ''}`}
                 >
-                  <Users className="w-3.5 h-3.5 inline mr-1.5" />
+                  <ClipboardList className="w-3.5 h-3.5 inline mr-1.5" />
                   Lineup &amp; reserves
                 </button>
                 <button
@@ -446,7 +339,7 @@ export function App() {
                   }}
                   className={`cm-tab ${squadSubTab === 'training' ? 'active' : ''}`}
                 >
-                  <FlaskConical className="w-3.5 h-3.5 inline mr-1.5" />
+                  <Dumbbell className="w-3.5 h-3.5 inline mr-1.5" />
                   Practice training
                 </button>
                 <button
@@ -458,7 +351,7 @@ export function App() {
                   }}
                   className={`cm-tab ${squadSubTab === 'staff' ? 'active' : ''}`}
                 >
-                  <Users className="w-3.5 h-3.5 inline mr-1.5" />
+                  <GraduationCap className="w-3.5 h-3.5 inline mr-1.5" />
                   Staff
                 </button>
               </div>
@@ -471,14 +364,6 @@ export function App() {
 
           {activeSection === 'play' && (
             <div>
-              {!inBattle && !['news', 'archive'].includes(playSubTab) && <nav className="cm-tabs match-centre-nav" aria-label="Match centre">
-                <button className={`cm-tab ${playSubTab === 'split' && !workspacePath(window.location.hash).includes('club=friendly') ? 'active' : ''}`} onClick={() => { setWatchMatchId(undefined); setPlaySubTab('split'); window.location.hash = 'match-centre?club=calendar'; }}><LabelIcon name="calendar"/>Fixtures</button>
-                <button className={`cm-tab ${playSubTab === 'split' && workspacePath(window.location.hash).includes('club=friendly') ? 'active' : ''}`} onClick={() => { setWatchMatchId(undefined); setPlaySubTab('split'); window.location.hash = 'scrimmages'; }}><Swords size={14}/>Scrimmages</button>
-                <button className={`cm-tab ${playSubTab === 'competitions' ? 'active' : ''}`} onClick={() => { setPlaySubTab('competitions'); window.location.hash = 'competitions?tab=circuit'; }}><Trophy size={14}/>Competitions</button>
-                <button className={`cm-tab ${playSubTab === 'broadcasts' ? 'active' : ''}`} onClick={() => { setPlaySubTab('broadcasts'); window.location.hash = 'hexacast'; }}><LabelIcon name="broadcast"/>Hexacast</button>
-                <button className={`cm-tab ${playSubTab === 'community' ? 'active' : ''}`} onClick={() => { setPlaySubTab('community'); window.location.hash = 'community-cups'; }}><Trophy size={14}/>Community cups</button>
-                <button className={`cm-tab ${playSubTab === 'modes' ? 'active' : ''}`} onClick={() => { setPlaySubTab('modes'); setInBattle(false); setLivePracticeMatch(null); setFpsExhibition(null); window.location.hash = 'match-centre?tool=practice'; }}><Swords size={14}/>Practice &amp; 3D Sim</button>
-              </nav>}
               {playSubTab === 'community' && !inBattle && <CommunityCups/>}
               {playSubTab === 'news' && !inBattle && <NewsFeed onWatch={id => { setWatchMatchId(id); setPlaySubTab('split'); window.location.hash = 'match-centre?match=' + id; }}/>}
               {playSubTab === 'broadcasts' && !inBattle && <BroadcastHub/>}
@@ -501,7 +386,7 @@ export function App() {
                             <div>
                               <h2 className="text-base font-extrabold">Real-Time 3D Scrimmage</h2>
                               <p className="text-xs cm-muted mt-1.5 leading-relaxed">
-                                Watch your starting five play live in 3D on Fontessa or 3-level Spillway with 4-slot loadouts, vault drops, Influence Maps, Blackboards, death-callout trading, and prewarmed 1P/3P/Director/PiP cameras. Does not alter careers or funds.
+                                Watch your starting five, with your positions and gameplan, play a live 3D scrimmage on Fontessa or Spillway. Follow any player or let the director pick the action. Practice changes nothing in your career or finances.
                               </p>
                             </div>
                             <label className="text-xs font-bold cm-muted">
@@ -599,10 +484,10 @@ export function App() {
           )}
 
           {activeSection === 'supporter' && <SupporterStudio/>}
-          {activeSection === 'settings' && <section className="cm-panel mb-4"><h2 className="cm-panel-header"><Swords size={15}/> 3D Simulation &amp; Broadcast Lab</h2><div className="cm-panel-body space-y-3"><p>Watch real-time 3D exhibitions on Fontessa and 3-level Spillway with 4-slot weapons, Influence Maps, Blackboards, Behavior Trees, lawful death-callout trading, and prewarmed 1P, 3P, Free, PiP, and Auto Director cameras. Exhibition matches do not change club records.</p><div className="flex flex-wrap gap-3"><a className="cm-btn cm-btn-primary" href="#fps-simulation">Open FPS broadcast room</a><a className="cm-btn" href="#match-centre?tool=practice">Club 3D Practice</a><a className="cm-btn" href="#hexapedia/liveSimulation">3D &amp; AI Guide</a><a className="cm-btn" href="#hexapedia/fps">FPS reference</a>{accountSession?.user.is_evolution_admin && <a className="cm-btn" href={backendPageUrl('/evolution/game-modes')}>Game-mode settings</a>}</div><p className="club-help">Current format: Tactical FPS ({modes.fps_enabled ? 'active' : 'configured'}).</p></div></section>}
-          {activeSection === 'settings' && <RouteErrorBoundary><WorldDesk compact/></RouteErrorBoundary>}
+          {activeSection === 'settings' && <section className="cm-panel mb-4"><h2 className="cm-panel-header"><AppIcon name="broadcastLab" size={15}/> 3D Simulation &amp; Broadcast Lab</h2><div className="cm-panel-body space-y-3"><p>Watch real-time 3D exhibitions on Fontessa and 3-level Spillway with 4-slot weapons, Influence Maps, Blackboards, Behavior Trees, lawful death-callout trading, and prewarmed 1P, 3P, Free, PiP, and Auto Director cameras. Exhibition matches do not change club records.</p><div className="flex flex-wrap gap-3"><a className="cm-btn cm-btn-primary" href="#fps-simulation">Open FPS broadcast room</a><a className="cm-btn" href="#match-centre?tool=practice">Club 3D Practice</a><a className="cm-btn" href="#hexapedia/liveSimulation">3D &amp; AI Guide</a><a className="cm-btn" href="#hexapedia/fps">FPS reference</a>{accountSession?.user.is_evolution_admin && <a className="cm-btn" href={backendPageUrl('/evolution/game-modes')}>Game-mode settings</a>}</div><p className="club-help">Current format: Tactical FPS ({modes.fps_enabled ? 'active' : 'configured'}).</p></div></section>}
           {activeSection === 'settings' && (
             <div className="space-y-4 max-w-5xl">
+              <EmailSettings/>
               <div className="cm-panel">
                 <div className="cm-panel-header">
                   <span>Audio &amp; Broadcast Preferences</span>

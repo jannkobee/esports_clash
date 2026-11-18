@@ -4,7 +4,7 @@ import {useEffect,useState} from 'react';
 import {Activity,RefreshCw,ArrowUpRight} from 'lucide-react';
 import {request,backendPageUrl} from '../cloudPersistence';
 import {useAccount} from '../AccountContext';
-import {onWorldUpdate} from '../worldLive';
+import {onWorldUpdate,visibleInterval} from '../worldLive';
 import {pediaTime,pediaHref} from '../hexapedia';
 import {RoleLabel} from './RoleLabel';
 import './world-desk.css';
@@ -14,7 +14,7 @@ export function WorldDesk({compact=false}:{compact?:boolean}){
   const {session}=useAccount();const [world,setWorld]=useState<WorldState|null>(null),[ops,setOps]=useState<Record<string,unknown>|null>(null),[error,setError]=useState(''),[refresh,setRefresh]=useState(0);
   useEffect(()=>{const controller=new AbortController();let pending=false;
     const load=async()=>{if(pending)return;pending=true;try{const r=await request<{data:WorldState}>('/world/simulation',null,{signal:controller.signal});if(!controller.signal.aborted){setWorld({...r.data,decisions:apiRecords<WorldState['decisions'][number]>(r.data.decisions),next_fixtures:apiRecords<WorldState['next_fixtures'][number]>(r.data.next_fixtures),jobs:apiRecords<WorldState['jobs'][number]>(r.data.jobs)});setError('');}}catch{if(!controller.signal.aborted)setError('World Desk is temporarily unavailable.');}finally{pending=false;}};
-    void load();const stop=onWorldUpdate(['activity','clubs','fixtures','news'],()=>void load());const timer=window.setInterval(()=>void load(),60000);return()=>{controller.abort();stop();clearInterval(timer);};
+    void load();const stop=onWorldUpdate(['activity','clubs','fixtures','news'],()=>void load());const stopTimer=visibleInterval(()=>void load(),60000);return()=>{controller.abort();stop();stopTimer();};
   },[refresh]);
   useEffect(()=>{setOps(null);if(!session?.user.is_evolution_admin)return;const c=new AbortController();void request<{data:Record<string,unknown>}>('/world/operations',session,{signal:c.signal}).then(r=>{if(!c.signal.aborted)setOps(r.data);}).catch(()=>{if(!c.signal.aborted)setError('Owner operations are temporarily unavailable.');});return()=>c.abort();},[session?.token,session?.user.is_evolution_admin,refresh]);
   return <section className={'world-desk'+(compact?' world-desk--compact':'')} aria-label="World Desk"><header><h3><Activity size={16}/>World Desk</h3><button className="wire-text-button" onClick={()=>setRefresh(r=>r+1)} aria-label="Refresh World Desk"><RefreshCw size={14}/></button></header>{error&&<p role="status">{error}</p>}{!world&&!error&&<p>Reading the world…</p>}{world&&<><div className="world-desk-counts"><span><strong>{world.clubs}</strong>clubs</span><span><strong>{world.activity_24h}</strong>actions · 24h</span><span><strong>{world.open_auctions}</strong>auctions</span><span><strong>{world.live_matches}</strong>live games</span></div><p>{world.human_clubs} human managers · {world.managed_clubs} managed clubs</p><p className={'world-desk-status is-'+world.review_status}>{world.reviewed_clubs} / {world.managed_clubs} managed clubs reviewed in {world.review_window_minutes??137} minutes{world.review_status==='partial'?' · Some reviews are pending':world.review_status==='delayed'?' · Reviews are delayed':''}.</p><p className="world-desk-time">Latest review: {world.last_review_at?pediaTime(world.last_review_at)+' Manila':'Not recorded'}</p>

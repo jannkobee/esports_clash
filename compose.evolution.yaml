@@ -26,6 +26,17 @@ x-api: &api
     HEXATRICK_OWNER_EMAIL: ${HEXATRICK_OWNER_EMAIL:-}
     HEXATRICK_OWNER_PASSWORD: ${HEXATRICK_OWNER_PASSWORD:-}
     HEXATRICK_GAME_URL: ${HEXATRICK_GAME_URL:-http://localhost:8088}
+    # Manager email (results, deadlines, debt warnings, account recovery). Production sets a real SMTP relay;
+    # the default writes mail to the log. The dev override sends to the local Mailpit inbox.
+    APP_FRONTEND_URL: ${HEXATRICK_GAME_URL:-http://localhost:8088}
+    MAIL_MAILER: ${MAIL_MAILER:-log}
+    MAIL_HOST: ${MAIL_HOST:-}
+    MAIL_PORT: ${MAIL_PORT:-587}
+    MAIL_SCHEME: ${MAIL_SCHEME:-}
+    MAIL_USERNAME: ${MAIL_USERNAME:-}
+    MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-no-reply@hexatrick.local}
+    MAIL_FROM_NAME: Hexatrick
     WORLD_VOICES_ENABLED: ${WORLD_VOICES_ENABLED:-true}
     LIVING_WORLD_ENABLED: ${LIVING_WORLD_ENABLED:-true}
     WORLD_VOICES_DAILY_POSTS: ${WORLD_VOICES_DAILY_POSTS:-144}

@@ -2,7 +2,7 @@ import type { PlayerCard } from './types';
 
 export interface ApiSession {
   token: string;
-  user: { id: number; name: string; email: string; is_evolution_admin?:boolean; supporter?:import('./supporter').SupporterMembership; theme?:import('./supporter').PersonalTheme };
+  user: { id: number; name: string; email: string; email_verified?: boolean; is_evolution_admin?:boolean; supporter?:import('./supporter').SupporterMembership; theme?:import('./supporter').PersonalTheme };
 }
 
 export interface ClubSnapshot {
@@ -53,8 +53,9 @@ export async function request<T>(path: string, session: ApiSession | null, init:
   });
   if (!response.ok) {
     if (response.status === 401 && session && loadApiSession()?.token === session.token) persistApiSession(null);
-    const problem = await response.json().catch(() => null) as { message?: string } | null;
-    throw new Error(problem?.message ?? `API request failed (${response.status}).`);
+    const problem = await response.json().catch(() => null) as { message?: string; reason?: string } | null;
+    // The HTTP status and server reason travel with the error (e.g. 410 `replay_expired`).
+    throw Object.assign(new Error(problem?.message ?? `API request failed (${response.status}).`), { status: response.status, reason: problem?.reason });
   }
   if (response.status === 204) return undefined as T;
   const data=await response.json() as T;if(cacheable){if(publicReads.size>120)publicReads.clear();publicReads.set(path,{expires:Date.now()+5000,data:structuredClone(data)});}return data;

@@ -3,13 +3,29 @@ import {existsSync,readFileSync} from 'node:fs';
 import {freemem,totalmem} from 'node:os';
 import {statfsSync} from 'node:fs';
 import {randomUUID} from 'node:crypto';
-import {Store,atomic} from './store.mjs';
-import {root,baseline,approved,sha} from './model.mjs';
-const config=JSON.parse(readFileSync(root+'EsportsClash.Api/AutomaticLearning/config/default.json'));
+import {Store,atomic,modelKey,TRAINING_LINEAGES} from './store.mjs';
+import {root,baseline,approved,sha,utilityOf,utilitySummary,registryState} from './model.mjs';
+import {readRegistry,promoteBundle,promotedBundle,promotionHistory,appendRegistryEvent} from './registry.mjs';
+import {pullAndPublish} from './ingest.mjs';
+import {pairedScores,leagueVerdict,candidateElo,promotionDecision,monitorDecision,metaReport} from './promotion.mjs';
+// LEARNING_CONFIG points at an alternative config (short soak runs); the tracked default otherwise.
+const config=JSON.parse(readFileSync(process.env.LEARNING_CONFIG||root+'EsportsClash.Api/AutomaticLearning/config/default.json'));
 const directory=process.env.LEARNING_DATA??root+'EsportsClash.Api/storage/app/automatic-learning';
 const minBurstPercent=process.env.LEARNING_MIN_BURST_PERCENT!==undefined&&process.env.LEARNING_MIN_BURST_PERCENT!==''?Number(process.env.LEARNING_MIN_BURST_PERCENT):config.minimumBurstPercent;
 const healthyResumeSeconds=process.env.LEARNING_HEALTHY_RESUME_SECONDS!==undefined&&process.env.LEARNING_HEALTHY_RESUME_SECONDS!==''?Number(process.env.LEARNING_HEALTHY_RESUME_SECONDS):config.healthyResumeSeconds;
 const failureLimit=Math.max(1,config.healthFailureLimit??3);
+// Automatic promotion (append-only registry in the data directory, exported to AutomaticLearning/models).
+const modelsDir=directory+'/models';
+const leaguePairs=config.leaguePairs??50,leagueSize=config.leagueSize??3,monitorPairs=config.monitorPairs??50;
+const ABLATIONS=['route-only','combat-only','movement-only','playbook-only'];
+/** The incumbent: this worker's promoted bundle once it has promoted one, else the reviewed repo bundle. */
+function incumbent(){
+  const registry=readRegistry(modelsDir);
+  if(!registry.events.length)return approved();
+  const active=registryState(registry).active;
+  return active.sha256?promotedBundle(modelsDir,active.sha256):baseline();
+}
+const eloOf=digest=>promotionHistory(modelsDir).find(e=>e.sha256===digest)?.elo??1500;
 let store;
 try{store=new Store(directory);}catch(error){
   try{atomic(directory+'/heartbeat.json',{at:new Date().toISOString(),paused:'model-incompatible',error:String(error?.message??error),healthySince:0,completed:0});}catch{}
@@ -50,11 +66,13 @@ function execute(job){
     // Keep heartbeat fresh during long matches so host-health.py and Docker healthcheck do not trip at 120s.
     const heartbeatTimer=setInterval(()=>{try{writeHeartbeat(null);}catch{}},20000);
     child.on('message',message=>{try{
-      if(message.type==='record')store.append(message.record,job.mode==='learn');
+      if(message.type==='record')store.appendOrQuarantine(message.record,job.mode==='learn');
       if(message.type==='result')result=message.result;
     }catch(e){child.kill('SIGKILL');reject(e);}});
     child.on('error',error=>{clearTimeout(timer);clearInterval(heartbeatTimer);reject(error);});
-    child.on('exit',()=>{clearTimeout(timer);clearInterval(heartbeatTimer);resolve(result??{status:'aborted',failure:'worker-exit',rounds:0});});
+    // 'close', not 'exit': 'exit' can fire before queued IPC messages (the last records and the
+    // result) are delivered, which silently dropped the end of long matches.
+    child.on('close',(code,signal)=>{clearTimeout(timer);clearInterval(heartbeatTimer);resolve(result??{status:'aborted',failure:`worker-exit:${signal??code}`,rounds:0});});
     child.send(job);
   });
 }
@@ -79,7 +97,8 @@ function evaluationReport(cycle){
     }
     opponents[opponent]={...interval(values),groups:Object.fromEntries(Object.entries(groups).map(([k,v])=>[k,interval(v)])),sides};
   }
-  return {version:1,candidate:cycle.id,opponents,invalid,passed:!invalid&&opponents.incumbent.lower>0&&opponents.baseline.upper>=0,ablationRequired:true};
+  const utility={sharedByBothTeams:true,evaluatedWith:'incumbent',candidate:utilitySummary(cycle.model),incumbent:utilitySummary(cycle.incumbent)};
+  return {version:1,candidate:cycle.id,opponents,utility,invalid,passed:!invalid&&opponents.incumbent.lower>0&&opponents.baseline.upper>=0,ablationRequired:true};
 }
 function ablationReport(cycle,phase){
   const values=[],groups={},candidateSides={blue:{wins:0,matches:0},red:{wins:0,matches:0}};
@@ -113,28 +132,47 @@ try{
       if(await runGitExport())store.set('exportHour',exportHour);
     }
     if(!await healthy()){await sleep(10000);continue;}
+    // Real-match experience for club lineages (only when an API URL and worker token are configured).
+    try{const ingested=await pullAndPublish(store);if(ingested?.rejected.length)atomic(directory+'/reports/experience-rejected-'+Date.now()+'.json',ingested);}
+    catch(error){console.error('Real-match experience sync failed; will retry:',error?.message??error);}
     let cycle=store.get('cycle'),job=store.get('activeJob');
     if(!job){
-      if(cycle){
-        const index=cycle.index,opponent=cycle.phase??(index<config.evaluationPairs*2?'incumbent':'baseline');
-        const pair=Math.floor(index/2)%config.evaluationPairs,side=index%2?'red':'blue';
-        const rival=opponent==='baseline'?baseline():cycle.incumbent;
+      const monitor=store.get('monitor');
+      if(!cycle&&monitor){
+        // Post-promotion monitor: the promoted bundle against the version it replaced.
+        const pair=Math.floor(monitor.index/2),side=monitor.index%2?'red':'blue';
+        const promoted=promotedBundle(modelsDir,monitor.promoted),previous=monitor.previous?promotedBundle(modelsDir,monitor.previous):baseline();
+        job={id:`${monitor.id}-monitor-${pair}-${side}`,seed:1600000000+pair,group:pair%4,mode:'frozen',candidateTeam:side,mapId:pair%2?'spillway':'fontessa',
+          blue:side==='blue'?promoted:previous,red:side==='red'?promoted:previous,utility:utilityOf(previous)};
+      }else if(cycle){
+        const index=cycle.index,league=cycle.phase==='league'?cycle.league[Math.floor(index/(leaguePairs*2))]:undefined;
+        const opponent=cycle.phase==='league'?`league-${Math.floor(index/(leaguePairs*2))}`:cycle.phase??(index<config.evaluationPairs*2?'incumbent':'baseline');
+        const pair=Math.floor(index/2)%(cycle.phase==='league'?leaguePairs:config.evaluationPairs),side=index%2?'red':'blue';
+        const rival=league?promotedBundle(modelsDir,league):opponent==='baseline'?baseline():cycle.incumbent;
         const contender={...cycle.model};
-        if(cycle.phase==='route-only'){contender.combat=cycle.incumbent.combat;contender.movement=cycle.incumbent.movement;}
-        if(cycle.phase==='combat-only'){contender.navigation=cycle.incumbent.navigation;contender.movement=cycle.incumbent.movement;}
-        if(cycle.phase==='movement-only'){contender.navigation=cycle.incumbent.navigation;contender.combat=cycle.incumbent.combat;}
-        job={id:`${cycle.id}-${opponent}-${pair}-${side}`,seed:1500000000+pair,group:pair%4,mode:'frozen',candidateTeam:side,
-          blue:side==='blue'?contender:rival,red:side==='red'?contender:rival};
+        // Single-learner ablations pin every other learned part (including playbooks) to the incumbent.
+        const pin=keys=>{for(const k of keys){if(cycle.incumbent[k]===undefined)delete contender[k];else contender[k]=cycle.incumbent[k];}};
+        if(cycle.phase==='route-only')pin(['combat','movement','playbooks','opponents']);
+        if(cycle.phase==='combat-only')pin(['navigation','movement','playbooks','opponents']);
+        if(cycle.phase==='movement-only')pin(['navigation','combat','playbooks','opponents']);
+        if(cycle.phase==='playbook-only')pin(['navigation','combat','movement']);
+        // The utility brain is shared by both teams, so it cannot change a paired win comparison; every
+        // evaluation match pins the incumbent's brain and the candidate's is reported separately.
+        job={id:`${cycle.id}-${opponent}-${pair}-${side}`,seed:1500000000+pair,group:pair%4,mode:'frozen',candidateTeam:side,mapId:pair%2?'spillway':'fontessa',
+          blue:side==='blue'?contender:rival,red:side==='red'?contender:rival,utility:utilityOf(cycle.incumbent)};
       }else{
         const completed=store.get('completed')??0;
         if(completed>0&&completed%config.candidateEveryMatches===0&&store.get('lastCandidateCompleted')!==completed){
           const day=new Date().toISOString().slice(0,10);
           if(store.get('evaluationDay')===day){await sleep(10000);continue;}
-          cycle={id:randomUUID(),index:0,model:store.get('model'),incumbent:approved()};
+          cycle={id:randomUUID(),index:0,model:store.get('model'),incumbent:incumbent()};
+          store.recordVersion(cycle.model,'worker:main','candidate-frozen',{cycle:cycle.id},store.snapshotModel('pre-candidate'));
           store.transaction(()=>{store.set('cycle',cycle);store.set('evaluationDay',day);store.set('lastCandidateCompleted',completed);});continue;
         }
         const sequence=(store.get('sequence')??0)+1;store.set('sequence',sequence);
-        const model=store.get('model');job={id:randomUUID(),seed:1+sequence%1000000000,group:sequence%4,mode:'learn',blue:model,red:model};
+        // The two worker lineages play each other and alternate starting sides, so they co-evolve.
+        const [first,second]=sequence%2?[TRAINING_LINEAGES[1],TRAINING_LINEAGES[0]]:TRAINING_LINEAGES;
+        job={id:randomUUID(),seed:1+sequence%1000000000,group:sequence%4,mode:'learn',mapId:Math.floor(sequence/2)%2?'spillway':'fontessa',lineages:{blue:first,red:second},blue:store.get(modelKey(first)),red:store.get(modelKey(second))};
       }
       job={...job,maxSimulatedSeconds:config.maxSimulatedSeconds,maxMatchWallSeconds:config.maxMatchWallSeconds};
       store.set('activeJob',job);store.job(job);
@@ -148,21 +186,54 @@ try{
       store.finish(job.id,result);store.set('activeJob',null);
       if(job.mode==='learn'&&result.status==='completed')store.set('completed',(store.get('completed')??0)+1);
       if(cycle){cycle.index++;store.set('cycle',cycle);}
+      else if(job.id.includes('-monitor-')){const m=store.get('monitor');if(m){m.index++;store.set('monitor',m);}}
     });
-    if(cycle&&cycle.index>=config.evaluationPairs*(cycle.phase?2:4)){
+    const monitor=store.get('monitor');
+    if(!cycle&&monitor&&monitor.index>=monitorPairs*2){
+      const score=pairedScores(id=>store.result(id),`${monitor.id}-monitor`,monitorPairs),decision=monitorDecision(score);
+      if(decision.rollback)appendRegistryEvent(modelsDir,{action:'rollback',bundle:monitor.previous?monitor.previous+'.json':null,sha256:monitor.previous,reason:'auto-rollback: '+decision.reason,by:'monitor'});
+      atomic(directory+'/reports/monitor-'+monitor.id+'.json',{version:1,promoted:monitor.promoted,previous:monitor.previous,score,...decision});
+      store.set('monitor',null);await runGitExport();continue;
+    }
+    const phaseLength=!cycle?0:cycle.phase==='league'?cycle.league.length*leaguePairs*2:config.evaluationPairs*(cycle.phase?2:4);
+    if(cycle&&cycle.index>=phaseLength){
+      const next=phase=>{cycle.phase=phase;cycle.index=0;store.set('cycle',cycle);};
       if(!cycle.phase){
         cycle.report=evaluationReport(cycle);
-        if(cycle.report.passed){cycle.phase='route-only';cycle.index=0;store.set('cycle',cycle);continue;}
-      }else{
+        if(cycle.report.passed){next(ABLATIONS[0]);continue;}
+      }else if(ABLATIONS.includes(cycle.phase)){
         const phase=cycle.phase,summary=ablationReport(cycle,phase);
         cycle.report.ablations??={};cycle.report.ablations[phase]=summary;
-        if(cycle.phase==='route-only'){cycle.phase='combat-only';cycle.index=0;store.set('cycle',cycle);continue;}
-        if(cycle.phase==='combat-only'){cycle.phase='movement-only';cycle.index=0;store.set('cycle',cycle);continue;}
+        const following=ABLATIONS[ABLATIONS.indexOf(phase)+1];
+        if(following){next(following);continue;}
         cycle.report.ablationRequired=false;
-        cycle.report.passed&&=Object.values(cycle.report.ablations).length===3&&Object.values(cycle.report.ablations).every(r=>r.complete);
+        cycle.report.passed&&=Object.values(cycle.report.ablations).length===ABLATIONS.length&&Object.values(cycle.report.ablations).every(r=>r.complete);
+        // League: earlier promoted versions other than the incumbent itself.
+        const incumbentSha=registryState(readRegistry(modelsDir)).active.sha256;
+        cycle.league=promotionHistory(modelsDir).map(e=>e.sha256).filter((d,i,a)=>d!==incumbentSha&&a.indexOf(d)===i).slice(0,leagueSize);
+        if(cycle.report.passed&&cycle.league.length){next('league');continue;}
+      }else if(cycle.phase==='league'){
+        const entries=cycle.league.map((digest,k)=>({sha256:digest,...pairedScores(id=>store.result(id),`${cycle.id}-league-${k}`,leaguePairs)}));
+        cycle.report.league={entries,...leagueVerdict(entries)};
+      }
+      if(cycle.report.passed){
+        const incumbentSha=registryState(readRegistry(modelsDir)).active.sha256;
+        cycle.report.elo=candidateElo([{opponentElo:incumbentSha?eloOf(incumbentSha):1500,mean:cycle.report.opponents.incumbent.mean},
+          ...(cycle.report.league?.entries??[]).map(e=>({opponentElo:eloOf(e.sha256),mean:e.mean}))]);
+      }
+      const registry=readRegistry(modelsDir),paused=registry.events.length?registryState(registry).paused:false;
+      const decision=promotionDecision({report:cycle.report,league:cycle.report.league,paused:paused||existsSync(directory+'/PAUSE_PROMOTION'),autoPromote:config.autoPromote!==false});
+      cycle.report.promotion=decision;
+      if(decision.promote){
+        const previous=registry.events.length?registryState(registry).active.sha256:null;
+        const promoted=promoteBundle(modelsDir,cycle.model,{reason:decision.reason,cycle:cycle.id,elo:cycle.report.elo,by:'worker'});
+        store.recordVersion(cycle.model,'worker:main','promoted',{cycle:cycle.id,registry:promoted});
+        store.set('monitor',{id:randomUUID(),promoted,previous,index:0});
       }
       atomic(directory+'/candidates/'+cycle.id+'.json',{model:cycle.model,sha256:sha(cycle.model),report:cycle.report});
-      atomic(directory+'/reports/evaluation-'+cycle.id+'.json',cycle.report);store.set('cycle',null);
+      atomic(directory+'/reports/evaluation-'+cycle.id+'.json',cycle.report);
+      atomic(directory+'/reports/meta-'+cycle.id+'.json',metaReport(Object.fromEntries(TRAINING_LINEAGES.map(l=>[l,store.get(modelKey(l))]))));
+      store.set('cycle',null);
       await runGitExport();
     }
   }

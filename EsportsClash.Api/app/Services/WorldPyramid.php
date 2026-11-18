@@ -23,7 +23,7 @@ class WorldPyramid {
      if($tier<5)foreach(OwnedPlayerCard::where('user_id',$user->id)->get() as $p){
       $profile=$p->world_profile;$ranges=[1=>[74,88],2=>[57,73],3=>[40,56],4=>[28,39]];[$min,$max]=$ranges[$tier];$hash=hash('sha256',$p->id.':established-tier:'.$tier);$stats=[];
       foreach(WorldPlayerProfiles::ATTRIBUTES as $i=>$attr)$stats[$attr]=$min+hexdec(substr($hash,$i*2,2))%($max-$min+1);
-      $profile['stats']=$stats;$profile['source']='founding-tier-'.$tier;$profile['training_baseline']=$p->training_xp;$profile['potential']=max($max+3,$profile['potential']);$profile['wage']=(int)round(50*pow(array_sum($stats)/count($stats)/25,3));
+      $profile['stats']=$stats;$profile['source']='founding-tier-'.$tier;$profile['training_baseline']=$p->training_xp;$profile['potential']=max($max+3,$profile['potential']);$profile['wage']=WorldPlayerProfiles::wageFor($stats);
       $p->update(['world_profile'=>$profile]);
      }
      $market=app(ClubMarketService::class);$balance=$market->balance($club->id);$capital=max(ClubMarketService::OPENING_BALANCE,$market->weeklyWages($club,$catalog)*20);
@@ -46,7 +46,7 @@ class WorldPyramid {
     $scope='ladder:'.$week->toDateString();$existing=ClubTournament::where('definition_id',$definition->id)->where('year',$week->year)->where('scope',$scope)->first();if($existing)return $existing;
     $start=$week->addDays(4)->setTime(18,0)->addHours(($ri*5+$tier-1)*2)->utc();
     $rules=['capacity'=>8,'minimum'=>2,'tiers'=>[$tier],'geographies'=>[$region->id],'stages'=>[['format'=>'single_elimination','advance'=>1]],'round_interval_hours'=>24,'fixture_interval_hours'=>1,
-      'ladder'=>true,'promotion_tier'=>max(1,$tier-1),'circuit_points'=>[],'terms'=>'Free entry. Tier and geography eligibility apply. Verified champion earns promotion by one tier; Tier 1 champions retain Tier 1 and build a verified ranking record for regional entry. Real Nexus finishes and normal recovery rules apply. No invented qualification results.'];
+      'ladder'=>true,'promotion_tier'=>max(1,$tier-1),'circuit_points'=>[],'terms'=>'Free entry. Tier and geography eligibility apply. Verified champion earns promotion by one tier; Tier 1 champions retain Tier 1 and build a verified ranking record for regional entry. Verified match results and normal recovery rules apply. No invented qualification results.'];
     return ClubTournament::create(['definition_id'=>$definition->id,'year'=>$week->year,'scope'=>$scope,'name'=>$definition->name.' - '.$week->toDateString(),'tier'=>$tier,'participant_type'=>'club','capacity'=>8,'rules_version'=>1,'regulations'=>$rules,'qualification'=>[['key'=>'division-open','method'=>'open','slots'=>8]],'ranked'=>true,'accreditation'=>'verified_ranked','registration_opens_at'=>now(),'registration_closes_at'=>$week->addDays(2)->setTime(18,0)->utc(),'starts_at'=>$start,'ends_at'=>$week->addDays(13)->setTime(23,59)->utc(),'semifinals_at'=>$start,'final_at'=>$start->addDays(2),'champion_prize'=>0,'runner_up_prize'=>0,'status'=>'registration','sponsors'=>[]]);
    },3);
    $events[]=$event->id;

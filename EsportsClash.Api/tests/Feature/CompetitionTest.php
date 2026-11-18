@@ -15,7 +15,14 @@ class CompetitionTest extends TestCase
     use RefreshDatabase;
     protected function setUp():void {parent::setUp();Queue::fake();$this->travelTo(CarbonImmutable::parse('2027-01-01T00:00:00Z'));$this->artisan('online:install-catalog')->assertSuccessful();app(CompetitionCalendar::class)->installDefaults();}
     private function owner():User {$u=User::factory()->create();$u->forceFill(['is_evolution_admin'=>true])->save();return $u;}
-    private function club():OnlineClub {$u=User::factory()->create();$c=app(OnlineService::class)->provision($u);$c->update(['tag'=>'T'.$c->id]);return $c;}
+    private function club():OnlineClub {$u=User::factory()->create();$c=app(OnlineService::class)->provision($u);$c->update(['tag'=>'T'.$c->id]);$this->assignRoles($c);return $c;}
+    /** Matches require complete manager-chosen T/CT roles (2026-11-14); save them like a manager would. */
+    private function assignRoles(OnlineClub $club):void {
+        $templates=collect(app(OnlineService::class)->activeCatalog()->payload['cards'])->keyBy('id');
+        $definitions=\App\Models\OwnedPlayerCard::whereIn('id',array_column($club->lineup,'instance_id'))->get()->mapWithKeys(fn($p)=>[$p->id=>app(\App\Services\WorldPlayerProfiles::class)->definition($p,$templates[$p->definition_id])])->all();
+        $orders=[];foreach(app(\App\Services\FpsPlayerArchitecture::class)->recommendedAssignments($definitions,\App\Services\FpsIdentityEngine::PLAN) as $id=>$roles)$orders[$id]=array_merge($roles,['instruction'=>'balanced','training'=>'system']);
+        \Illuminate\Support\Facades\DB::table('fps_team_systems')->updateOrInsert(['club_id'=>$club->id],['revision'=>1,'gameplan'=>json_encode(\App\Services\FpsIdentityEngine::PLAN),'culture'=>json_encode(\App\Services\FpsIdentityEngine::PLAN),'instructions'=>json_encode($orders),'created_at'=>now(),'updated_at'=>now()]);
+    }
     private function event(string $format='single_elimination',int $size=8,array $stages=[]):ClubTournament {
         $d=CompetitionDefinition::where('slug','vanguard-cup')->firstOrFail();
         $rules=['capacity'=>$size,'minimum'=>$size,'stages'=>$stages?:[['format'=>$format,'advance'=>1]],'qualification'=>[['key'=>'open','method'=>'open','slots'=>$size]]];

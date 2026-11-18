@@ -153,6 +153,23 @@ test('a close bullet miss produces a spatial near-miss cue',()=>{
   assert.ok(sim.drainAudioCues().some(cue=>cue.kind==='nearMiss'));
 });
 
+test('near-miss shots dynamically alert the target player, turn focus, and drop knife travel',()=>{
+  const {sim,p,enemy}=encounter();
+  Object.assign(p,{x:-19,z:-10,yaw:0,pitch:0,weapon:'ak47',equipped:'ak47',weaponReady:0,ammo:30,reserve:0,acquired:sim.time,burst:0});
+  Object.assign(enemy,{x:-18.3,z:0,hp:100,yaw:0,crouch:false,jumpY:0,equipped:'knife',weapon:'m4a1_s',target:undefined,action:'Holding'});
+  sim.fire(p,enemy);
+  assert.equal(enemy.underFireKind,'near-miss');
+  assert.ok((enemy.underFireCount??0)>=1);
+  assert.ok(enemy.underFireFrom,'target records approximate incoming fire origin');
+  assert.equal(enemy.aimFocus?.source,'contact','target snaps aimFocus toward incoming fire');
+  assert.ok((enemy.panicUntil??0)>sim.time,'rear near-miss causes brief surprise/panic');
+  sim.chooseEquipment(enemy);
+  assert.equal(enemy.equipped,'m4a1_s','player under fire puts away knife immediately');
+  sim.time+=0.2;p.nextShot=0;
+  sim.fire(p,enemy);
+  assert.ok((enemy.underFireCount??0)>=2,'sustained fire escalates underFireCount');
+});
+
 test('the B fountain centrepiece stops a head-level round before its target',()=>{
   const {sim,p,enemy}=encounter();
   Object.assign(p,{x:16,z:21,yaw:Math.PI/2,pitch:0,weapon:'ak47',equipped:'ak47',weaponReady:0,ammo:30,reserve:0,acquired:sim.time,burst:0});
@@ -524,11 +541,14 @@ test('conversational flash, smoke lineup, and wide-swing comms coordinate teamma
   Object.assign(support,{hp:100,role:'support',attacking:true,team:'red',smoke:1,flash:1,x:0,z:-14,yaw:0,weapon:'rifle',equipped:'rifle',weaponReady:0,utilityAt:0,reload:0,channel:0,bomb:false});
   Object.assign(entry,{hp:100,role:'entry',attacking:true,team:'red',x:-18,z:8,yaw:0,target:undefined,decision:'prepare',nextThink:100,bomb:false});
   Object.assign(trader,{hp:100,role:'trade',attacking:true,team:'red',x:-18,z:5,yaw:0,target:undefined,decision:'prepare',nextThink:100,bomb:false});
-  const okSmoke=sim.throwUtility(support,'smoke',{x:0,z:19.5},'overhead','mid-window');
+  // A smoke the team worked out for mid control is called by the spot it lands on.
+  const midSmoke={id:'calc:t:control:Mid:0,20',name:'Mid lane to window',phase:'control',attacking:true,site:'Mid',position:{x:0,z:-14},target:{x:0,z:19.5}};
+  sim.roundSmokes=[midSmoke];
+  const okSmoke=sim.throwUtility(support,'smoke',{x:0,z:19.5},'overhead',midSmoke.id);
   assert.equal(okSmoke,true);
-  assert.match(support.radioMessage,/Smoking window/);
+  assert.match(support.radioMessage,/Smoking off .+ so we can take mid/);
   sim.time=support.utilityPreparation.readyAt;sim.releaseUtilityPreparation(support);
-  assert.match(support.radioMessage,/Smoking window/);
+  assert.match(support.radioMessage,/smoked — take mid control/);
 
   sim.time+=3.5;support.utilityAt=0;support.weaponReady=0;support.x=-18;support.z=3;
   const okFlash=sim.throwUtility(support,'flash',{x:-18,z:14});

@@ -23,14 +23,15 @@ export function rankLiveSmokeLineups(lineups:readonly LiveSmokeLineup[],context:
 }):LiveSmokeLineup[] {
   const rules=LIVE_LINEUP_DECISION_RULES;
   const beliefs=context.beliefs.filter(b=>b.certainty>=rules.minimumCertainty&&b.age<=rules.maximumAge
-    &&b.radius<=rules.maximumUncertainty&&(b.source==='sight'||b.weaponHint==='sniper'));
+    &&b.radius<=rules.maximumUncertainty&&(b.source==='sight'||b.weaponHint==='sniper'||b.weaponHint==='heavy'));
   return lineups.map((lineup,index)=>{
     const route=context.travelTo(lineup.position),travel=Number.isFinite(route)&&route>=0?route:Infinity;
     const threat=beliefs.reduce((best,belief)=>{
       // A smoke beyond a nearby opponent does not cover that opponent's angle.
       if(distance(context.from,belief)+LIVE_UTILITY_RULES.smokeRadius<distance(context.from,lineup.target))return best;
       const proximity=Math.max(0,1-distance(belief,lineup.target)/(LIVE_UTILITY_RULES.smokeRadius+4));
-      const value=belief.certainty*proximity/(1+Math.max(0,belief.radius)*.12)*(belief.weaponHint==='sniper'?rules.sniperWeight:1);
+      const weaponWeight=belief.weaponHint==='sniper'?rules.sniperWeight:belief.weaponHint==='heavy'?1.65:belief.weaponHint==='rifle'||belief.weaponHint==='suppressed'?1.15:1;
+      const value=belief.certainty*proximity/(1+Math.max(0,belief.radius)*.12)*weaponWeight;
       return Math.max(best,value);
     },0);
     return {lineup,index,travel,score:threat*rules.threatWeight-travel*rules.travelWeight};

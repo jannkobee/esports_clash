@@ -6,24 +6,27 @@ import {LIVE_WINDOW_FURNITURE} from './fpsMidWindowInterior.ts';
 /** Enlarged customs house: civic side wing and ground-level open T door on Mid. */
 export function buildMidWindowScenery(scene:Scene,{box,detail}:VillageBuilder):void {
   const front=16.84;
-  for(const x of [-1.45,2.85])box(`mid-window-stone-reveal-${x}`,x,3.735,front,.13,1.83,.12,'#dcc8a5');
-  box('mid-window-stone-sill',.6,2.79,front,4.45,.12,.24,'#dfcaa8');
-  box('mid-window-lintel-reveal',.6,4.68,front,4.45,.14,.13,'#d7c3a1');
+  const winMid=(w.windowMinX+w.windowMaxX)/2,winW=w.windowMaxX-w.windowMinX,winH=w.lintelY-w.sillY;
+  for(const x of [w.windowMinX+.05,w.windowMaxX-.05])box(`mid-window-stone-reveal-${x}`,x,(w.sillY+w.lintelY)/2,front,.13,winH,.12,'#dcc8a5');
+  box('mid-window-stone-sill',winMid,w.sillY-.03,front,winW+.15,.12,.24,'#dfcaa8');
+  box('mid-window-lintel-reveal',winMid,w.lintelY+.03,front,winW+.15,.14,.13,'#d7c3a1');
   // Ground-level open wooden doorway facing T-side lower Mid with upper shuttered window.
-  for(const x of [-4.4,-1.8]){
-    const px=x<-3?-4.33:-1.84,fz=front-.02;
+  // A normal street door: frame, header and an opened leaf hinged on its west jamb.
+  const doorMid=(w.doorMinX+w.doorMaxX)/2,doorW=w.doorMaxX-w.doorMinX;
+  for(const x of [w.doorMinX,w.doorMaxX]){
+    const px=x<doorMid?x+.05:x-.05,fz=front-.02;
     box(`mid-window-t-door-plinth-${x}`,px,.16,fz,.16,.32,.18,'#b9aa90');
-    box(`mid-window-t-door-frame-${x}`,px,1.3,fz,.12,2.6,.14,'#d4c2a1');
+    box(`mid-window-t-door-frame-${x}`,px,w.doorTopY/2,fz,.12,w.doorTopY,.14,'#d4c2a1');
   }
-  box('mid-window-t-door-header',-3.085,2.66,front-.02,2.62,.18,.16,'#dcc8a5');
-  box('mid-window-t-door-cornice',-3.085,2.8,front-.05,2.78,.1,.2,'#c8b698');
-  box('mid-window-t-open-door-board',-4.33,1.28,17.5,.07,2.52,.88,'#6f4b2f');
-  for(const y of [.65,1.95])box(`mid-window-t-door-crossbar-${y}`,-4.28,y,17.5,.04,.1,.86,'#593a23');
-  box('mid-window-t-door-handle',-4.26,1.05,17.86,.05,.06,.14,'#c7a76c');
+  box('mid-window-t-door-header',doorMid,w.doorTopY+.06,front-.02,doorW+.12,.18,.16,'#dcc8a5');
+  box('mid-window-t-door-cornice',doorMid,w.doorTopY+.2,front-.05,doorW+.28,.1,.2,'#c8b698');
+  box('mid-window-t-open-door-board',w.doorMinX+.06,w.doorTopY/2-.02,17.17+doorW*.45,.07,w.doorTopY-.08,doorW*.9,'#6f4b2f');
+  for(const y of [.6,1.7])box(`mid-window-t-door-crossbar-${y}`,w.doorMinX+.11,y,17.17+doorW*.45,.04,.1,doorW*.88,'#593a23');
+  box('mid-window-t-door-handle',w.doorMinX+.12,1.02,17.17+doorW*.85,.05,.06,.14,'#c7a76c');
   box('mid-window-t-upper-frame',-3.1,4.05,front,1.35,1.35,.08,'#dac6a4');
   box('mid-window-t-upper-shutter',-3.1,4.05,front-.04,1.12,1.12,.05,'#57716a');
   for(const side of [-1,1])for(let row=0;row<8;row++){
-    const x=.6+side*(2.28+(row%3)*.18);
+    const x=winMid+side*(winW/2+.18+(row%3)*.18);
     box(`mid-window-brick-${side}-${row}`,x,2.82+row*.23,front,.26,.13,.035,row%3?'#ae8d70':'#c2a080');
   }
   for(const z of [18,21,24,26])box(`mid-window-house-beam-${z}`,0,5.34,z,8.75,.12,.16,'#74583d');

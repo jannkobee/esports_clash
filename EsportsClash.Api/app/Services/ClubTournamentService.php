@@ -93,8 +93,9 @@ class ClubTournamentService
         OnlineClub::whereKey($ids)->orderBy('id')->lockForUpdate()->get();
         $schedule = [];
         foreach ($pairs as $offset => [$home, $away]) {
-            $start = $kickoff->copy()->addHours($offset);
-            $deadline = $start->copy()->subMinutes(15);
+            // One broadcast stream: the second semifinal waits a full slot for the first.
+            $start = $kickoff->copy()->addMinutes($offset * max(60, (int) config('competitions.broadcast_slot_minutes', 90)));
+            $deadline = ClubFixture::ordersCloseAt($start);
             if (ClubFixture::conflicts([$home, $away], $start) || $deadline->lte(now())) {
                 $event->update(['status' => 'review']);
                 return;

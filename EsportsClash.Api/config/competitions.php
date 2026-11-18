@@ -10,6 +10,14 @@ return [
     'provisional_games' => 10,
     'repeat_opponent_daily_limit' => 2,
     'recovery_hours' => 24,
+    // Broadcast pacing: games on one tournament stream follow each other like a real broadcast day.
+    'broadcast_slot_minutes' => (int) env('COMPETITION_BROADCAST_SLOT_MINUTES', 90),
+    'broadcast_break_minutes' => (int) env('COMPETITION_BROADCAST_BREAK_MINUTES', 15),
+    'broadcast_max_hold_minutes' => (int) env('COMPETITION_BROADCAST_MAX_HOLD_MINUTES', 180),
+    'games_per_stream' => (int) env('COMPETITION_GAMES_PER_STREAM', 8),
+    // Worker capacity guard: at most this many fixtures kick off in one UTC clock hour (0 = unlimited).
+    // About 25 per concurrent match slot with the 90-minute precompute (300 fits one 16-thread worker).
+    'kickoffs_per_hour' => (int) env('COMPETITION_KICKOFFS_PER_HOUR', 300),
     'max_edition_size' => 256,
     'national_squad_size' => 10,
     'manager_inactive_days' => 14,

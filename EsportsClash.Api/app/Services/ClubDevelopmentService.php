@@ -14,20 +14,64 @@ class ClubDevelopmentService
     public function postTraining(): void
     {
         $startOfWeek = now('Asia/Manila')->startOfWeek()->utc();
+        $levels = [];
         DB::table('club_training_sessions')->whereNull('processed_at')
             ->whereIn('match_id', DB::table('online_matches')->select('id')->where('completed_at', '<', $startOfWeek))
-            ->chunkById(100, function ($sessions) {
+            ->chunkById(100, function ($sessions) use (&$levels) {
+                $focus = [];
                 foreach ($sessions as $session) {
-                    DB::transaction(function () use ($session) {
+                    DB::transaction(function () use ($session, &$levels, &$focus) {
                         $updated = DB::table('club_training_sessions')->where('id', $session->id)->whereNull('processed_at')
                             ->update(['processed_at' => now()]);
-                        if ($updated) {
-                            OwnedPlayerCard::withoutGlobalScopes()->whereKey($session->card_id)->increment('training_xp', $session->xp);
-                            app(FpsIdentityEngine::class)->train($session->card_id,$session->match_id,(int)$session->xp);
-                        }
+                        if (! $updated) return;
+                        $profiles = app(WorldPlayerProfiles::class);
+                        $card = OwnedPlayerCard::withoutGlobalScopes()->lockForUpdate()->find($session->card_id);
+                        if (! $card) return;
+                        $profiles->ensureAllocation($card);
+                        $card->increment('training_xp', $session->xp);
+                        app(FpsIdentityEngine::class)->train($session->card_id,$session->match_id,(int)$session->xp);
+                        $changes = $profiles->allocateSteps($card->refresh(), $this->focus($session, $card, $focus));
+                        if ($changes) $levels[$card->user_id][$card->id] = array_replace($levels[$card->user_id][$card->id] ?? [], $changes);
                     }, 3);
                 }
             });
+        $this->announceLevels($levels, now('Asia/Manila')->format('o-W'));
+    }
+
+    /**
+     * The development focus that applies to a training session: the one pinned in the match plan (what the
+     * manager had chosen when the match was allocated), else the club's current choice (reserve practice).
+     */
+    private function focus(object $session, OwnedPlayerCard $card, array &$cache): ?string
+    {
+        $pinned = $cache[$session->match_id] ??= (function () use ($session) {
+            $plan = DB::table('online_matches')->where('id', $session->match_id)->value('plan');
+            $players = json_decode($plan ?? 'null', true)['fps_identity']['players'] ?? [];
+            return array_map(fn ($p) => $p['trainingFocus'] ?? null, $players);
+        })();
+        if (array_key_exists($card->id, $pinned)) return $pinned[$card->id];
+        $club = OnlineClub::where('user_id', $card->user_id)->value('id');
+        $instructions = json_decode(DB::table('fps_team_systems')->where('club_id', $club)->value('instructions') ?? '{}', true) ?: [];
+        return $instructions[$card->id]['training'] ?? null;
+    }
+
+    /** Inbox note of whole-level changes only (never progress toward the next level). */
+    private function announceLevels(array $levels, string $week): void
+    {
+        $labels = ['rifling' => 'Rifling', 'sniping' => 'Sniping', 'entry' => 'Entry', 'utility' => 'Utility', 'positioning' => 'Positioning', 'shotcalling' => 'Shotcalling'];
+        foreach ($levels as $userId => $players) {
+            $club = OnlineClub::where('user_id', $userId)->first();
+            if (! $club || $club->is_bot) continue;
+            $lines = [];
+            foreach ($players as $playerId => $changes) {
+                $name = OwnedPlayerCard::withoutGlobalScopes()->whereKey($playerId)->value('persona_name') ?? 'A player';
+                $parts = [];
+                foreach ($changes as $key => $change) $parts[] = ($labels[$key] ?? $key).' '.($change['to'] > $change['from'] ? 'rose' : 'fell').' to '.$change['to'].' · '.FpsPlayerArchitecture::SKILL_SCALE_LABELS[$change['to'] - 1];
+                $lines[] = $name.': '.implode(', ', $parts).'.';
+            }
+            if ($lines) app(ClubOffice::class)->notify($club->id, 'training-levels:'.$week, 'training', count($lines) === 1 ? 'A player reached a new level' : count($lines).' players reached new levels',
+                implode(' ', $lines), ['type' => 'route', 'route' => 'squad?tab=training']);
+        }
     }
 
     public function manageBot(OnlineClub $club, ClubMarketService $market, OnlineService $online, ?int $targetRoster = null,bool $allowScouting=true): void

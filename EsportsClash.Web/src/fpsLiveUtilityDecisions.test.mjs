@@ -131,7 +131,8 @@ test('retake flash, HE, and incendiary throws solve arcs over tall cover even du
     const ok=sim.throwUtility(p,kind,coverTarget);
     assert.equal(ok,true,`idle weaponReady must not block retake ${kind} setup over tall cover`);
     assert.equal(p.utilityPreparation?.kind,kind);
-    const preview=launchLiveGrenade(-1,kind,p.id,p.team,hand,coverTarget,sim.time+2,false,p.utilityPreparation.throwStyle,baseHeight,{x:0,z:0},p.utilityPreparation.flightTime);
+    // Release launches at the prepared aim point: for a flash that is the pop spot in front of the target (2026-11-17).
+    const preview=launchLiveGrenade(-1,kind,p.id,p.team,hand,p.utilityPreparation.aimTarget??coverTarget,sim.time+2,false,p.utilityPreparation.throwStyle,baseHeight,{x:0,z:0},p.utilityPreparation.flightTime);
     const landed=predictLiveGrenade(preview,sim.time+2);
     assert.ok(landed.z<26.5,`prepared ${kind} preview must clear b-screen instead of bouncing back at CT (z=${landed.z.toFixed(2)})`);
   }

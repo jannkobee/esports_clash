@@ -1,0 +1,138 @@
+/* Matches: fixture board grouped by the action a manager needs to take. */
+
+.fx-board { display: grid; gap: 18px; }
+
+/* ---- Next match hero ---------------------------------------------------- */
+.fx-hero {
+  display: grid; gap: 14px; padding: 18px 20px;
+  border: 1px solid var(--cm-border); border-left: 3px solid var(--cm-border-strong);
+  border-radius: var(--hx-radius-md); background: var(--cm-bg-panel);
+}
+.fx-hero--orders { border-left-color: var(--hx-warning); }
+.fx-hero--live { border-left-color: var(--hx-red-bright); }
+.fx-hero--locked { border-left-color: var(--hx-blue); }
+.fx-hero__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 14px; }
+.fx-hero__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 24px; margin: 0; }
+.fx-hero__facts dt { font-size: 11px; font-weight: 700; letter-spacing: 0.03em; color: var(--cm-text-subtle); }
+.fx-hero__facts dd { margin: 2px 0 0; font-size: 14px; font-weight: 600; color: var(--cm-text); }
+.fx-hero__facts dd small { display: block; font-size: 12px; font-weight: 400; color: var(--cm-text-muted); }
+.fx-hero__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---- Teams ---------------------------------------------------------------- */
+.fx-teams { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-width: 0; }
+.fx-team { display: inline-flex; align-items: center; gap: 7px; min-width: 0; color: var(--cm-text); }
+.fx-team__name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fx-team__name a { color: inherit; text-decoration: none; }
+.fx-team__name a:hover { text-decoration: underline; }
+.fx-team.is-mine .fx-team__name { font-weight: 800; }
+.fx-teams--lg { gap: 6px 16px; }
+.fx-teams--lg .fx-team__name { font-size: 20px; }
+.fx-vs { margin-right: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--cm-text-subtle); }
+.fx-you {
+  padding: 1px 6px; border-radius: 9px; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+  background: color-mix(in srgb, var(--hx-red) 24%, transparent); color: var(--cm-text);
+}
+.fx-crest-fallback {
+  display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--cm-bg-input); border: 1px solid var(--cm-border); font-size: 11px; font-weight: 700; color: var(--cm-text-muted);
+}
+.fx-teams--lg .fx-crest-fallback { width: 34px; height: 34px; font-size: 14px; }
+
+.fx-competition { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 12px; color: var(--cm-text-muted); }
+.fx-competition a { color: inherit; text-decoration: none; }
+.fx-competition a:hover { color: var(--cm-text); text-decoration: underline; }
+
+/* ---- Groups --------------------------------------------------------------- */
+.fx-group { display: grid; gap: 8px; }
+.fx-group__head { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 2px 12px; }
+.fx-group__head h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; font-weight: 700; color: var(--cm-text); }
+.fx-group__head p { grid-column: 1; margin: 0; font-size: 12px; color: var(--cm-text-muted); }
+.fx-more { grid-row: 1; grid-column: 2; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; }
+.fx-count {
+  min-width: 20px; padding: 0 6px; border-radius: 9px; text-align: center;
+  font-size: 11px; font-weight: 700; line-height: 18px; background: var(--cm-bg-input); border: 1px solid var(--cm-border); color: var(--cm-text-muted);
+}
+.fx-group--orders .fx-count { background: color-mix(in srgb, var(--hx-warning) 22%, transparent); border-color: color-mix(in srgb, var(--hx-warning) 50%, transparent); color: var(--cm-text); }
+.fx-group--live .fx-count { background: var(--hx-red); border-color: var(--hx-red-bright); color: var(--hx-on-accent); }
+
+.fx-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel); overflow: hidden; }
+.fx-row {
+  display: grid; grid-template-columns: 96px minmax(0, 1.6fr) minmax(0, 1.2fr) auto; align-items: center; gap: 8px 16px;
+  padding: 12px 16px;
+}
+.fx-row + .fx-row { border-top: 1px solid var(--cm-border); }
+.fx-when { display: grid; line-height: 1.3; }
+.fx-when strong { font-size: 12px; font-weight: 700; color: var(--cm-text); }
+.fx-when span { font-size: 12px; color: var(--cm-text-muted); }
+.fx-main { display: grid; gap: 4px; min-width: 0; }
+.fx-state { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 12px; color: var(--cm-text-muted); }
+.fx-state svg { flex-shrink: 0; }
+.fx-state--orders svg { color: var(--hx-warning); }
+.fx-state--live { color: var(--cm-text); font-weight: 600; }
+.fx-state--live svg { color: var(--hx-red-bright); }
+.fx-state--review { color: var(--hx-negative); }
+.fx-action { display: flex; justify-content: flex-end; min-width: 132px; }
+
+.fx-quiet, .fx-footnote { margin: 0; font-size: 12px; color: var(--cm-text-subtle); }
+
+@media (max-width: 860px) {
+  .fx-row { grid-template-columns: 80px minmax(0, 1fr); }
+  .fx-row > .fx-state { grid-column: 2; }
+  .fx-row > .fx-action { grid-column: 2; justify-content: flex-start; min-width: 0; }
+  .fx-teams--lg .fx-team__name { font-size: 17px; }
+}
+
+/* ---- Scrimmages ----------------------------------------------------------- */
+.scrim-layout { display: grid; gap: 18px; }
+.scrim-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; align-items: start; }
+.scrim-card { display: grid; gap: 12px; padding: 16px 18px; }
+.scrim-card > header { display: grid; gap: 3px; }
+.scrim-card h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 16px; font-weight: 700; }
+.scrim-card .scrimmage-state { margin: 0; }
+.scrim-invite-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 12px; align-items: end; }
+.scrim-invite-form label { display: grid; }
+.scrim-invite-form button { justify-self: start; }
+.scrim-invite-row { grid-template-columns: 96px minmax(0, 1fr) auto; }
+
+/* ---- Fixture orders context ------------------------------------------------- */
+.orders-context {
+  display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px 20px;
+  margin: 0 0 16px; padding: 14px 16px; border: 1px solid var(--cm-border); border-left: 3px solid var(--hx-warning);
+  border-radius: var(--hx-radius-md); background: var(--cm-bg-panel-alt);
+}
+.orders-context h3 { margin: 2px 0; font-size: 17px; font-weight: 700; }
+.orders-context__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.fx-side {
+  padding: 1px 6px; border-radius: 9px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  border: 1px solid var(--cm-border); color: var(--cm-text-muted);
+}
+.fx-hero > .fx-state { margin-top: -4px; }
+
+/* Verified outcome on result rows: the word carries the meaning, colour reinforces it. */
+.fx-outcome { font-weight: 700; }
+.fx-outcome.is-win { color: var(--hx-positive); }
+.fx-outcome.is-loss { color: var(--hx-negative); }
+
+/* Opponent scouting on the Next match card. */
+.fx-scout { margin-top: 12px; border-top: 1px solid var(--cm-border); padding-top: 10px; }
+.fx-scout > summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--cm-text); display: inline-flex; align-items: center; gap: 6px; }
+.fx-scout__body { margin-top: 10px; display: grid; gap: 8px; }
+.fx-scout__body h4 { margin: 6px 0 0; font-size: 12px; font-weight: 700; letter-spacing: .03em; color: var(--cm-text-subtle); }
+.fx-scout__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 6px 18px; margin: 0; }
+.fx-scout__facts dt { font-size: 11px; color: var(--cm-text-subtle); font-weight: 700; }
+.fx-scout__facts dd { margin: 2px 0 0; font-size: 13px; color: var(--cm-text); }
+.fx-scout__recent, .fx-scout__tendencies { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.fx-scout__recent small { display: block; color: var(--cm-text-muted); font-size: 12px; }
+.fx-scout__tendencies { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 4px 18px; }
+.fx-scout__tendencies li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed var(--cm-border); padding: 3px 0; }
+.fx-scout__tendencies small { color: var(--cm-text-muted); }
+
+/* Optional plan for one fixture (inside the orders editor). */
+.fixture-plan { margin: 10px 0 14px; border: 1px solid var(--cm-border); border-radius: 6px; padding: 10px 12px; background: var(--cm-bg-panel); }
+.fixture-plan > summary { cursor: pointer; font-weight: 700; font-size: 13px; color: var(--cm-text); }
+.fixture-plan > summary small { font-weight: 400; color: var(--cm-text-muted); margin-left: 6px; }
+.fixture-plan label { display: grid; gap: 4px; font-size: 12px; color: var(--cm-text-muted); }
+.fixture-plan select { max-width: 100%; }
+.fixture-plan__preset { margin: 8px 0; max-width: 360px; }
+.fixture-plan__sliders, .fixture-plan__instructions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 18px; margin: 8px 0; }

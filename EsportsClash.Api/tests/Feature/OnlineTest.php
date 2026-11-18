@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class OnlineTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, \Tests\Support\AssignsManagerRoles;
 
     private function agreeTransfer(\App\Models\OnlineClub $club, OwnedPlayerCard $player): void
     {
@@ -25,6 +25,7 @@ class OnlineTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->assignManagerRolesOnSave();
         Queue::fake();
         $this->artisan('online:install-catalog')->assertSuccessful();
         config(['online.worker_token' => str_repeat('test-worker-', 4)]);

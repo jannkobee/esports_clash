@@ -8,6 +8,7 @@ import {PersonalThemeProvider} from './PersonalThemeContext'
 import {GameModesProvider} from './gameModes'
 import './personal-theme.css'
 import './hexatrick-records.css'
+import './components/ui/ui.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

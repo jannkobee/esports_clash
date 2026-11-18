@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
 import {FPS_IDENTITY_PERSONALITIES,generatePlayerDNA} from './fps/fpsIdentity.ts';
-import {emptyLiveIntel,rememberLiveIntel,liveIntelBeliefs,assessLiveIntel,strongestLiveIntel,clearLiveIntel} from './fps/fpsLiveIntel.ts';
+import {emptyLiveIntel,rememberLiveIntel,liveIntelBeliefs,assessLiveIntel,strongestLiveIntel,clearLiveIntel,weaponHintForWeapon,assessLiveWeaponThreat,inferEnemyWeaponProfile} from './fps/fpsLiveIntel.ts';
 import {launchLiveGrenade} from './fps/fpsLiveGrenades.ts';
 
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
@@ -99,7 +99,10 @@ test('defense holds against a sound cue, reinforces confirmed pressure, preserve
   sim.time=20.2;addStack(sim,caller,'B',2);
   sim.callFromInformation(caller,allies);const order=sim.informationOrders.blue;
   assert.equal(order.mode,'reinforce');assert.equal(order.responders.length,1);assert.ok(!order.responders.includes(allies[0].id));
-  const responder=allies.find(p=>order.responders.includes(p.id));sim.time=Math.max(sim.time,order.readyAt??sim.time)+.01;sim.decide(responder);
+  const responder=allies.find(p=>order.responders.includes(p.id));
+  // A player who does not verify calls (verifiers take a moment on reinforce calls; see fpsRoleInteraction20261117).
+  responder.tendencies={...responder.tendencies,informationVerification:0};
+  sim.time=Math.max(sim.time,order.readyAt??sim.time)+.01;sim.decide(responder);
   assert.ok(responder.goal.x>10);assert.match(responder.intent,/Reinforce B/);
   sim.time=20.5;sim.observeIntel(caller,{key:'other-noise',observerId:caller.id,source:'footstep',x:-20,z:14,observed:20.5,confidence:.5,uncertainty:4},false);
   sim.callFromInformation(caller,allies);assert.equal(sim.informationOrders.blue.site,'B');
@@ -156,4 +159,38 @@ test('confirmed objective information supersedes earlier uncertain site calls',(
   sim.bomb={status:'planted',site:'A',x:-23,z:21,remaining:25};
   const snapshot=sim.snapshot();assert.match(snapshot.teams.blue.information,/Device confirmed A/);assert.match(snapshot.teams.red.information,/Device planted A/);
   assert.ok(!snapshot.teams.blue.information.includes('Possible B'));
+});
+
+test('both forces lawfully infer remaining opponent locations without reading hidden positions',()=>{
+  const a=game(),b=game();
+  for(const sim of [a,b]){
+    sim.time=35;sim.liveElapsed=20;sim.remaining=90;sim.site='A';sim.bomb.status='carried';
+    for(const actor of sim.actors.slice(5))Object.assign(actor,{x:-20,z:-24,target:undefined});
+  }
+  // Move hidden CTs to totally different places in b; inference must stay identical because it never reads hidden CTs.
+  for(const ct of b.actors.slice(0,5))Object.assign(ct,{x:26,z:30});
+  const infA=a.inferRemainingOpponentLocations(a.actors[5],a.actors.slice(5));
+  const infB=b.inferRemainingOpponentLocations(b.actors[5],b.actors.slice(5));
+  assert.ok(infA.length>0);
+  assert.deepEqual(infA,infB);
+  const defInf=a.inferRemainingOpponentLocations(a.actors[0],a.actors.slice(0,5));
+  assert.ok(defInf.length>0);
+});
+
+test('weapon threat profiles guide utility counters against sniper and shotgun threats',()=>{
+  assert.equal(weaponHintForWeapon('sniper','sniper'),'sniper');
+  assert.equal(weaponHintForWeapon('nova','shotgun'),'shotgun');
+  assert.equal(weaponHintForWeapon('negev','heavy'),'heavy');
+  assert.equal(assessLiveWeaponThreat('sniper',25).avoidDryPeek,true);
+  assert.equal(assessLiveWeaponThreat('shotgun',8).avoidDryPeek,true);
+  assert.equal(assessLiveWeaponThreat('shotgun',22).avoidDryPeek,false);
+
+  const sim=game(),p=sim.actors[5];
+  Object.assign(p,{x:-19,z:-8,yaw:0,smoke:1,flash:1,incendiary:0,he:0,utilityAt:0,target:undefined,bomb:false});
+  sim.observeIntel(p,{key:'enemy:awp',enemyId:'blue-1',observerId:p.id,source:'sight',x:-19,z:12,observed:sim.time,confidence:.95,uncertainty:.5,weaponHint:'sniper'},false);
+  const profile=inferEnemyWeaponProfile(p.intel,sim.time);
+  assert.equal(profile.sniperCount,1);
+  const reason=sim.useInformationUtility(p,sim.actors.slice(5));
+  assert.ok(reason&&/sniper|Smoke|Flash/i.test(reason),`Expected anti-sniper utility, got: ${reason}`);
+  assert.ok(p.utilityPreparation,'Player prepares smoke/flash instead of dry-peeking the sniper');
 });

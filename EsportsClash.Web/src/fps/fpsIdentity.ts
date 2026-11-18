@@ -1,7 +1,8 @@
 import {fpsBehaviorPreferences, type FpsPersonality, type FpsAssignments, type FpsPosition, type FpsObservedBehavior} from './fpsPlayerArchitecture.ts';
 export * from './fpsPlayerArchitecture.ts';
+export * from './fpsPlayerTendencies.ts';
 export const FPS_IDENTITY_BALANCE={instructionWeight:.3,temperature:.42,familiarityBase:.002,familiarityAdaptability:.003} as const;
-export interface FpsScoutingProfile {player_id:string;personality:FpsPersonality;assignments?:Partial<FpsAssignments>|null;observed?:FpsObservedBehavior;mapping:string;confidence:string;appearances?:number;gameplan_fit?:string|null;coach_fit?:string|null;team_chemistry?:string;familiarity?:string;role_familiarity?:Partial<Record<FpsPosition,number>>;recent_observations?:string[];observations:{risk:string;adaptability:string;preparation:string;team_orientation:string;pressure_response?:string;economy_discipline?:string}}
+export interface FpsScoutingProfile {player_id:string;personality:FpsPersonality;assignments?:Partial<FpsAssignments>|null;observed?:FpsObservedBehavior;mapping:string;confidence:string;appearances?:number;gameplan_fit?:string|null;coach_fit?:string|null;team_chemistry?:string;familiarity?:string;role_familiarity?:Partial<Record<FpsPosition,number>>;recent_observations?:string[];igl_identity?:{label:string;summary:string;potentialWeakness?:string};top_tendencies?:{key:string;label:string;value:number;level:string}[];derived_tendencies?:Record<string,{value:number;label:string}>;consistency?:{value:number;label:string};observations:{risk:string;adaptability:string;preparation:string;team_orientation:string;pressure_response?:string;economy_discipline?:string}}
 export type FpsDnaKey = 'riskTolerance' | 'emotionalStability' | 'coachability' | 'tacticalDiscipline' | 'adaptability' | 'creativity' | 'confidenceVolatility' | 'socialTrust' | 'leadershipInitiative' | 'competitiveDrive' | 'teamOrientation' | 'preparationPreference';
 export type FpsPlayerDNA = Record<FpsDnaKey, number>;
 
@@ -35,7 +36,7 @@ export const FPS_GAMEPLANS:Record<string,{name:string;plan:FpsGameplan}>={
 export interface FpsTeamIdentity { tempo: number; structure: number; aggression: number; preparation: number; freedom: number; economy: number }
 export interface FpsTeamChemistry { trust: number; communication: number; understanding: number; leadershipAcceptance: number; roleCompetition: number }
 export type FpsPrimaryRole = 'entry'|'caller'|'sniper'|'support'|'lurker'|'anchor'|'trade';
-export interface FpsPlayer {id:string;personality:FpsPersonality;assignments?:FpsAssignments;observed?:FpsObservedBehavior;dna:FpsPlayerDNA;roleSuitability:number;familiarity:number;roleFamiliarity?:Partial<Record<FpsPosition,number>>;instruction?:'balanced'|'hold'|'initiative'|'support'}
+export interface FpsPlayer {id:string;personality:FpsPersonality;assignments?:FpsAssignments;observed?:FpsObservedBehavior;dna:FpsPlayerDNA;roleSuitability:number;familiarity:number;roleFamiliarity?:Partial<Record<FpsPosition,number>>;instruction?:'balanced'|'hold'|'initiative'|'support';tendencyOverrides?:Record<string,number>}
 export interface MatchStateContext {triggers:ReadonlySet<PersonalityTrigger>;confidence:number;fatigue:number;teamIdentity?:FpsTeamIdentity}
 export interface PlayerTacticalFit {coachFit:number;gameplanFit:number;roleFit:number;teamChemistry:number;familiarity:number;overall:number}
 export interface ScoredTacticalAction {action:TacticalAction;legal:boolean;tacticalValue:number;instruction:number}

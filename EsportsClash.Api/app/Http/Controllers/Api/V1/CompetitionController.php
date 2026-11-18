@@ -31,7 +31,7 @@ class CompetitionController extends Controller
         $stages=DB::table('competition_stages')->where('tournament_id',$id)->orderBy('position')->get()->map(function($s){$s->rules=json_decode($s->rules,true);$s->state=json_decode($s->state,true);return $s;});
         $entries=DB::table('club_tournament_entries as e')->leftJoin('online_clubs as c','c.id','=','e.club_id')->leftJoin('national_teams as n','n.id','=','e.national_team_id')
             ->where('e.tournament_id',$id)->select('e.*','c.name as club_name','n.name as national_name')->orderBy('e.seed')->limit(256)->get();
-        $fixtures=ClubFixture::where('tournament_id',$id)->with(['homeClub:id,name','awayClub:id,name','homeNation:id,name','awayNation:id,name','match:id,status,result,spectator_ready,plan'])->orderBy('kickoff_at')->limit(200)->get()->map(fn($f)=>[
+        $fixtures=ClubFixture::where('tournament_id',$id)->with(['homeClub:id,name','awayClub:id,name','homeNation:id,name','awayNation:id,name','match:id,status,result,spectator_ready,plan,on_air_at'])->orderBy('kickoff_at')->limit(200)->get()->map(fn($f)=>[
             'id'=>$f->id,'stage_id'=>$f->stage_id,'round'=>$f->round,'group'=>$f->group_key,'home'=>$f->homeClub?->name??$f->homeNation?->name,'away'=>$f->awayClub?->name??$f->awayNation?->name,
             'kickoff_at'=>$f->kickoff_at,'status'=>$f->hold_reason?'review':($f->match?->status??'scheduled'),
             'winner'=>$f->match?->result['winner']??null,'watch_id'=>$f->match?->canSpectate()?$f->match->id:null]);

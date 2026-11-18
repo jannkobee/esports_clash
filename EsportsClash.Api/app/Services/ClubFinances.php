@@ -43,6 +43,7 @@ class ClubFinances
                 'statement'=>['income'=>$income,'expenses'=>$expenses,'net'=>$income-$expenses,'capital'=>(int)(clone $period)->where('kind','Opening balance')->sum('amount'),
                     'opening_available'=>(int)(clone $query)->where('created_at','<',$from)->sum('amount'),'net_cash_movement'=>(int)(clone $period)->sum('amount')],
                 'payroll'=>['players'=>$weekly-$staff-$youth,'staff'=>$staff,'academy'=>$youth,'weekly'=>$weekly,'four_week_reserve'=>$weekly*4,'weeks_covered'=>$weekly>0?round(max(0,$available)/$weekly,1):null],
+                'board'=>\Illuminate\Support\Facades\Schema::hasTable('manager_dismissals')?app(ClubEconomy::class)->board($club,$available):null,
                 'categories'=>$categories,'daily'=>$daily,'ledger'=>$entries->items(),'page'=>$entries->currentPage(),'pages'=>$entries->lastPage(),'total'=>$entries->total(),
                 'basis'=>'Settled income and expenses in Manila calendar months. Capital and refundable reservations are excluded from operating totals. Purchases are recognized at settlement, not when a bid is held. Ledger shows movements in available money; it therefore differs from the income statement. Payroll budget uses current contracts and assumes no future revenue; contract expiry and future roster changes may alter it.'];
         });

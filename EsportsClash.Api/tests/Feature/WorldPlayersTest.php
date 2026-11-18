@@ -123,6 +123,17 @@ class WorldPlayersTest extends TestCase
         $b = $this->club();
         $online = app(OnlineService::class);
         $c = $online->activeCatalog();
+        // Matches require complete manager-chosen T/CT roles (2026-11-14); save them like a manager would.
+        foreach ([$a, $b] as $club) {
+            $templates = collect($c->payload['cards'])->keyBy('id');
+            $ids = array_column($club->lineup, 'instance_id');
+            $definitions = OwnedPlayerCard::whereIn('id', $ids)->get()->mapWithKeys(fn ($p) => [$p->id => app(WorldPlayerProfiles::class)->definition($p, $templates[$p->definition_id])])->all();
+            $orders = [];
+            foreach (app(\App\Services\FpsPlayerArchitecture::class)->recommendedAssignments($definitions, \App\Services\FpsIdentityEngine::PLAN) as $id => $roles) {
+                $orders[$id] = array_merge($roles, ['instruction' => 'balanced', 'training' => 'system']);
+            }
+            DB::table('fps_team_systems')->updateOrInsert(['club_id' => $club->id], ['revision' => 1, 'gameplan' => json_encode(\App\Services\FpsIdentityEngine::PLAN), 'culture' => json_encode(\App\Services\FpsIdentityEngine::PLAN), 'instructions' => json_encode($orders), 'created_at' => now(), 'updated_at' => now()]);
+        }
         $m = $online->allocate($c, $a->user_id, $b->user_id, $online->validatedLineup($a->user_id, $a->lineup, $c), $online->validatedLineup($b->user_id, $b->lineup, $c), ['blue' => $a->name, 'red' => $b->name]);
         $this->assertSame(1, $m->plan['player_profile_schema']);
         $this->assertNull($m->plan['coach_id']);

@@ -97,6 +97,8 @@ function simultaneousFights(snapshot:LiveSnapshot,preview?:LiveSnapshot,map:Live
 export const PLANT_CHANNEL_DURATION = 3.2;
 export const PLANT_SETTLE_WINDOW = 1.2;
 export const DIRECTOR_MIN_CUT_INTERVAL = 1.2;
+/** Routine re-ranking (no kill, no predicted fight) waits for a readable shot length. */
+export const DIRECTOR_MIN_SHOT_LENGTH = 2.2;
 export const DIRECTOR_POST_KILL_BEAT = 1.4;
 export const DIRECTOR_PREDICTIVE_CUT_INTERVAL = 0.28;
 export const DIRECTOR_FIGHT_LOCK_DURATION = 2.2;
@@ -380,7 +382,45 @@ export function scoreDirectorKillPriority(
   // Mild preference toward active entry / sniper / playmakers when idle, balanced across teams.
   const roleBias = player.role === 'entry' || player.role === 'sniper' || player.role === 'trade' ? 0.25 : 0;
 
-  return duelScore + firingScore + killMomentum + combatRoleBonus + frontLineScore + scopeBonus + utilityExecuteBonus + attackPushBonus + sidearmStarBonus + planterPenalty + stickyBonus + stagnationPenalty + revisitPenalty + teamContrastBonus + roleBias;
+  // The last player alive on a team carries the round's story: viewers expect to stay with the clutch.
+  const teammatesAlive = snapshot.players.filter((p) => p.hp > 0 && p.team === player.team).length;
+  const clutchBonus = teammatesAlive === 1 && enemies.length >= 1 ? 2.4 + Math.min(1.2, (enemies.length - 1) * .4) : 0;
+
+  // A quiet subject whose view is a wall or a tree a step away makes a dead shot; prefer someone with a view.
+  let viewPenalty = 0;
+  if (isQuietSubject) {
+    const clear = directorViewClearance(player, map, playerEyeY);
+    viewPenalty = clear < 1.6 ? -2.4 : clear < 3.2 ? -1 : 0;
+    if (player.equipped === 'knife' && nearestThreat > 25) viewPenalty -= .7;
+  }
+
+  return duelScore + firingScore + killMomentum + combatRoleBonus + frontLineScore + scopeBonus + utilityExecuteBonus + attackPushBonus + sidearmStarBonus + planterPenalty + stickyBonus + stagnationPenalty + revisitPenalty + teamContrastBonus + roleBias + clutchBonus + viewPenalty;
+}
+
+/** How far the player can see straight ahead before a wall (metres, capped at 8). */
+export function directorViewClearance(player: Pick<LivePlayer, 'x' | 'z' | 'yaw' | 'level'>, map: LiveMapRuntime, eyeY: number): number {
+  const reach = 8, from = {x: player.x, y: eyeY, z: player.z};
+  const to = {x: player.x + Math.sin(player.yaw) * reach, y: eyeY, z: player.z + Math.cos(player.yaw) * reach};
+  const hits = map.wallIntersections(from, to);
+  return hits.length ? Math.min(reach, hits[0].t * reach) : reach;
+}
+
+/**
+ * The bomb's last seconds with no defuse that can finish: the shot is the detonation. Returns the
+ * player closest to the device who can see it (the explosion plays out in front of them).
+ */
+export function directorBombFinaleSubject(snapshot: LiveSnapshot): LivePlayer | undefined {
+  if (snapshot.phase !== 'live' || snapshot.bomb.status !== 'planted') return undefined;
+  const left = snapshot.bomb.remaining ?? snapshot.remaining;
+  if (left > 3.4) return undefined;
+  const defuseFinishes = snapshot.players.some((p) => p.hp > 0 && !p.attacking && p.channel > 0 && (p.kit ? 5 : 10) - p.channel <= left);
+  if (defuseFinishes) return undefined;
+  const map = getLiveMapRuntime(snapshot.mapId ?? 'fontessa');
+  const bomb = snapshot.bomb, bombY = map.terrain.groundHeight(bomb) + .3;
+  return snapshot.players.filter((p) => p.hp > 0)
+    .map((p) => ({p, d: distance(p, bomb), sees: map.sightline(p, bomb, (p.jumpY ?? 0) + 1.6, bombY)}))
+    .filter((e) => e.d > 4 && e.d < 40)
+    .sort((a, b) => Number(b.sees) - Number(a.sees) || a.d - b.d)[0]?.p;
 }
 
 function predictsDirectorFight(player: LivePlayer, snapshot: LiveSnapshot): boolean {
@@ -492,6 +532,13 @@ function pickDirectorFollowedPlayer(snapshot: LiveSnapshot, state: DirectorState
     return next;
   }
 
+  // The detonation is the round's last beat: frame it from the nearest player who can see the device.
+  const finale = directorBombFinaleSubject(snapshot);
+  if (finale) {
+    if (finale.id !== existing.id && snapshot.time - state.cutAt >= .5) {state.followedId = finale.id;state.cutAt = snapshot.time;}
+    return players.find((p) => p.id === state.followedId && p.hp > 0) ?? finale;
+  }
+
   // Immediately pull main camera off an active bomb planter (PIP covers the plant).
   if (isActivelyPlanting(existing) && nonPlanters.length > 0) {
     state.followedId = best.player.id;
@@ -522,7 +569,7 @@ function pickDirectorFollowedPlayer(snapshot: LiveSnapshot, state: DirectorState
   // Pre-cut to upcoming shot/utility/objective action in look-ahead buffer when currently watching quiet play.
   const upcomingShotActorId = preview?.shots?.find(shot => shot.time > snapshot.time && shot.time <= snapshot.time + 0.85 && pool.some(p => p.id === shot.actorId))?.actorId;
   const upcomingActionActorId = upcomingShotActorId ?? preview?.events.find(event => (event.kind === 'utility' || event.kind === 'objective') && event.actorId && event.time > snapshot.time + .04 && event.time <= snapshot.time + .85 && pool.some(p => p.id === event.actorId))?.actorId;
-  if (upcomingActionActorId && existingScore < 4.5 && sinceCut >= 0.85) {
+  if (upcomingActionActorId && existingScore < 4.5 && sinceCut >= 1.6) {
     const actor = pool.find(p => p.id === upcomingActionActorId)!;
     if (actor.id !== existing.id) {
       state.followedId = actor.id;
@@ -542,11 +589,12 @@ function pickDirectorFollowedPlayer(snapshot: LiveSnapshot, state: DirectorState
 
   const bestPredictsFight = predictsDirectorFight(best.player, snapshot);
   const predictiveCut = best.player.id !== existing.id && bestPredictsFight && !predictsDirectorFight(existing, snapshot)
-    && sinceCut >= DIRECTOR_PREDICTIVE_CUT_INTERVAL;
+    // A quiet subject can be left at once for a fight; a subject already in one keeps the shot a little longer.
+    && sinceCut >= (existingScore < 3 ? DIRECTOR_PREDICTIVE_CUT_INTERVAL : 1);
   const staleRotate = sinceCut > 3.6 && existingScore < 3.6 && (best.score > existingScore + 0.18 || (sinceCut > 4.2 && best.score > existingScore - 0.12));
   const tacticalCut =
     best.player.id !== existing.id &&
-    (staleRotate || (sinceCut >= (bestPredictsFight ? DIRECTOR_PREDICTIVE_CUT_INTERVAL : DIRECTOR_MIN_CUT_INTERVAL) &&
+    (staleRotate || (sinceCut >= (bestPredictsFight ? .6 : DIRECTOR_MIN_SHOT_LENGTH) &&
     best.score > existingScore + 1.15));
 
   if (urgentKillCut || predictiveCut || tacticalCut) {
@@ -580,8 +628,13 @@ export function chooseDirectorCameraMode(
   if(snapshot.phase==='finished')return 'cinematic';
   if (snapshot.phase === 'post') {
     const withinKillBeat = followed.hp > 0 && snapshot.time - state.lastKillCutAt <= DIRECTOR_POST_KILL_BEAT;
-    return withinKillBeat ? 'first' : 'cinematic';
+    // Fights continue after the round is decided (exit frags, saves): show them from the shooter's eyes.
+    const postFight = followed.hp > 0 && (snapshot.time - followed.lastShot < 1.2
+      || Boolean(preview?.events.some((event) => event.kind === 'kill' && (event.actorId === followed.id || event.targetId === followed.id) && event.time > snapshot.time && event.time <= snapshot.time + 1.1)));
+    return withinKillBeat || postFight ? 'first' : 'cinematic';
   }
+  // The last seconds of a bomb nobody can defuse: a third-person frame shows the blast and the runners.
+  if (directorBombFinaleSubject(snapshot)?.id === followed.id) return 'third';
 
   const fights=simultaneousFights(snapshot,preview);
   const multiple=fights.length>=2&&distance(fights[0],fights[1])>10&&distance(fights[0],fights[1])<58;

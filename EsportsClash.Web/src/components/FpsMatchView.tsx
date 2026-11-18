@@ -1,4 +1,5 @@
-import {FPS_POSITION_LABELS} from '../fps/fpsPlayerArchitecture';
+import {FPS_POSITION_LABELS,emptyFpsObservedBehavior,observeFpsBehavior} from '../fps/fpsPlayerArchitecture';
+import {computeObservedTeamTendencies,FPS_OBSERVED_TEAM_CATEGORIES,FPS_OBSERVED_TEAM_CATEGORY_LABELS} from '../fps/fpsPlayerTendencies';
 import { useEffect, useMemo, useState } from 'react';
 import {
   buildFpsMapLayout,
@@ -18,6 +19,30 @@ export interface FpsMatchViewProps {
   redTeamName: string;
   onExit: () => void;
   autoPlay?: boolean;
+}
+
+
+/** Match-only sample from recorded behavior observations up to the replay position; never hidden profiles. */
+function MatchObservedTendencies({ report, selectedRound, visibleEvents, blueTeamName, redTeamName }: {
+  report: FpsMatchReport; selectedRound: number; visibleEvents: readonly FpsMatchEvent[]; blueTeamName: string; redTeamName: string;
+}) {
+  const observedEvents = [...report.events.filter(e => e.roundNumber < selectedRound), ...visibleEvents]
+    .filter(e => e.type === 'behavior_observation' && e.observation && e.actorId);
+  if (!observedEvents.length) return null;
+  const teams = (['blue', 'red'] as const).map(team => {
+    const record = emptyFpsObservedBehavior();
+    record.matches = 1;
+    for (const e of observedEvents) if (report.playerStats[e.actorId!]?.team === team) observeFpsBehavior(record, e.observation!.metric, e.observation!.attempted);
+    return { team, observed: computeObservedTeamTendencies([record], { minMatches: 1 }) };
+  });
+  if (!teams.some(t => t.observed.sufficient)) return null;
+  return <section className="fps-view__panel"><details className="fps-view__personality">
+    <summary>Observed team tendencies · this match only</summary>
+    <p>Rates of recorded attempts per opportunity so far. One match is a sample, not an established team identity; categories stay blank until they have enough opportunities.</p>
+    <div className="cm-table-wrap"><table className="cm-table"><thead><tr><th>Category</th><th>{blueTeamName}</th><th>{redTeamName}</th></tr></thead>
+      <tbody>{FPS_OBSERVED_TEAM_CATEGORIES.map(key => <tr key={key}><th scope="row">{FPS_OBSERVED_TEAM_CATEGORY_LABELS[key]}</th>
+        {teams.map(t => <td key={t.team}>{t.observed[key] ?? '—'}</td>)}</tr>)}</tbody></table></div>
+  </details></section>;
 }
 
 function teamName(team: FpsTeamId, blueTeamName: string, redTeamName: string): string {
@@ -286,6 +311,7 @@ export function FpsMatchView({ report, blueTeamName, redTeamName, onExit, autoPl
               </div>
             ))}
           </section>
+          <MatchObservedTendencies report={report} selectedRound={selectedRound} visibleEvents={visibleEvents} blueTeamName={blueTeamName} redTeamName={redTeamName}/>
           <section className="fps-view__panel fps-view__log">
             <div className="fps-view__panel-heading"><div><span className="fps-view__eyebrow">RECORDED PLAY-BY-PLAY</span><h2>Action log</h2></div><span>{visibleEvents.length}/{events.length}</span></div>
             <div className="fps-view__event-list" aria-live="polite">

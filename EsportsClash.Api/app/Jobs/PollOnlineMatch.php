@@ -26,18 +26,42 @@ class PollOnlineMatch implements ShouldQueue, ShouldBeUniqueUntilProcessing
     {
         $match = OnlineMatch::findOrFail($this->matchId);
         if (! in_array($match->status, ['allocated', 'running'], true)) return;
-        if ($match->isBeforeKickoff()) return;
+        if ($match->isBeforeComputeWindow()) return;
         $http = Http::withToken(config('online.worker_token'))->connectTimeout(3)->timeout(15);
-        $url = rtrim(config('online.worker_url'), '/').'/matches/'.$match->id;
+        $url = $match->workerUrl().'/matches/'.$match->id;
         $started = $http->post($url, ['plan' => $match->plan, 'plan_hash' => $match->plan_hash]);
         if ($started->status() === 409) { self::dispatch($match->id)->delay(now()->addSeconds(10)); return; }
+        // Queued on the worker (all slots busy): it starts the match itself; check back less often.
+        if (($started->json('status') ?? null) === 'queued') { self::dispatch($match->id)->delay(now()->addSeconds(30)); return; }
         $started->throw();
         $state = $http->get($url)->throw()->json();
-        if (in_array($state['status'], ['running', 'completed'], true) && isset($state['started_at'])) {
-            OnlineMatch::whereKey($match->id)->whereNull('started_at')
-                ->update(['started_at' => Carbon::parse($state['started_at'])->utc()]);
+        $live = $match->usesLiveEngine();
+        // One game at a time per tournament stream: record the on-air time, or wait while the previous game airs.
+        if ($live && $match->on_air_at === null && $match->resolveOnAir() === null && $match->awaitsOnAir()) {
+            self::dispatch($match->id)->delay(now()->addSeconds(30));
+            return;
         }
-        if (($state['public_replay'] ?? false) === true && isset($match->plan['fixture'])) {
+        if (in_array($state['status'], ['running', 'completed'], true) && isset($state['started_at'])
+            && (! $live || ! $match->isBeforeKickoff())) {
+            // A live 3D broadcast starts when it goes on air, however early it was simulated.
+            OnlineMatch::whereKey($match->id)->whereNull('started_at')
+                ->update(['started_at' => $live && $match->broadcastStartsAt() ? $match->broadcastStartsAt()->utc() : Carbon::parse($state['started_at'])->utc()]);
+        }
+        if ($live && $state['status'] === 'completed') {
+            // Simulated ahead: settle only when the broadcast reaches the final frame (no spoilers).
+            $match->refresh();
+            $start = $match->broadcastStartsAt();
+            $ends = $start?->addMilliseconds((int) round(($state['result']['report']['broadcastSeconds'] ?? 0) * 1000));
+            if ($start === null || $ends->isFuture()) {
+                if ($start !== null && ! $start->isFuture()) {
+                    OnlineMatch::whereKey($match->id)->whereIn('status', ['allocated', 'running'])->update(['status' => 'running']);
+                    if (isset($match->plan['fixture'])) OnlineMatch::whereKey($match->id)->where('spectator_ready', false)->update(['spectator_ready' => true]);
+                }
+                self::dispatch($match->id)->delay($start === null || $start->isFuture() ? ($start ?? now()->addSeconds(5)) : $ends->min(now()->addMinutes(5)));
+                return;
+            }
+        }
+        if (($state['public_replay'] ?? false) === true && isset($match->plan['fixture']) && (! $live || ! $match->isBeforeKickoff())) {
             OnlineMatch::whereKey($match->id)->where('spectator_ready', false)->update(['spectator_ready' => true]);
         }
         if ($state['status'] === 'completed') {
@@ -46,7 +70,7 @@ class PollOnlineMatch implements ShouldQueue, ShouldBeUniqueUntilProcessing
             OnlineMatch::whereKey($match->id)->whereIn('status', ['allocated', 'running'])
                 ->update(['status' => 'failed', 'error' => $state['error'] ?? 'Worker failed.']);
         } else {
-            if ($state['status'] === 'running') {
+            if ($state['status'] === 'running' && (! $live || ! $match->isBeforeKickoff())) {
                 OnlineMatch::whereKey($match->id)->whereIn('status', ['allocated', 'running'])
                     ->update(['status' => 'running', 'sequence' => $state['sequence'] ?? 0]);
             }

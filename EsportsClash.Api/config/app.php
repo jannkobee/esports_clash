@@ -54,6 +54,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // Where managers open the game (links in email). Defaults to the first configured frontend origin.
+    'frontend_url' => env('APP_FRONTEND_URL', explode(',', (string) env('FRONTEND_URLS', 'http://localhost:8088'))[0]),
+
     'dev_vite_url' => env('DEV_VITE_URL'),
 
     /*

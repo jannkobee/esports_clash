@@ -1,5 +1,152 @@
 # Repository handoff
 
+## Workspace information architecture: grouped by what the manager is doing (2026-11-18, latest)
+
+Read [the record](docs/ui-information-architecture-20261118.md) before changing navigation, Home, Matches or Squad.
+
+- **Navigation.** `components/ui/navigation.ts` (`WORKSPACE_NAV`, `activeNavKey`, `areaHeading`, `navTrail`) drives the sidebar, its active state, the breadcrumb and page headers.
+  - Groups: Your club (Home, Squad, Matches, Transfers, Finances), Compete, Watch & follow, Practice, Research, Account.
+  - Matches holds only the club's games: Fixtures, Scrimmages and Results (the old Match history). Routes are unchanged.
+  - Below 1024 px the sidebar collapses behind a menu button.
+- **Fixtures** (`components/matches/FixtureBoard.tsx`): a Next match card, then Live now, Set your orders, Locked in, Needs review and Recent results.
+  - Rows name the opponent with a Home/Away tag and a plain-language state line.
+  - Editing fixture orders shows a context banner.
+  - Scrimmages put received invitations first, then Quick match beside Invite a club.
+- **Squad** (`SquadRoster.tsx`): a readiness check (`lineupReadiness`, shared with Home), the slot picker, then the roster grouped into Starting five and Reserves, with per-player Details (personality, positions, attribute bars).
+- **Home** (`ClubHome.tsx`, `components/home/HomeSections.tsx`), in priority order: Needs your attention (derived items), Next match, Club at a glance, Manager's desk, Starting five with Recent results, Around the circuit. The decorative banner and the portal grid that repeated the sidebar are removed.
+- **Checks.** `npm run check:game` 592/592; `npm run build` passes. Verified in a headless-Chrome harness at 1440 px and 390 px.
+- **Open.**
+  - The signed-in app with a live backend was not rendered.
+  - Competitions, cups, Transfers, Finances, Staff, Supporter and Settings kept their internal layouts.
+  - `EsportsClash.Web/ui-harness/` must be deleted by hand.
+
+## Shared UI layer: icon registry, search, navigation, states (2026-11-18)
+
+Read [the record](docs/ui-shared-layer-20261118.md) before adding or restyling a screen.
+
+- **Components** live in `src/components/ui/`: `SearchField`, `FilterBar`/`SelectField`, `SectionNav`, `PageHeader`, `EmptyState`/`ErrorState`/`ListSkeleton`, `AppIcon`, and `ui.css`. Use them; do not add bare search inputs or ad hoc loading text.
+- **Icons** come from `ui/icons.ts` (`ICONS`, `NAV_SETS`). Each navigation set has a distinct icon per destination, enforced by `src/uiIcons.test.mjs`. `LabelIcon` resolves registered names exactly and returns no icon for unmatched free text (it no longer falls back to a generic one).
+- **Applied to:** the app shell, Match centre tabs, squad sub-tabs, Hexapedia (three groups: Start here, Game reference, World records), the squad roster (compact identity marks), and every text search.
+- **Open:** signed-in screens were verified only by typecheck and a headless-Chrome harness; other modules were not redesigned; legacy search/filter CSS is partly unused and not removed.
+
+## Broadcast schedule: tournament streams, on-air holds, kickoff cap (2026-11-18)
+
+Read [the record](docs/fps-broadcast-schedule-20261118.md) before changing fixture scheduling, `OnlineMatch` broadcast timing or `PollOnlineMatch`.
+
+- **Streams.** Tournament games air one at a time per `club_fixtures.broadcast_stream`, at least `broadcast_slot_minutes` (90) apart. A round has `ceil(games / games_per_stream)` streams (8 games per stream), or the `broadcast_streams` regulation.
+- **On-air hold.** A live 3D game whose earlier game on the same stream is still unsettled is held, and goes on air at that game's end plus `broadcast_break_minutes` (15). The time is stored in `online_matches.on_air_at` and decided only after the earlier game ends, so no spoiler. Held games show as `delayed`. Holds are capped at `broadcast_max_hold_minutes` (180).
+- **Kickoff cap.** `kickoffs_per_hour` (300) limits fixtures per UTC clock hour. Tournaments and the scrimmage queue move to the next hour with room; friendlies and `fixtures:schedule` refuse.
+- **Orders deadline.** Live fixtures lock orders 105 minutes before kickoff (`ClubFixture::ordersCloseAt`: 15 plus the 90-minute precompute; 15 on version 4), so simulation gets the full window. The scrimmage queue keeps its 15-minute lock. The club's saved default lineup plays unless a fixture has its own orders, and `DELETE /online/fixtures/{id}/orders` reverts to it.
+- **Checks.** `BroadcastScheduleTest` 8/8 plus the focused suites in the record; `npm run build` passes. Migration `2026_11_18_000001` has not been run in production.
+
+## Official matches on the live 3D engine, simulated ahead and watched as replays (2026-11-18)
+
+Read [the record](docs/fps-official-live-engine-20261118.md) before changing match allocation, the worker, replays or official viewing.
+
+- **Version 5.** New official allocations pin `simulation_version: 5` on a live map (`OnlineService::FPS_LIVE_MAPS`). `FPS_SIMULATION_VERSION=4` reverts to the recorded engine. Version-4 allocations and replays stay supported. `phpunit.xml` pins version 4 for the existing suites; version 5 is covered by `FpsLiveEngineTest`.
+- **Engine.** `simulateOfficialLiveMatch` (`fpsOfficialLiveMatch.ts`) is deterministic and headless, with frozen learners, and returns the recorded engine's report contract plus:
+  - `engine: 'live-3d'`
+  - `behaviorSummary` (aggregated observed decisions; keep it aggregated, as per-observation events made 10 MB reports)
+  - `roundSnapshots` (positions only)
+  - `broadcastSeconds`
+
+  Team-kills and bomb deaths are `player_eliminated`, not kills. No private identity state in reports or replays.
+- **Replays.** `fpsLiveReplay.ts`: 10 frames per second, public keyframes plus deltas, 10-second gzipped chunks, a provisional header after every chunk. Tendencies appear only as 1–10 levels. `FpsLiveReplaySource` drives `FpsLiveBroadcast` through its `replay` prop. Exhibitions still simulate in the browser.
+- **Timing.**
+  - Simulation starts `FPS_PRECOMPUTE_MINUTES` (90) before kickoff.
+  - The match becomes `running` at kickoff and settles only at `kickoff + broadcastSeconds`.
+  - `/online/matches/{id}/live-replay[/{chunk}]` serves only whole chunks that have aired, and hides the match length until it ends.
+- **Workers.**
+  - `ONLINE_MAX_MATCHES` matches at a time per worker, with a local queue (`202 queued`).
+  - Each match process has a heap cap (`ONLINE_MATCH_HEAP_MB`) and loads the prebuilt engine bundle (`scripts/build-worker-engine.mjs`).
+  - `ONLINE_WORKER_URLS` routes matches by id across machines.
+  - `/health` reports capacity, and each match logs its CPU seconds and peak memory.
+- **Retention** (record section "Replay retention"). `replay_retention.py`, swept by `server.py` at startup and every `ONLINE_REPLAY_SWEEP_MINUTES` (60), removes only `replay/` of finished version-5 matches whose broadcast ended more than `ONLINE_REPLAY_RETENTION_DAYS` (30; `0` keeps forever) ago, leaving `state.json`/`allocation.json` and a `replay-expired.json` marker. Age counts from the end of airing (`state.completed_at` or the final header, and kickoff + `broadcastSeconds`), never from a provisional header. Running, queued, unfinished, on-air and version-4 matches are never touched. Low-disk guard `ONLINE_REPLAY_MIN_FREE_GB` (2; `0` off) removes the oldest aired replays first, never within an hour of airing. `/health` reports `replays`. Laravel answers `410` (`replay_expired`, or `replay_missing` for a settled match the worker lacks); the frontend shows "Replay no longer available" with the result and report kept.
+- **Checks.**
+  - `npm run check:game`: 569/569; `npm run build` passes.
+  - Backend focused suites: 108/108.
+  - Results are deterministic across processes and between the bundle and the sources.
+  - Load test (`scripts/load-test-match-worker.mjs`): about 212 CPU-seconds per match under full load; about 40 hardware threads for 1,000 kickoffs simulated in 90 minutes; about 5.4 MB of replay per match.
+- **Open.**
+  - Replay storage: the owner chose the worker's disk for now; object storage plus a CDN is not built.
+  - Production cores are the owner's decision.
+  - The Docker image was not built; nothing was deployed or migrated.
+  - No end-to-end fixture run through Laravel's queue.
+  - The official broadcast view was not reviewed in a browser.
+
+## Round responsibilities: dynamic jobs on top of fixed roster positions (2026-11-17)
+
+Read [the record](docs/fps-round-responsibilities-20261117.md) before any role, IGL or decision-making work.
+
+- **Positions vs jobs.** Manager-assigned positions and `role` (the IGL authority and the buy bridge) stay fixed for the match. Round jobs (`entry`, `trade`, `support`, `lurker`, `anchor`, `sniper`) come from `assignFpsRoundDuties` (`fpsRoundResponsibilities.ts`) for the whole team at once. Live code reads `duty(p)`, never `p.role`, for round jobs.
+- **Inputs.** The roster prior, the player's own tendencies (floor 0.35), the caller's leadership tendencies, lawful team state (HP, weapon, grenades, bomb, distance) and continuity. Attributes are read only through the caller's strength exploitation, and never gate a job. The allocator is deterministic and uses no random stream.
+- **Handovers.** Jobs re-elect about once a second and at once after a death. A changed job is a communicated handover with a delay. A single-holder job releases the old holder in the same call. Freeze time is always elected as an opening. The carrier is never the entry while a healthy rifler is available.
+- **Interaction, by positioning and timing only.** A paired trader for the entry; the entry briefly holds for the trade; the best-placed teammate with a flash supports the entry, whatever that player's job; an escort for an isolated carrier; an anchor fallback when outnumbered (never during a visible duel); anchor depth from tendencies.
+- **Other surfaces.** The recorded 2D engine uses the same allocator. Snapshot `duty`/`dutyReason` feed the broadcast focus card. `diagnostics.staticRoles` is a headless ablation. Diagnostics: `scripts/diagnose-role-duties.mjs`.
+- **Continuation and forks** (record sections 11–12):
+  - Trades: the paired trader has first claim, a second responder commits, and trade swings onto the lawfully called position happen only after the call lands. The follow point is chosen for a line onto the entry's view.
+  - CT setups come from positions (`ctSlot`), not roster order. CT_ROTATOR rotates first.
+  - One lost anchor gets a measured response; orders carry `firm`.
+  - Rotator hesitation and lane contact (`rotationHesitation`, `laneContact`).
+  - Duty-aware action scoring (`dutyActionBias`).
+  - Fixes: a vault no longer wedges a player in the Mid window frame, and a player killed mid-vault is settled on the landing. Re-issued rotations keep their call time and acknowledge the order.
+- **Whole-system review.**
+  - The top-bar Sound button was removed (Settings keeps master sound and music).
+  - Scouting and World Desk entry points on Club home and in the sidebar; a guide chapter on roles and round jobs.
+  - Bulk-primed Hexapedia directories and tournaments, memoised identity readiness, cached search, a guarded index migration (`2026_11_17_000003`, not run in production), and no polling from hidden tabs.
+- **Checks.**
+  - `npm run check:game`: 564/564; `npm run build` passes.
+  - Backend focused suites: 80/80.
+  - Pooled T win rate 0.65 dynamic against 0.63 static (noise).
+  - Deaths traded within 3 s: 9.3% against 8.1% on Fontessa, 7.6% against 6.2% on Spillway.
+  - Benchmark p99 is 9–14 ms.
+- **Open issues.**
+  - Trades are now limited by duels (reaction wait, then killer re-positioning).
+  - Hesitation rarely fires, because almost all CT calls are firm. It needs ambiguous T play.
+  - Unindexed player text search, per-club record table, timers while the WebSocket is connected, and 1–10-only API values (all recommended in the record).
+  - Signed-in screens not rendered; the full backend suite was not run.
+  - No production migration or deployment; GPU not measured.
+
+## Duels, calculated smokes, handoffs, post-round fights, rotations, Mid door/bridge, director, utility purposes (2026-11-17)
+
+Read [the record](docs/fps-live-corrections-20261117.md) and [the adopted utility-purpose reference](docs/fps-utility-purposes-20261117.md).
+
+- **Duels.** Players take a duel they can see before thinking about cover. Do not restore cover moves without a trade, or the 0.3 s peek-back.
+- **Smokes.** Smokes come from `fpsSmokePlanner.ts` each round (`roundSmokes`). Do not read `authoredSmokeLineups` in live decisions; it is a test fixture only.
+- **Handoffs.** Items pass by physical handoff (`beginHandoff`/`stepHandoff`); drop flights use real `at`/`airUntil`.
+- **Snipers** need a short scoped dwell (`scopedAt`).
+- **After the round**, players fight until the next round (learners are not fed it).
+- **CT** rotate on a lawful fallen-site call.
+- **Mid building** has a normal door and window, and the gap beside the bridge's right stair is closed.
+- **Director** adds clutch focus, a wall-view penalty, the bomb finale and a minimum shot length.
+- **Utility purpose.** Every throw carries an objective, a primary purpose and secondary purposes, and an outcome is judged afterwards. It is decision-side only.
+- **Forks.** Forks made planning commitments (no route re-rolls) and the rounded operative model with inventory-driven grenade pouches.
+- **Checks.** `npm run check:game`: 521/521.
+- **Open issues**:
+  - Isolated 50–70 ms `decide()` spikes; cause not found.
+  - Flashes rarely achieve their purpose.
+  - GPU and live-browser review not done.
+
+## Evolving meta: lineages, playbooks, auto-promotion, real matches; lag and post-plant fixes (2026-11-17, later)
+
+Read [the record](docs/fps-evolving-meta-20261117.md). Learned state is never deleted: append-only Laravel lineage store (`fps_team_lineages`/`fps_model_versions`/`fps_lineage_events`, trigger-enforced), append-only `models/registry.json` (overrides `active.json`), worker `model_versions` + quarantine, utility-brain consolidation tiers (archive/aggregates) instead of eviction, IndexedDB browser cache with quarantine and experiment slots. `engineHash` is provenance only; incompatible learners are archived then forked. Two worker lineages co-evolve (`worker:main`/`worker:rival`). Archetypes/setups are data-driven seed plays (`fpsLivePlays.ts`, parity trace `scripts/trace-live-fps.mjs` identical); team playbooks (`fpsLivePlaybook.ts`) do Thompson choice, bounded innovation, per-opponent counters and lawful opponent models (decision-only). Coordinator auto-promotes after screening, four ablations and a league, monitors and auto-rolls back; owner controls are `registry.mjs pause|resume|rollback`. Club real-match experience: `POST /fps/lineages/club:{id}/experience` (own club, lawful fields only). Worker jobs resolve on child `close` (not `exit`). Route planning uses one-origin `findPathsFrom`; planters leave the device after planting. The T-side bias (63-67% at the last commit; manual aim adds ~6-7 points) is unexplained. No browser review this pass; GPU unmeasured.
+
+## Aim paths, all-grenade utility brain, server utility learning, 1-10 scouting scale (2026-11-17)
+
+Read [the record](docs/fps-aim-utility-server-scale10-20261117.md). Every shot comes from the manual crosshair (no snapped views); AWP/Scout flick without spray; spray index survives target changes. All grenades are calculated and learned by `fpsUtilityBrain.ts` (no solver in live throws). Utility brain travels in learning reports/bundles (optional, bounded). Scouting shows only whole 1-10 levels with labels (`fpsScale10.ts` mirrored in PHP); never raw 0-100 or DNA. Consistency is a hidden noise-only trait. Fontessa HUD/props/operatives were reviewed in headless Chrome screenshots (1920/1280/390px) and fixed; Spillway was reviewed the same way. T wins 77-82% in small headless samples (earlier Spillway record ~55%); cause unfound, likely from this pass's aim/utility changes. GPU frame rates unmeasured.
+
+## Fontessa manual aim, CS-style recoil, signs, outskirts and HUD (2026-11-16)
+
+Read [the Fontessa gunplay/signs/HUD record](docs/fps-fontessa-gunplay-signs-hud-20261116.md). Bots aim by hand (`fpsLiveGunplay.ts` submovement crosshair, attribute-driven); do not restore continuous head-locking or per-tick automatic recoil compensation. Preserve fixed spray patterns with learned pull-down, Deagle punch/spam penalty, double-sided correctly oriented sign lettering, facade detail on the outer houses' visible faces, wall-anchored festoons and the one-line observer card rows. Visuals are unreviewed in a browser.
+
+## Lag spikes, smoke fixes and the learned utility brain (2026-11-16)
+
+Read [the utility brain record](docs/fps-utility-brain-and-lag-20261116.md). Smokes are calculated by the bots (distance → throw type, static blockers → arc) and learned from real landings in `fpsUtilityBrain.ts`; do not restore pre-solved lineup throws, per-tick arc searches or the perfect-forecast release veto for smokes. Preserve per-assignment spot memory, best-aim learning, the committed seed brain (`fps-utility-brain.json`, trainer `scripts/train-utility-brain.mjs`), lab learning on by default and the per-tick defuser election cache. CPU spikes are reduced; GPU frame rates are unverified.
+
+## Architecture v4 tendencies audit & Phase 5–6 (2026-11-16)
+
+Read [the tendencies audit record](docs/fps-tendencies-v4-audit-20261116.md). Preserve exact TS↔PHP scouting derivation parity (`fps-tendency-vectors.json`, asserted in both suites), null-until-threshold observed team categories (5 appearances / 15 opportunities; never back-fill), bounded pressure expression in `effectiveTendency`, 2D override + contextual call acceptance parity, one-time IGL death takeover with combat-lock secondary calling via `activeCaller()`, team-union lawful opponent habit recording, and lab-only experimental tendency overrides. Tendencies remain decision-only (no accuracy/spread/damage/reaction effects).
+
 ## Spillway battlefield, lawful death-callout trading, cam-switch lag & Hexapedia/FE sync (2026-11-16)
 
 Read [the Spillway & FE sync record](docs/fps-spillway-20261116.md). Preserve `fontessa` as default (`getLiveMapRuntime()`), Spillway's 3-level Overpass-inspired layout (`fpsSpillwayMap.ts`/`Scenery`/`Terrain`), `3.82m` Control Deck rails with 2-1-2 B rotation, lawful observed-only death cover callouts (`describeNearbyDeathCover`, no unseen killer leaks), `radioAt` PTT release timing, `fpWeaponViews` LRU cache (`48`) + incremental prewarming, PiP 3D sightline checks, Hexapedia `liveSimulation` / live map / live weapon entries, and Manager FE live 3D practice launch with `createFpsIdentityContext` validation (keep manual unique role assignment intact). Structural/CPU/NullEngine checks do not verify browser GPU FPS.

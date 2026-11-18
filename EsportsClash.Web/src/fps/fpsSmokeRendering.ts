@@ -29,7 +29,7 @@ float fbm(vec3 p){
 }
 void main(){
   vec3 direction=normalize(worldPoint-eyePosition);
-  float opticalDepth=0.0;float weightedEntry=0.0;float weightSum=0.0;float frontEntry=10000.0;
+  float opticalDepth=0.0;float weightedEntry=0.0;float weightedMid=0.0;float weightSum=0.0;float frontEntry=10000.0;
   float floorY=cloudOrigin.y-1.42;
   float minT=0.0;
   float maxT=10000.0;
@@ -52,19 +52,24 @@ void main(){
         opticalDepth+=layer;
         float w=chord*chord*(0.2+0.8*radial);
         weightedEntry+=(entry+chord*0.06)*w;
+        weightedMid+=0.5*(entry+exit)*w;
         weightSum+=w;
         if(layer>0.08)frontEntry=min(frontEntry,entry+chord*0.05);
       }}
   }
   if(opticalDepth*fade<0.005||weightSum<=1e-6)discard;
   float effectiveEntry=weightedEntry/weightSum;
+  float effectiveMid=weightedMid/weightSum;
   float depthEntry=frontEntry<9999.0?min(effectiveEntry,frontEntry+0.15):effectiveEntry;
   vec3 flow=vec3(cloudTime*.055,-cloudTime*.032,cloudTime*.025);
-  vec3 samplePoint=eyePosition+direction*(effectiveEntry+min(opticalDepth,1.0)*.35);
+  float sampleDist=max(1.65,max(effectiveEntry+min(opticalDepth,1.8)*.55,effectiveMid));
+  vec3 samplePoint=eyePosition+direction*sampleDist;
   float billow=fbm(samplePoint*1.35+flow);
   float detail=fbm(samplePoint*2.8-flow*1.4);
-  float density=opticalDepth*(0.62+0.48*billow)*fade;
-  float alpha=clamp(1.0-exp(-density*2.1),0.0,0.99)*smoothstep(0.32,1.02,opticalDepth*fade);
+  float edgeNoise=mix(billow,detail,0.35);
+  float sculptedOptical=max(0.0,opticalDepth-(1.0-edgeNoise)*0.20*clamp(1.2-opticalDepth*0.35,0.25,1.0));
+  float density=sculptedOptical*(0.68+0.50*billow)*fade;
+  float alpha=clamp(1.0-exp(-density*2.2),0.0,0.99)*smoothstep(0.18,0.88,density);
   if(alpha<0.015)discard;
   vec3 normalApprox=normalize((samplePoint-vec3(cloudOrigin.x,cloudOrigin.y-0.15,cloudOrigin.z))*vec3(1.0,1.35,1.0)+(detail-0.5)*0.85);
   float sunWrap=clamp(dot(normalApprox,normalize(vec3(0.45,0.78,-0.35)))*0.5+0.5,0.0,1.0);

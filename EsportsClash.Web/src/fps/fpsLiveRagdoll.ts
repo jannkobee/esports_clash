@@ -5,9 +5,18 @@ import type {FpsTerrainLevel} from './fpsSpatialWorld.ts';
 export interface RagPoint {x:number;y:number;z:number;px:number;py:number;pz:number}
 export type RagJoint='pelvis'|'chest'|'head'|'ls'|'le'|'lh'|'rs'|'re'|'rh'|'lhp'|'lk'|'lf'|'rhp'|'rk'|'rf';
 export interface LiveRagdoll {points:Record<RagJoint,RagPoint>;links:{a:RagJoint;b:RagJoint;length:number}[];inverseMass:Record<RagJoint,number>;age:number;accumulator:number;solids:readonly {minX:number;maxX:number;minZ:number;maxZ:number;height:number;baseY?:number}[];level?:FpsTerrainLevel;floorAt?:(p:RagPoint,y:number)=>number}
-/** Cosmetic articulated Verlet bodies. No collision volume or information is fed back to actors. */
-export function createLiveRagdoll(c:LiveCorpse,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):LiveRagdoll {
- const positions:Record<RagJoint,number[]>={pelvis:[0,.78,0],chest:[0,1.23,0],head:[0,1.54,0],ls:[-.235,1.31,0],le:[-.235,1.06,.02],lh:[-.235,.81,.06],rs:[.235,1.31,0],re:[.235,1.06,.03],rh:[.235,.81,.08],lhp:[-.11,.74,0],lk:[-.11,.38,0],lf:[-.11,.07,.06],rhp:[.11,.74,0],rk:[.11,.38,0],rf:[.11,.07,.06]};
+/** Body-local joint positions (x right, y up from the feet, z forward) captured from the last live pose. */
+export type LiveRagdollPose=Partial<Record<RagJoint,readonly [number,number,number]>>;
+/**
+ * Cosmetic articulated Verlet bodies. No collision volume or information is fed back to actors. When the
+ * operative's last live pose is supplied the body starts from it (no snap to a rest pose on death), and the
+ * knees take a small forward buckle so a dropped body folds instead of toppling stiff.
+ */
+export function createLiveRagdoll(c:LiveCorpse,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,pose?:LiveRagdollPose):LiveRagdoll {
+ const rest:Record<RagJoint,readonly number[]>={pelvis:[0,.78,0],chest:[0,1.23,0],head:[0,1.54,0],ls:[-.235,1.31,0],le:[-.235,1.06,.02],lh:[-.235,.81,.06],rs:[.235,1.31,0],re:[.235,1.06,.03],rh:[.235,.81,.08],lhp:[-.11,.74,0],lk:[-.11,.38,0],lf:[-.11,.07,.06],rhp:[.11,.74,0],rk:[.11,.38,0],rf:[.11,.07,.06]};
+ const posed=(key:RagJoint)=>{const p=pose?.[key];return p&&p.every(Number.isFinite)?p:undefined;};
+ const positions=Object.fromEntries((Object.keys(rest) as RagJoint[]).map(key=>{const p=posed(key);return [key,p?[p[0],p[1]/(c.crouch?.76:1),p[2]]:rest[key]];})) as Record<RagJoint,readonly number[]>;
+ const facingX=Math.sin(c.yaw),facingZ=Math.cos(c.yaw);
  const points={} as Record<RagJoint,RagPoint>;
  const impact=c.impact,region=impact?.region??'torso',strength=Math.max(.25,Math.min(1.5,impact?.strength??.65));
  const horizontal=Math.hypot(impact?.direction.x??0,impact?.direction.z??0);
@@ -38,8 +47,10 @@ export function createLiveRagdoll(c:LiveCorpse,runtime:LiveMapRuntime=FONTESSA_M
   const at=impact?.point,proximity=at?1/(1+Math.hypot(wx-at.x,wy-at.y,wz-at.z)*2):.4;
   const local=region==='blast'||region==='burn'?0:proximity*.65;
   const lateralX=at?wx-at.x:0,lateralZ=at?wz-at.z:0;
-  const vx=c.vx+dirX*(kick+local)*strength+lateralX*local*.3;
-  const vz=c.vz+dirZ*(kick+local)*strength+lateralZ*local*.3;
+  // Muscle tone gives out: knees fold forward rather than locking straight (not for blasts).
+  const buckle=region==='blast'?0:key==='lk'||key==='rk'?.55:0;
+  const vx=c.vx+dirX*(kick+local)*strength+lateralX*local*.3+facingX*buckle;
+  const vz=c.vz+dirZ*(kick+local)*strength+lateralZ*local*.3+facingZ*buckle;
   const vy=(c.vy??0)+(dirY*kick+lift-drop)*strength;
   points[key]={x:wx,y:wy,z:wz,px:wx-vx/60,py:wy-vy/60,pz:wz-vz/60};
  }
@@ -53,7 +64,7 @@ export function stepLiveRagdoll(r:LiveRagdoll,dt:number):void {
   for(let pass=0;pass<5;pass++){
    for(const link of r.links){const a=r.points[link.a],b=r.points[link.b],dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z,d=Math.hypot(dx,dy,dz)||1,k=(d-link.length)/d,wa=r.inverseMass[link.a],wb=r.inverseMass[link.b],sum=wa+wb;a.x+=dx*k*wa/sum;a.y+=dy*k*wa/sum;a.z+=dz*k*wa/sum;b.x-=dx*k*wb/sum;b.y-=dy*k*wb/sum;b.z-=dz*k*wb/sum;}
    for(const [joint,p] of Object.entries(r.points)){
-    const radius=joint==='head'?.15:joint==='chest'||joint==='pelvis'?.17:.075;
+    const radius=joint==='head'?.12:joint==='chest'||joint==='pelvis'?.17:.075;
     const floor=(r.floorAt?r.floorAt(p,p.y):FONTESSA_MAP_RUNTIME.terrain.floorAt({x:p.x,z:p.z,level:r.level},p.y))+radius;if(p.y<floor){p.y=floor;p.px=p.x-(p.x-p.px)*.55;p.pz=p.z-(p.z-p.pz)*.55;}
     for(const w of r.solids){if(p.y<(w.baseY??0)-.07||p.y>w.height+.07||p.x<w.minX-.07||p.x>w.maxX+.07||p.z<w.minZ-.07||p.z>w.maxZ+.07)continue;
      const sides=[Math.abs(p.x-(w.minX-.07)),Math.abs(p.x-(w.maxX+.07)),Math.abs(p.z-(w.minZ-.07)),Math.abs(p.z-(w.maxZ+.07)),Math.abs(p.y-(w.height+.07))],side=sides.indexOf(Math.min(...sides));

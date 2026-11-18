@@ -46,7 +46,11 @@ class FpsIdentityProfiles
     }
     public function scouting(object $row,?array $plan=null,?array $coach=null): array
     {
-        $p=app(FpsPlayerArchitecture::class)->personality(json_decode($row->personality,true,512,JSON_THROW_ON_ERROR));
+        $arch=app(FpsPlayerArchitecture::class);
+        $p=$arch->personality(json_decode($row->personality,true,512,JSON_THROW_ON_ERROR));
+        $dna=json_decode($row->dna??'{}',true)?:[];
+        $tendencies=$arch->deriveTendencies($p,$dna);
+        $iglIdentity=$arch->iglLeadershipIdentity($tendencies);
         $dev=json_decode($row->development,true);$behavior=json_decode($row->behavior??'null',true);
         $initiative=match($p['playstyle']){'AGGRESSIVE'=>.9,'PASSIVE'=>.1,default=>.5};
         $deliberation=match($p['decisionStyle']){'METHODICAL'=>.85,'INSTINCTIVE'=>.15,default=>.5};
@@ -55,9 +59,20 @@ class FpsIdentityProfiles
         $gameplanFit=$plan?$describe((4-abs($initiative-$plan['aggression'])-abs($deliberation-$plan['preparation'])-abs($coordination-$plan['structure'])-abs(1-$deliberation-$plan['freedom']))/4):null;
         $coachFit=$coach?$describe((4-abs($initiative-$coach['aggression'])-abs($deliberation-$coach['preparation'])-abs($coordination-$coach['communication'])-abs(1-$deliberation-$coach['freedom']))/4):null;
         $appearances=$behavior['matches']??0;$sufficient=$appearances>=5&&($behavior['metrics']['engagement']['opportunities']??0)>=30;
+        // Derived values only; raw DNA never leaves this service. Labels come from the shared catalog.
+        $labels=[];foreach($arch->tendenciesCatalog()['individualCategories'] as $category)foreach($category['tendencies'] as $t)$labels[$t['key']]=$t['label'];
+        $topTendencies=[];
+        foreach(['earlyAggression','playDiscipline','supportFlash','lurkFlank','wideSwing','jigglePeek','utilityConservation','rotationProactivity'] as $k)$topTendencies[]=['key'=>$k,'label'=>$labels[$k]??$k,'value'=>$tendencies[$k]??50];
+        usort($topTendencies,fn($a,$b)=>abs($b['value']-50)<=>abs($a['value']-50)?:$b['value']<=>$a['value']);
+        // Manager-facing output uses whole 1–10 levels with labels; raw 0–100 values stay here.
+        $topTendencies=array_map(function($t)use($arch){$r=$arch->rated($t['value'],'tendency');return ['key'=>$t['key'],'label'=>$t['label'],'value'=>$r['value'],'level'=>$r['label']];},$topTendencies);
         return ['player_id'=>$row->player_id,'personality'=>$p,'observed'=>$sufficient?$behavior:null,
             'mapping'=>$dev['mapping']??'deterministic_id_v4','confidence'=>$sufficient?'observed':'natural preferences; insufficient match observations',
             'appearances'=>$appearances,'gameplan_fit'=>$gameplanFit,'coach_fit'=>$coachFit,'role_familiarity'=>$dev['role_familiarity']??(object)[],
+            'igl_identity'=>$iglIdentity,'top_tendencies'=>array_slice($topTendencies,0,3),
+            // Derived diagnostics (shared diagnosticKeys) and the hidden consistency trait, both as whole
+            // 1–10 levels with labels; neither exposes DNA or a raw 0–100 value.
+            'derived_tendencies'=>array_map(fn($v)=>$arch->rated($v,'tendency'),$arch->diagnosticTendencies($p,$dna)),'consistency'=>$arch->rated($arch->deriveConsistency($p,$dna),'skill'),
             'familiarity'=>($dev['familiarity']??0)>.3?'learning':'new system','recent_observations'=>$sufficient?($dev['recent_observations']??[]):[],
             'observations'=>['risk'=>strtolower($p['playstyle']),'adaptability'=>'universal; '.strtolower($p['decisionStyle']).' reassessment','preparation'=>$deliberation>.7?'deliberate':'contextual','team_orientation'=>strtolower($p['mindset']),'pressure_response'=>strtolower($p['temperament'])]];
     }

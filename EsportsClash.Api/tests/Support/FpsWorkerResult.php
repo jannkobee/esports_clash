@@ -16,6 +16,14 @@ class FpsWorkerResult
         }
         $rounds=[];for($round=1;$round<=16;$round++)$rounds[]=['roundNumber'=>$round,'winnerTeam'=>'blue','winnerSide'=>$round<=15?'attackers':'defenders','reason'=>$round<=15?'defenders_eliminated':'attackers_eliminated','roundDurationSeconds'=>75,'blueScoreAfter'=>$round,'redScoreAfter'=>0];
         return ['match_id'=>$match->id,'game_mode'=>'fps_mr15_v1','seed'=>$match->plan['seed'],'versions'=>$match->plan['versions'],'winner'=>'blue','player_performance'=>$performance,
-            'report'=>['format'=>'MR15_TACTICAL_FPS','simulationVersion'=>$match->plan['fps']['simulation_version'],'winner'=>'blue','winnerTeam'=>'blue','mapId'=>$match->plan['fps']['map_id'],'seed'=>$match->plan['seed'],'totalRounds'=>16,'durationSeconds'=>1200,'finalScore'=>['blue'=>16,'red'=>0],'roundResults'=>$rounds,'playerStats'=>$stats,'events'=>[]]];
+            'report'=>[...self::liveFields($match),'format'=>'MR15_TACTICAL_FPS','simulationVersion'=>$match->plan['fps']['simulation_version'],'winner'=>'blue','winnerTeam'=>'blue','mapId'=>$match->plan['fps']['map_id'],'seed'=>$match->plan['seed'],'totalRounds'=>16,'durationSeconds'=>1200,'finalScore'=>['blue'=>16,'red'=>0],'roundResults'=>$rounds,'playerStats'=>$stats,'events'=>[]]];
+    }
+
+    /** Live 3D (v5) reports carry the engine marker and aggregated observed behaviour. */
+    private static function liveFields(OnlineMatch $match):array
+    {
+        if(($match->plan['fps']['simulation_version']??0)!==5)return [];
+        $summary=[];foreach(array_keys($match->plan['fps_identity']['players']??[]) as $id)$summary[$id]=['engagement'=>['opportunities'=>2,'attempts'=>1]];
+        return ['engine'=>'live-3d','behaviorSummary'=>$summary,'broadcastSeconds'=>1200];
     }
 }

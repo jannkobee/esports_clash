@@ -10,5 +10,9 @@
   "minimumDiskFraction": 0.15,
   "minimumBurstPercent": 20,
   "healthFailureLimit": 3,
-  "targetMatchesPerHour": 200
+  "targetMatchesPerHour": 200,
+  "autoPromote": true,
+  "leaguePairs": 50,
+  "leagueSize": 3,
+  "monitorPairs": 50
 }

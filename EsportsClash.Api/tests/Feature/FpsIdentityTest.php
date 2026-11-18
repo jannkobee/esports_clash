@@ -67,6 +67,36 @@ class FpsIdentityTest extends TestCase
         $after=DB::table('fps_player_identities')->where('player_id',$id)->first();
         $this->assertSame($before->dna,$after->dna);$this->assertSame($before->personality,$after->personality);
     }
+    public function test_scouting_tendencies_match_shared_typescript_vectors_without_exposing_dna():void {
+        $vectors=json_decode(file_get_contents(__DIR__.'/../Fixtures/fps-tendency-vectors.json'),true,512,JSON_THROW_ON_ERROR);
+        $this->assertGreaterThanOrEqual(54,count($vectors));
+        $arch=app(\App\Services\FpsPlayerArchitecture::class);
+        foreach($vectors as $i=>$vector){
+            $this->assertSame($vector['expected'],$arch->deriveTendencies($vector['personality'],$vector['dna']),"vector $i");
+            $this->assertSame($vector['diagnostics'],$arch->diagnosticTendencies($vector['personality'],$vector['dna']),"diagnostics $i");
+            $this->assertSame($vector['consistency'],$arch->deriveConsistency($vector['personality'],$vector['dna']),"consistency $i");
+            $this->assertSame($vector['consistencyRated'],$arch->rated($vector['consistency'],'skill'),"consistency level $i");
+            $this->assertSame($vector['diagnosticsRated'],array_map(fn($v)=>$arch->rated($v,'tendency'),$vector['diagnostics']),"diagnostic levels $i");
+        }
+        $catalog=$arch->tendenciesCatalog();
+        $this->assertCount(4,$catalog['iglPresets']);
+        $this->assertSame(48,array_sum(array_map(fn($c)=>count($c['tendencies']),$catalog['iglCategories'])));
+        $this->assertSame(178,array_sum(array_map(fn($c)=>count($c['tendencies']),$catalog['individualCategories'])));
+        $row=(object)['player_id'=>'p1','personality'=>json_encode($vectors[0]['personality']),'dna'=>json_encode($vectors[0]['dna']),'development'=>'{}','behavior'=>null];
+        $report=app(\App\Services\FpsIdentityProfiles::class)->scouting($row);
+        $this->assertArrayNotHasKey('dna',$report);
+        $this->assertStringNotContainsString('riskTolerance',json_encode($report));
+        $this->assertCount(3,$report['top_tendencies']);
+        // Server-derived diagnostics replace client rederivation from ID-based DNA; no DNA key or the
+        // raw consistency number is exposed, only derived tendencies and a qualitative label.
+        $this->assertSame($vectors[0]['diagnosticsRated'],$report['derived_tendencies']);
+        $this->assertSame($vectors[0]['consistencyRated'],$report['consistency']);
+        foreach($report['top_tendencies'] as $t){$this->assertContains($t['value'],range(1,10));$this->assertSame(\App\Services\FpsPlayerArchitecture::TENDENCY_SCALE_LABELS[$t['value']-1],$t['level']);}
+        foreach(['riskTolerance','emotionalStability','coachability','tacticalDiscipline','adaptability','creativity','confidenceVolatility','socialTrust','leadershipInitiative','competitiveDrive','teamOrientation','preparationPreference'] as $dnaKey)$this->assertDoesNotMatchRegularExpression('/"'.$dnaKey.'":\s*-?\d/',json_encode($report),"raw DNA $dnaKey");
+        $this->assertContains($report['consistency']['value'],range(1,10),'only the 1–10 consistency level is exposed, never its 0–100 number');
+        $this->assertContains($report['igl_identity']['label'],['Tactical Architect','Fragging Playmaker','Adaptive Mastermind','Player-Centric Facilitator']);
+        $this->assertNull($report['observed']);
+    }
     public function test_v3_settlement_rejects_private_dna_and_applies_development_once():void {
         $match=$this->allocate();$stats=[];$performance=[];
         foreach(['blue','red'] as $side)foreach($match->plan[$side] as $slot){

@@ -15,6 +15,10 @@ class AvatarpediaService
     private ?Collection $playerRecords = null;
     private ?Collection $avatarRecords = null;
     private ?array $entryCounts = null;
+    /** Catalog cards by id: one lookup per player row instead of a scan of the whole catalog. */
+    private ?array $cardIndex = null;
+    private array $definitions = [];
+    private array $organizers = [];
 
     public const KINDS = ['tournaments', 'teams', 'nations', 'players', 'coaches', 'avatars', 'items', 'releases', 'organizers', 'sponsors', 'talent', 'managers'];
 
@@ -33,12 +37,13 @@ class AvatarpediaService
 
     private function players(): Collection
     {
-        return $this->playerRecords ??= OwnedPlayerCard::where('catalog_id',$this->catalog()?->id)->orderBy('persona_name')->limit(100)->get()->map(fn($owned)=>$this->worldPlayer($owned))->filter()->values();
+        return $this->playerRecords ??= (function(){$cards=OwnedPlayerCard::where('catalog_id',$this->catalog()?->id)->orderBy('persona_name')->limit(100)->get();app(WorldPlayerProfiles::class)->prime($cards);return $cards->map(fn($owned)=>$this->worldPlayer($owned))->filter()->values();})();
     }
 
     private function worldPlayer(OwnedPlayerCard $owned): ?array
     {
-        $card=collect($this->catalog()?->payload['cards']??[])->firstWhere('id',$owned->definition_id);
+        $this->cardIndex ??= collect($this->catalog()?->payload['cards']??[])->keyBy('id')->all();
+        $card=$this->cardIndex[$owned->definition_id]??null;
         if(!$card)return null;
         $card=app(WorldPlayerProfiles::class)->definition($owned,$card);
         return [
@@ -49,8 +54,8 @@ class AvatarpediaService
             'age' => $card['age'] ?? null, 'overall' => $card['ovr'] ?? null,
             'stats' => array_intersect_key($card['stats'] ?? [], array_flip(['rifling', 'entry', 'positioning', 'shotcalling', 'sniping', 'utility'])),
             'fpsIdentity'=>$card['fpsIdentity']??null,
-            'signature_avatar_ids' => collect($this->catalog()?->payload['avatars'] ?? [])
-                ->filter(fn ($avatar) => in_array($avatar['name'], $card['signatureChampions'] ?? [], true))->pluck('id')->values()->all(),
+            'signature_avatar_ids' => ($card['signatureChampions'] ?? []) ? collect($this->catalog()?->payload['avatars'] ?? [])
+                ->filter(fn ($avatar) => in_array($avatar['name'], $card['signatureChampions'], true))->pluck('id')->values()->all() : [],
         ];
     }
 
@@ -93,10 +98,29 @@ class AvatarpediaService
         return $club->only(['id', 'name', 'tag', 'identity', 'tier', 'is_bot', 'created_at', 'updated_at']);
     }
 
+    /** Batch what tournament() reads for a page of editions (directories list 30 per page). */
+    private function primeTournaments(iterable $events): void
+    {
+        $events = collect($events);
+        if ($events->isEmpty()) return;
+        $definitionIds = $events->pluck('definition_id')->filter()->unique()->reject(fn ($id) => array_key_exists($id, $this->definitions))->values();
+        if ($definitionIds->isNotEmpty()) {
+            foreach (\App\Models\CompetitionDefinition::whereIn('id', $definitionIds->all())->get() as $definition) $this->definitions[$definition->id] = $definition;
+            $organizerIds = collect($this->definitions)->filter()->pluck('organizer_id')->filter()->unique()->reject(fn ($id) => array_key_exists($id, $this->organizers))->values();
+            if ($organizerIds->isNotEmpty()) foreach (DB::table('competition_organizers')->whereIn('id', $organizerIds->all())->get() as $organizer) $this->organizers[$organizer->id] = $organizer;
+        }
+        $this->entryCounts ??= [];
+        $missing = $events->pluck('id')->reject(fn ($id) => array_key_exists($id, $this->entryCounts))->values();
+        if ($missing->isNotEmpty()) {
+            $counts = DB::table('club_tournament_entries')->whereIn('tournament_id', $missing->all())->where('status', 'accepted')->groupBy('tournament_id')->selectRaw('tournament_id, count(*) as aggregate')->pluck('aggregate', 'tournament_id');
+            foreach ($missing as $id) $this->entryCounts[$id] = (int) ($counts[$id] ?? 0);
+        }
+    }
+
     private function tournament(ClubTournament $event): array
     {
-        $definition=$event->definition_id ? \App\Models\CompetitionDefinition::find($event->definition_id) : null;
-        $organizer=$definition ? DB::table('competition_organizers')->find($definition->organizer_id) : null;
+        $definition=$event->definition_id ? ($this->definitions[$event->definition_id] ??= \App\Models\CompetitionDefinition::find($event->definition_id)) : null;
+        $organizer=$definition ? ($this->organizers[$definition->organizer_id] ??= DB::table('competition_organizers')->find($definition->organizer_id)) : null;
         $this->entryCounts ??= [];
         $this->entryCounts[$event->id] ??= DB::table('club_tournament_entries')->where('tournament_id',$event->id)->where('status','accepted')->count();
         return [...$event->only(['id', 'year', 'tier', 'status', 'registration_closes_at', 'semifinals_at', 'final_at', 'champion_id', 'champion_prize', 'runner_up_prize', 'updated_at','starts_at','ends_at']),
@@ -113,14 +137,14 @@ class AvatarpediaService
 
     private function fixtures($query, int $limit = 100): array
     {
-        return $query->with(['homeClub:id,name,tag', 'awayClub:id,name,tag','homeNation:id,name,flag','awayNation:id,name,flag', 'match:id,status,plan,result,spectator_ready,started_at,completed_at'])
+        return $query->with(['homeClub:id,name,tag', 'awayClub:id,name,tag','homeNation:id,name,flag','awayNation:id,name,flag', 'match:id,status,plan,result,spectator_ready,started_at,completed_at,on_air_at'])
             ->limit($limit)->get()->map(function (ClubFixture $fixture) {
                 $match = $fixture->match;
                 $teams = $match?->plan['clubs'] ?? ['blue' => $fixture->homeClub?->name??$fixture->homeNation?->name, 'red' => $fixture->awayClub?->name??$fixture->awayNation?->name];
                 $winner = $match?->status === 'completed' ? ($match->result['winner'] ?? null) : null;
                 return ['id' => $fixture->id, 'competition' => $fixture->competition, 'kickoff_at' => $fixture->kickoff_at,
                     'orders_close_at' => $fixture->orders_close_at, 'tournament_id' => $fixture->tournament_id, 'bracket_slot' => $fixture->bracket_slot,
-                    'status' => $fixture->hold_reason ? 'review' : ($match?->status ?? 'scheduled'), 'started_at' => $match?->started_at,
+                    'status' => $fixture->hold_reason ? 'review' : ($match?->status === 'allocated' && $fixture->kickoff_at->isPast() ? 'delayed' : ($match?->status ?? 'scheduled')), 'started_at' => $match?->started_at,
                     'watch_match_id' => $match?->canSpectate() ? $match->id : null,
                     'home' => ['id' => $fixture->home_club_id??$fixture->home_national_team_id, 'name' => $teams['blue'],'national'=>(bool)$fixture->home_national_team_id,'flag'=>$fixture->homeNation?->flag], 'away' => ['id' => $fixture->away_club_id??$fixture->away_national_team_id, 'name' => $teams['red'],'national'=>(bool)$fixture->away_national_team_id,'flag'=>$fixture->awayNation?->flag],
                     'winner' => $winner === null ? null : $teams[$winner], 'winner_id' => $winner === null ? null : ($winner === 'blue' ? $fixture->home_club_id : $fixture->away_club_id),
@@ -165,9 +189,9 @@ class AvatarpediaService
             $query=OwnedPlayerCard::where('catalog_id',$this->catalog()?->id)->orderBy('persona_name')->orderBy('id');if($q!=='')$query->where(fn($query)=>$query->whereRaw('LOWER(persona_name) LIKE ?',['%'.$q.'%'])->orWhereRaw('LOWER(CAST(personal_details AS TEXT)) LIKE ?',['%'.$q.'%']));
             if($filters['nationality']??null)$query->whereIn('nationality_id',DB::table('competition_geographies')->where('kind','country')->where('code',$filters['nationality'])->select('id'));
             if($filters['role']??null){$ids=collect($this->catalog()?->payload['cards']??[])->filter(fn($c)=>($c['preferredRole']??$c['role']??'')===$filters['role'])->pluck('id');$query->whereIn('definition_id',$ids);}
-            $total=(clone $query)->count();$players=$query->offset(($page-1)*$perPage)->limit($perPage)->get();$clubs=OnlineClub::whereIn('user_id',$players->pluck('user_id'))->get(['id','name','tag','user_id'])->keyBy('user_id');$rows=$players->map(fn($p)=>$this->worldPlayer($p)+['club'=>isset($clubs[$p->user_id])?$clubs[$p->user_id]->only(['id','name','tag']):null])->filter();
+            $total=(clone $query)->count();$players=$query->offset(($page-1)*$perPage)->limit($perPage)->get();app(WorldPlayerProfiles::class)->prime($players);$clubs=OnlineClub::whereIn('user_id',$players->pluck('user_id'))->get(['id','name','tag','user_id'])->keyBy('user_id');$rows=$players->map(fn($p)=>$this->worldPlayer($p)+['club'=>isset($clubs[$p->user_id])?$clubs[$p->user_id]->only(['id','name','tag']):null])->filter();
         } elseif($kind==='tournaments') {
-            $directory=app(TournamentDirectory::class);$options=[...$filters,'q'=>$search,'page'=>$page];$events=$directory->page($options,$perPage);
+            $directory=app(TournamentDirectory::class);$options=[...$filters,'q'=>$search,'page'=>$page];$events=$directory->page($options,$perPage);$this->primeTournaments($events->getCollection());
             return ['items'=>$events->getCollection()->map(fn($e)=>$this->tournament($e)+['lifecycle'=>$e->lifecycle,'effective_starts_at'=>$e->effective_starts_at,'effective_ends_at'=>$e->effective_ends_at]),'meta'=>['page'=>$page,'per_page'=>$perPage,'total'=>$events->total(),'last_page'=>$events->lastPage()],'counts'=>$directory->counts($options)];
         } else {
             $rows = match ($kind) {
@@ -245,7 +269,8 @@ class AvatarpediaService
         $roster = $this->publicRosters(collect([$club]))[$club->id] ?? [];
         $base = fn () => $this->fixtureQuery()->where(fn ($query) => $query->where('home_club_id', $club->id)->orWhere('away_club_id', $club->id));
         $events = ClubTournament::whereIn('id', DB::table('club_tournament_entries')->where('club_id', $club->id)->select('tournament_id'))->orderByDesc('year')->get()->map(fn ($event) => $this->tournament($event));
-        $completed = $base()->whereHas('match', fn ($query) => $query->where('status', 'completed'))->with('match:id,result')->get();
+        // Only the columns the record needs: a long-lived club can have thousands of completed fixtures.
+        $completed = $base()->whereHas('match', fn ($query) => $query->where('status', 'completed'))->with('match:id,result')->get(['id', 'home_club_id', 'away_club_id', 'match_id']);
         $wins = $completed->filter(fn ($fixture) => ($fixture->match->result['winner'] === 'blue' ? $fixture->home_club_id : $fixture->away_club_id) === $club->id)->count();
         return [...$this->club($club), 'manager'=>\App\Models\User::find($club->user_id)?->only(['id','name']), 'roster' => $roster, 'tournaments' => $events,
             'record' => ['played' => $completed->count(), 'wins' => $wins, 'losses' => $completed->count() - $wins],
@@ -266,8 +291,9 @@ class AvatarpediaService
 
     private function publicRosters(Collection $clubs): array
     {
-        $cards = OwnedPlayerCard::whereIn('user_id', $clubs->pluck('user_id'))->where('catalog_id', $this->catalog()?->id)
-            ->get()->groupBy('user_id');
+        $cards = OwnedPlayerCard::whereIn('user_id', $clubs->pluck('user_id'))->where('catalog_id', $this->catalog()?->id)->get();
+        app(WorldPlayerProfiles::class)->prime($cards);
+        $cards = $cards->groupBy('user_id');
         return $clubs->mapWithKeys(fn ($club) => [$club->id => ($cards[$club->user_id] ?? collect())
             ->filter(fn ($card) => $this->worldPlayer($card)!==null)
             ->map(fn ($card) => ['player' => $this->worldPlayer($card), 'training_xp' => (int) $card->training_xp])->values()])->all();

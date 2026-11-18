@@ -3,7 +3,35 @@ import type { FpsPoint } from './fpsSpatialWorld.ts';
 export type LiveIntelSource='sight'|'footstep'|'gunfire'|'melee'|'reload'|'damage'|'utility';
 export type LiveIntelArea='A'|'B'|'Mid';
 export type LiveIntelClassifier=(point:FpsPoint)=>LiveIntelArea;
-export type LiveWeaponHint='sniper'|'suppressed'|'eco'|'rifle';
+export type LiveWeaponHint='sniper'|'suppressed'|'eco'|'rifle'|'shotgun'|'heavy';
+export interface LiveWeaponThreat {
+  smokePriority:number;
+  flashPriority:number;
+  firePriority:number;
+  preferredRangeDelta:number;
+  avoidDryPeek:boolean;
+}
+
+export function weaponHintForWeapon(weapon:string,category?:string):LiveWeaponHint {
+  if(category==='sniper')return 'sniper';
+  if(category==='shotgun')return 'shotgun';
+  if(weapon==='negev'||category==='heavy')return 'heavy';
+  if(weapon==='usp_s'||weapon==='m4a1_s')return 'suppressed';
+  if(category==='pistol'||category==='smg')return 'eco';
+  return 'rifle';
+}
+
+export function assessLiveWeaponThreat(hint:LiveWeaponHint|undefined,range:number):LiveWeaponThreat {
+  switch(hint){
+    case 'sniper':return {smokePriority:2.2,flashPriority:1.55,firePriority:1.25,preferredRangeDelta:-2,avoidDryPeek:range>14};
+    case 'heavy':return {smokePriority:1.8,flashPriority:1.6,firePriority:1.5,preferredRangeDelta:4,avoidDryPeek:range<24};
+    case 'shotgun':return {smokePriority:1.1,flashPriority:1.7,firePriority:1.75,preferredRangeDelta:6,avoidDryPeek:range<11};
+    case 'eco':return {smokePriority:.9,flashPriority:1.35,firePriority:1.3,preferredRangeDelta:4,avoidDryPeek:false};
+    case 'suppressed':
+    case 'rifle':return {smokePriority:1.25,flashPriority:1.25,firePriority:1.15,preferredRangeDelta:0,avoidDryPeek:false};
+    default:return {smokePriority:1,flashPriority:1,firePriority:1,preferredRangeDelta:0,avoidDryPeek:false};
+  }
+}
 export interface LiveIntelContact extends FpsPoint {
   key:string;enemyId?:string;observerId:string;source:LiveIntelSource;via?:string;
   observed:number;confidence:number;uncertainty:number;
@@ -93,15 +121,18 @@ export function hasObservedBomb(memory:LiveIntelMemory,now:number):LiveIntelBeli
     .sort((a,b)=>b.certainty-a.certainty||b.observed-a.observed)[0];
 }
 
-export function inferEnemyWeaponProfile(memory:LiveIntelMemory,now:number):{sniperCount:number;ecoSignal:number;suppressedCount:number} {
-  let sniperCount=0,ecoSignal=0,suppressedCount=0;
+export function inferEnemyWeaponProfile(memory:LiveIntelMemory,now:number):{sniperCount:number;ecoSignal:number;suppressedCount:number;shotgunCount:number;heavyCount:number;rifleCount:number} {
+  let sniperCount=0,ecoSignal=0,suppressedCount=0,shotgunCount=0,heavyCount=0,rifleCount=0;
   for(const belief of liveIntelBeliefs(memory,now)){
     if(belief.age>8.5||belief.certainty<.25)continue;
     if(belief.weaponHint==='sniper')sniperCount++;
+    else if(belief.weaponHint==='shotgun')shotgunCount++;
+    else if(belief.weaponHint==='heavy')heavyCount++;
     else if(belief.weaponHint==='eco')ecoSignal+=belief.certainty;
-    else if(belief.weaponHint==='suppressed')suppressedCount++;
+    else if(belief.weaponHint==='suppressed'){suppressedCount++;rifleCount++;}
+    else if(belief.weaponHint==='rifle')rifleCount++;
   }
-  return {sniperCount,ecoSignal,suppressedCount};
+  return {sniperCount,ecoSignal,suppressedCount,shotgunCount,heavyCount,rifleCount};
 }
 
 export function describeLiveIntel(memory:LiveIntelMemory,from:FpsPoint,now:number,classifier?:(p:FpsPoint)=>LiveIntelArea):string {

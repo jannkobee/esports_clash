@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>shot</title>
+<style>html,body{margin:0;background:#000}canvas{width:100vw;height:100vh;display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+// Temporary review page (deleted after review): renders the live scene from a fixed free-camera pose.
+import {FpsLiveViewer} from '/src/fps/fpsLiveViewer.ts';
+import {FpsLiveSimulation} from '/src/fps/fpsLiveSimulation.ts';
+import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from '/src/fps/fpsPlayerArchitecture.ts';
+import {FPS_IDENTITY_PERSONALITIES,generatePlayerDNA} from '/src/fps/fpsIdentity.ts';
+const q=new URLSearchParams(location.search),[x,y,z,yaw,pitch]=(q.get('pose')??'0,6,-10,0,.3').split(',').map(Number);
+const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
+const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
+const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance:.6,roleCompetition:.3};
+const cards=Array.from({length:10},(_,i)=>({id:`s-${i}`,name:`P${i}`,stats:{rifling:70,sniping:70,entry:70,utility:70,positioning:70,shotcalling:70}}));
+const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[i%5],ct:FPS_CT_POSITIONS[i%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
+const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),7,identity,{mapId:q.get('map')??'fontessa'});
+const canvas=document.getElementById('c');canvas.width=innerWidth;canvas.height=innerHeight;
+const viewer=new FpsLiveViewer(canvas,()=>{});
+const snap=sim.snapshot();
+viewer.freeControls.pose={x,y,z,yaw,pitch};
+let frames=0;
+const tick=()=>{viewer.freeControls.pose={x,y,z,yaw,pitch};viewer.render(snap,snap,1,'free',snap.players[0].id,1/60);if(++frames<40)requestAnimationFrame(tick);else document.title='ready';};
+requestAnimationFrame(tick);
+</script></body></html>

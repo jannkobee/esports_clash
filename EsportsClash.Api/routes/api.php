@@ -12,6 +12,14 @@ Route::post('/internal/online/authorize-stream', [OnlineController::class, 'auth
 
 Route::prefix('v1')->group(function (): void {
     Route::get('/automatic-learning/approved', [\App\Http\Controllers\AutomaticLearningController::class, 'show'])->middleware('throttle:60,1');
+    Route::prefix('fps/lineages/{key}')->where(['key' => '(club:[0-9]{1,18}|worker:[a-z0-9-]{1,60}|exhibition:[a-z0-9-]{1,60})'])->controller(\App\Http\Controllers\FpsLineageController::class)->group(function (): void {
+        Route::get('/current', 'current')->middleware('throttle:120,1');
+        Route::get('/history', 'history')->middleware('throttle:60,1');
+        Route::post('/versions', 'append')->middleware('throttle:120,1');
+        Route::post('/events', 'event')->middleware('throttle:60,1');
+        Route::post('/experience', 'submit')->middleware(['auth:sanctum', 'throttle:10,1']);
+    });
+    Route::get('/fps/lineage-experience', [\App\Http\Controllers\FpsLineageController::class, 'pending'])->middleware('throttle:60,1');
     Route::get('/game-modes', [\App\Http\Controllers\GameModeController::class, 'manifest'])->middleware('throttle:90,1');
     Route::get('/world/simulation', [\App\Http\Controllers\WorldSimulationController::class, 'show'])->middleware('throttle:60,1');
     Route::get('/world/operations', [\App\Http\Controllers\WorldSimulationController::class, 'operations'])->middleware(['auth:sanctum','throttle:30,1']);
@@ -69,6 +77,14 @@ Route::prefix('v1')->group(function (): void {
     Route::get('/avatar-visuals/assets/{release}/{hash}.glb',[\App\Http\Controllers\AvatarEvolutionController::class,'published'])->whereNumber('release')->where('hash','[a-f0-9]{64}')->middleware('throttle:120,1');
     Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
     Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1');
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:5,1');
+    Route::get('/auth/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->whereNumber('id')->middleware(['signed', 'throttle:10,1'])->name('api.verification.verify');
+    Route::get('/notifications/unsubscribe/{token}', function (Request $request, string $token) {
+        $category = $request->query('category');
+        $ok = app(\App\Services\ManagerMail::class)->unsubscribe($token, is_string($category) && array_key_exists($category, \App\Services\ManagerMail::CATEGORIES) ? $category : null);
+        return redirect()->away(app(\App\Services\ManagerMail::class)->frontendUrl('settings?section=email&unsubscribed='.($ok ? '1' : '0')));
+    })->middleware('throttle:20,1');
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/online/careers',[\App\Http\Controllers\Api\V1\WorldCareerController::class,'index'])->middleware('throttle:30,1');
@@ -101,6 +117,46 @@ Route::prefix('v1')->group(function (): void {
         Route::get('/online/office/inbox',[\App\Http\Controllers\Api\V1\ClubOfficeController::class,'inbox']);
         Route::put('/online/office/inbox/read',[\App\Http\Controllers\Api\V1\ClubOfficeController::class,'read']);
         Route::get('/online/office/reports',[\App\Http\Controllers\Api\V1\ClubOfficeController::class,'reports']);
+        Route::get('/online/billing', fn (Request $request) => ['data' => app(\App\Services\SupporterBilling::class)->desk($request->user())]);
+        Route::post('/online/billing/checkout', function (Request $request) {
+            $v = $request->validate(['plan' => ['required', 'in:signal,beacon']]);
+            return ['data' => app(\App\Services\SupporterBilling::class)->checkout($request->user(), $v['plan'])];
+        })->middleware('throttle:10,1');
+        Route::get('/online/billing/checkout/{id}', fn (Request $request, string $id) => ['data' => app(\App\Services\SupporterBilling::class)->checkoutDetails($request->user(), $id)])->whereUuid('id');
+        // Mock provider only: the in-app test page confirms or declines a test payment. A real provider confirms by webhook.
+        Route::post('/online/billing/checkout/{id}/mock', function (Request $request, string $id) {
+            abort_unless(app(\App\Services\SupporterBilling::class)->provider()->isTest(), 404);
+            $v = $request->validate(['result' => ['required', 'in:paid,declined']]);
+            $billing = app(\App\Services\SupporterBilling::class);
+            $billing->checkoutDetails($request->user(), $id);
+            return ['data' => $billing->completeCheckout($id, $v['result'] === 'paid', 'mock_'.substr(hash('sha256', $id), 0, 24))];
+        })->whereUuid('id')->middleware('throttle:10,1');
+        Route::post('/online/billing/cancel', function (Request $request) {
+            $v = $request->validate(['cancel' => ['required', 'boolean']]);
+            app(\App\Services\SupporterBilling::class)->cancel($request->user(), (bool) $v['cancel']);
+            return ['data' => app(\App\Services\SupporterBilling::class)->desk($request->user())];
+        })->middleware('throttle:10,1');
+        Route::get('/online/scouting', fn (Request $request) => ['data' => app(\App\Services\ScoutingAssignments::class)->desk(app(\App\Services\OnlineService::class)->provision($request->user()))]);
+        Route::post('/online/scouting', function (Request $request) {
+            $v = $request->validate(['need' => ['required', 'string', 'max:24'], 'region_id' => ['nullable', 'integer']]);
+            $club = app(\App\Services\OnlineService::class)->provision($request->user());
+            app(\App\Services\ScoutingAssignments::class)->start($club, $v['need'], $v['region_id'] ?? null);
+            return response()->noContent();
+        })->middleware('throttle:10,1');
+        Route::post('/online/scouting/{id}/sign', function (Request $request, int $id) {
+            $v = $request->validate(['index' => ['required', 'integer', 'between:0,2']]);
+            $card = app(\App\Services\ScoutingAssignments::class)->sign(app(\App\Services\OnlineService::class)->provision($request->user()), $id, $v['index']);
+            return ['data' => ['player_id' => $card->id, 'name' => $card->persona_name]];
+        })->whereNumber('id')->middleware('throttle:10,1');
+        Route::post('/online/scouting/{id}/pass', function (Request $request, int $id) {
+            app(\App\Services\ScoutingAssignments::class)->pass(app(\App\Services\OnlineService::class)->provision($request->user()), $id);
+            return response()->noContent();
+        })->whereNumber('id')->middleware('throttle:10,1');
+        Route::get('/online/week', fn (Request $request) => ['data' => app(\App\Services\CompetitionAutoInvites::class)->week(app(\App\Services\OnlineService::class)->provision($request->user()))]);
+        Route::post('/online/invitations/{id}/decline', function (Request $request, int $id) {
+            app(\App\Services\CompetitionAutoInvites::class)->decline(app(\App\Services\OnlineService::class)->provision($request->user()), $id);
+            return response()->noContent();
+        })->whereNumber('id')->middleware('throttle:30,1');
         Route::get('/online/fixtures', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'index']);
         Route::get('/online/history',\App\Http\Controllers\Api\V1\ClubHistoryController::class);
         Route::post('/online/fixtures/invites', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'invite'])->middleware('throttle:10,1');
@@ -121,12 +177,17 @@ Route::prefix('v1')->group(function (): void {
         Route::post('/online/market/auctions', [\App\Http\Controllers\Api\V1\ClubMarketController::class, 'store'])->middleware('throttle:20,1');
         Route::post('/online/market/auctions/{id}/bid', [\App\Http\Controllers\Api\V1\ClubMarketController::class, 'bid'])->whereNumber('id')->middleware('throttle:30,1');
         Route::put('/online/fixtures/{id}/orders', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'update'])->whereNumber('id');
+        Route::delete('/online/fixtures/{id}/orders', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'useDefault'])->whereNumber('id');
+        Route::get('/online/fixtures/{id}/debrief', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'debrief'])->whereNumber('id');
+        Route::get('/online/fixtures/{id}/opponent', [\App\Http\Controllers\Api\V1\ClubFixtureController::class, 'opponent'])->whereNumber('id');
         Route::post('/online/queue', [OnlineController::class, 'queue'])->middleware('throttle:12,1');
         Route::delete('/online/queue', [OnlineController::class, 'leave']);
         Route::post('/online/scrimmage-queue', [\App\Http\Controllers\Api\V1\ScrimmageQueueController::class, 'join'])->middleware('throttle:12,1');
         Route::delete('/online/scrimmage-queue', [\App\Http\Controllers\Api\V1\ScrimmageQueueController::class, 'leave']);
         Route::get('/online/matches/{id}', [OnlineController::class, 'show']);
         Route::get('/online/matches/{id}/replay', [OnlineController::class, 'replay'])->middleware('throttle:120,1');
+        Route::get('/online/matches/{id}/live-replay', [OnlineController::class, 'liveReplayHeader'])->middleware('throttle:120,1');
+        Route::get('/online/matches/{id}/live-replay/{chunk}', [OnlineController::class, 'liveReplayChunk'])->whereNumber('chunk')->middleware('throttle:240,1');
         Route::post('/online/matches/{id}/stream', [OnlineController::class, 'grant'])->middleware('throttle:30,1');
         Route::get('/evolution', [EvolutionController::class, 'index']);
         Route::get('/evolution/avatar-pipeline', \App\Http\Controllers\AvatarPipelineStatusController::class)->middleware('throttle:20,1');
@@ -140,9 +201,16 @@ Route::prefix('v1')->group(function (): void {
         Route::delete('/evolution/runs/{id}', [EvolutionController::class, 'stop']);
         Route::post('/evolution/reviews/{id}/decision', [EvolutionController::class, 'decide']);
         Route::get('/me', fn (Request $request) => response()->json([
-            'data' => ['id' => $request->user()->id, 'name' => $request->user()->name, 'email' => $request->user()->email,'is_evolution_admin'=>(bool)$request->user()->is_evolution_admin,'supporter'=>app(\App\Services\SupporterMembership::class)->status($request->user()),'theme'=>app(\App\Services\PersonalThemes::class)->effective($request->user())],
+            'data' => ['id' => $request->user()->id, 'name' => $request->user()->name, 'email' => $request->user()->email,'email_verified'=>$request->user()->hasVerifiedEmail(),'is_evolution_admin'=>(bool)$request->user()->is_evolution_admin,'supporter'=>app(\App\Services\SupporterMembership::class)->status($request->user()),'theme'=>app(\App\Services\PersonalThemes::class)->effective($request->user())],
         ]));
         Route::delete('/auth/token', [AuthController::class, 'logout']);
+        Route::post('/auth/email/resend', [AuthController::class, 'resendVerification'])->middleware('throttle:3,1');
+        Route::get('/online/notifications', fn (Request $request) => ['data' => ['preferences' => app(\App\Services\ManagerMail::class)->preferences($request->user())['categories'],
+            'categories' => \App\Services\ManagerMail::CATEGORIES, 'email' => $request->user()->email, 'email_verified' => $request->user()->hasVerifiedEmail()]]);
+        Route::put('/online/notifications', function (Request $request) {
+            $data = $request->validate(['preferences' => ['required', 'array'], 'preferences.*' => ['boolean']]);
+            return ['data' => ['preferences' => app(\App\Services\ManagerMail::class)->update($request->user(), $data['preferences'])['categories']]];
+        })->middleware('throttle:20,1');
 
         Route::get('/club', [ClubProfileController::class, 'show'])->middleware('ability:club:read');
         Route::put('/club', [ClubProfileController::class, 'update'])->middleware('ability:club:write');

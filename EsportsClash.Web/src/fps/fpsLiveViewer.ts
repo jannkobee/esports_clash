@@ -1,4 +1,4 @@
-import {createLiveRagdoll,stepLiveRagdoll,type LiveRagdoll,type RagJoint} from './fpsLiveRagdoll.ts';
+import {createLiveRagdoll,stepLiveRagdoll,type LiveRagdoll,type LiveRagdollPose,type RagJoint} from './fpsLiveRagdoll.ts';
 import { Engine, Scene, FreeCamera, Viewport, Vector3, Color3, Color4, HemisphericLight, DirectionalLight, PointLight, StandardMaterial, MeshBuilder, DynamicTexture, Texture, ShadowGenerator, TransformNode, Mesh, type LinesMesh } from '@babylonjs/core';
 import { FONTESSA_MAP_RUNTIME } from './fpsLiveMap.ts';
 import { getLiveMapRuntime } from './fpsLiveMapRegistry.ts';
@@ -20,6 +20,23 @@ import { liveSmokeCloudLobes } from './fpsLiveBrain.ts';
 import { stepLiveGrenade, type LiveGrenade, type LiveGrenadeKind } from './fpsLiveGrenades.ts';
 import {batchStaticLiveGeometry,interpolateLivePlayer,LiveRenderCache} from './fpsLiveRenderOptimization.ts';
 import {buildVariantOperativeDetails,resolveOperativeStyle,resolveOperativeVariantIndex,type OperativeStyleProfile} from './fpsOperativeDesign.ts';
+import {createCapsuleLimb,createOperativeBoot,createOperativeHand,createOperativeTorso,createRoundedOperativeBlock,createRoundedOperativeBox,createRoundedOperativeCylinder,createViewmodelCuff,createViewmodelFingerCluster,createViewmodelForearm,OPERATIVE_BUILD,OPERATIVE_HEAD_PROFILE} from './fpsOperativeGeometry.ts';
+const SHOULDER_X=OPERATIVE_BUILD.shoulderX;
+import {liveViewmodelKick,OPERATIVE_SEGMENT_PROFILES,operativeDrawPose,operativeGaitPose,orientOperativeBone,sculptOperativeSegment,type LiveViewmodelKick,type OperativeSegmentProfile} from './fpsOperativeMotion.ts';
+
+/**
+ * How far along its hand-toss flight a dropped item is (0 = leaving the hand, 1 = on the floor). Uses the
+ * real launch time and duration from the simulation; items without a launch time assume a 0.7 s drop.
+ */
+export function liveDropFlightProgress(item:{at?:number;airUntil?:number},time:number):number {
+  if(item.airUntil===undefined)return 1;
+  const start=item.at!==undefined&&item.at<item.airUntil?item.at:item.airUntil-.7;
+  return Math.max(0,Math.min(1,(time-start)/Math.max(.05,item.airUntil-start)));
+}
+/** A short drop barely rises; a longer toss to a teammate is lobbed. */
+export function liveDropLobHeight(from:{x:number;z:number},to:{x:number;z:number}):number {
+  return Math.min(1.1,.18+Math.hypot(to.x-from.x,to.z-from.z)*.09);
+}
 
 export function computeLiveGrenadeTrajectoryPoints(
   grenade: LiveGrenade,
@@ -93,6 +110,8 @@ export interface OperativeView {
   wasAirborne?: boolean;
   prevJumpY?: number;
   flinch?: number;
+  /** Grenades carried on the rig, shown only while that grenade is in the inventory (not merged). */
+  utilityCarry?: {kind:'smoke'|'flash'|'he'|'incendiary';mesh:Mesh}[];
   lastHp?: number;
   poseMemory?:{nodes:TransformNode[];rotations:Float32Array;initialized:boolean};
 }
@@ -347,7 +366,17 @@ const solveArmToTarget = (
 };
 
 /** Articulated CT/T 3D operative animation covering reloads, throw styles, bolt/pump cycles, defusal, landing compression, hit flinch, weapon stances, and stride. */
+/** Show a carried grenade only while one is in the inventory beyond the one already in hand. */
+export function updateOperativeUtilityCarry(rig: OperativeView, player: Pick<LivePlayer, 'hp' | 'equipped' | 'smoke' | 'flash' | 'he' | 'incendiary' | 'utilityPrep'>): void {
+  for (const carried of rig.utilityCarry ?? []) {
+    const inHand = player.equipped === carried.kind || player.utilityPrep?.kind === carried.kind ? 1 : 0;
+    const show = player.hp > 0 && (player[carried.kind] ?? 0) - inHand > 0;
+    if (carried.mesh.isEnabled(false) !== show) carried.mesh.setEnabled(show);
+  }
+}
+
 export function applyOperativeAnimation(view: ActorView, player: LivePlayer, currentTime: number, elapsed: number): void {
+  updateOperativeUtilityCarry(view.operative, player);
   if (player.hp <= 0) return;
   const rig=view.operative;
   const memory=rig.poseMemory??(rig.poseMemory={nodes:[rig.spine,rig.headPivot,rig.leftArmPivot,rig.rightArmPivot,rig.leftElbowPivot,rig.rightElbowPivot,rig.leftLegPivot,rig.rightLegPivot,rig.leftKneePivot,rig.rightKneePivot],rotations:new Float32Array(30),initialized:false});
@@ -410,10 +439,11 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
   const rackPhase = isReloading && reloadProgress >= .78 ? Math.sin(((reloadProgress - .78) / .22) * Math.PI) : 0;
 
   const sinceShot = currentTime - player.lastShot;
-  const hasRecentShot = sinceShot >= 0 && sinceShot < .18;
-  const recoilImpulse = hasRecentShot ? Math.sin(Math.min(1, sinceShot / .06) * Math.PI * .5) * Math.exp(-sinceShot * 16) : 0;
-  const recoilScale = (player.equipped === 'sniper' || player.equipped === 'deagle' || player.equipped === 'mag7' || player.equipped === 'nova') ? 1.45 : (player.equipped === 'ak47' || player.equipped === 'scout') ? 1.15 : .8;
-  const shotKick = recoilImpulse * recoilScale;
+  const tpKick = Object.hasOwn(LIVE_WEAPONS, player.equipped) ? liveViewmodelKick(player.equipped) : undefined;
+  const hasRecentShot = sinceShot >= 0 && sinceShot < .28;
+  const recoilImpulse = tpKick && hasRecentShot ? Math.sin(Math.min(1, sinceShot / .04) * Math.PI * .5) * Math.exp(-Math.max(0, sinceShot - .02) * tpKick.decay) : 0;
+  const shotBurstSign = (Math.round(player.lastShot * 17) & 1) ? 1 : -1;
+  const shotKick = recoilImpulse * (tpKick ? tpKick.pitch * 12 : .8);
 
   const isBoltWeapon = player.equipped === 'sniper' || player.equipped === 'scout';
   const boltFromShot = isBoltWeapon && sinceShot >= .16 && sinceShot < .92 ? Math.sin(((sinceShot - .16) / .76) * Math.PI) : 0;
@@ -437,8 +467,11 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
   const pitchArm = -totalPitch * .65;
 
   // Footfall phase follows actual travel distance; upper body and weapon remain CS2-steady while walking.
-  const dx = view.operative.hasMotion ? player.x - view.operative.lastX : 0;
-  const dz = view.operative.hasMotion ? player.z - view.operative.lastZ : 0;
+  // A respawn/teleport (or a skipped frame across a round reset) is not a stride.
+  const rawDx = view.operative.hasMotion ? player.x - view.operative.lastX : 0;
+  const rawDz = view.operative.hasMotion ? player.z - view.operative.lastZ : 0;
+  const teleported = Math.hypot(rawDx, rawDz) > 1.5;
+  const dx = teleported ? 0 : rawDx, dz = teleported ? 0 : rawDz;
   view.operative.lastX = player.x;
   view.operative.lastZ = player.z;
   view.operative.hasMotion = true;
@@ -452,6 +485,8 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
   const legSwing = cycle * (1 - shuffle * .72);
   const forwardDir = forward < -.002 ? -.4 : 1;
   const sprintLean = walkAmount * .045 * forwardDir * (1 - crouchPose * .65) * (1 - scopedAds * .9);
+  const runAmount = Math.max(0, Math.min(1, (player.speed - 1.6) / 1.2)) * (1 - crouchPose);
+  const gait = operativeGaitPose(view.operative.stridePhase, walkAmount, runAmount, crouchPose, lateralStep);
 
   let idSeed = 0;
   for (let i = 0; i < player.id.length; i++) idSeed = (idSeed * 31 + player.id.charCodeAt(i)) & 0xff;
@@ -460,9 +495,9 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
   const underhandDip = isUnderhand && (prepPhase === 'pin' || prepPhase === 'ready' || isThrowing)
     ? .05 * (prepPhase ? 1 : throwLift)
     : 0;
-  const shoulderX = .192;
-  const spineHeight = 1.05 - .23 * crouchPose - .065 * landSquash - underhandDip;
-  const shoulderY = 1.29 - .23 * crouchPose - .065 * landSquash - underhandDip;
+  const shoulderX = SHOULDER_X;
+  const spineHeight = 1.05 - .35 * crouchPose - .065 * landSquash - underhandDip;
+  const shoulderY = 1.29 - .35 * crouchPose - .065 * landSquash - underhandDip;
   const combatStanceYaw = !inUtilityPrep && !isThrowing && player.equipped !== 'knife' && player.equipped !== 'bomb'
     ? (scopedAds > 0 ? .16 + scopedAds * .08 : pistolGrip ? .06 : .14)
     : 0;
@@ -470,19 +505,19 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
   view.operative.spine.position.y = spineHeight;
   view.operative.spine.rotation.x = .16 * crouchPose + sprintLean + .14 * landSquash + .04 * reloadWeight + pouchReach * .08 - shotKick * .06 - flinch * .09 + scopedAds * .04 + breathe * .004;
   view.operative.spine.rotation.y = combatStanceYaw - pouchReach * .15;
-  view.operative.spine.rotation.z = -lateralStep * .028 + boltCycling * .07 + flinch * .07;
+  // Hips/torso shift over the stance leg; the weapon and head stay level (CS-steady upper body).
+  view.operative.spine.rotation.z = -lateralStep * .028 + boltCycling * .07 + flinch * .07 + gait.pelvisRoll;
 
-  view.operative.headPivot.position.y = 1.54 - .37 * crouchPose - .065 * landSquash - underhandDip;
   view.operative.headPivot.rotation.x = -.06 * crouchPose - totalPitch * .72 + .06 * landSquash + (pouchReach + insertPhase * .4) * .20 + scopedAds * .11 - flinch * .07 + rackPhase * .06;
   view.operative.headPivot.rotation.y = isBlinded ? -.24 * blindBlend : 0;
   view.operative.headPivot.rotation.z = lateralStep * .018 - scopedAds * (isBoltWeapon ? .18 : .14) + boltCycling * .06 + flinch * .04;
 
   view.operative.leftArmPivot.position.y = shoulderY;
   view.operative.rightArmPivot.position.y = shoulderY;
-  view.operative.leftLegPivot.position.y = .74 - .14 * crouchPose - .03 * landSquash;
-  view.operative.rightLegPivot.position.y = .74 - .14 * crouchPose - .03 * landSquash;
-  view.operative.leftKneePivot.position.y = -.36 + .04 * crouchPose;
-  view.operative.rightKneePivot.position.y = -.36 + .04 * crouchPose;
+  view.operative.leftLegPivot.position.y = .74 - .24 * crouchPose - .03 * landSquash;
+  view.operative.rightLegPivot.position.y = .74 - .24 * crouchPose - .03 * landSquash;
+  view.operative.leftKneePivot.position.y = -.36 + .06 * crouchPose;
+  view.operative.rightKneePivot.position.y = -.36 + .06 * crouchPose;
 
   // Solve third-person weapon pose first so two-handed IK locks hands directly onto weapon sockets.
   const rightX = Math.cos(player.yaw), rightZ = -Math.sin(player.yaw);
@@ -494,11 +529,11 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
     ? (prepPhase ? .18 : .16 * throwLift - .10 * throwFollow)
     : 0;
   const profile = WEAPON_GRIP_PROFILES[player.equipped] ?? DEFAULT_GRIP_PROFILE;
-  const pitchRad = Math.min(1, player.weaponReady / .35) * .45 + reloadWeight * .32 + pouchReach * .08 - magSlap * .12 - totalPitch * .85 - shotKick * (pistolGrip ? .22 : .14) - rackPhase * .14;
+  const pitchRad = Math.min(1, player.weaponReady / .35) * .45 + reloadWeight * .32 + pouchReach * .08 - magSlap * .12 - totalPitch * .85 - (tpKick ? recoilImpulse * tpKick.pitch * 1.9 : shotKick * (pistolGrip ? .22 : .14)) - rackPhase * .14;
 
   let gunRight = profile.rightOffset;
   let gunFwd = profile.fwd;
-  let localGunY = (1.05 - .23 * crouchPose) - .065 * landSquash + profile.yOffset;
+  let localGunY = (1.05 - .35 * crouchPose) - .065 * landSquash + profile.yOffset;
   let gunYawOffset = profile.yawOffset;
   let gunRotX = pitchRad;
   let gunRotZ = 0;
@@ -520,28 +555,32 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
   } else if (inUtilityPrep || isThrowing) {
     gunRight = .2 + (overhandGunLift > .08 ? .07 : 0);
     gunFwd = .35 - (overhandGunLift > .08 ? .08 : 0);
-    localGunY = (1.05 - .25 * crouchPose) - .065 * landSquash - underhandGunDrop + overhandGunLift;
+    localGunY = (1.05 - .36 * crouchPose) - .065 * landSquash - underhandGunDrop + overhandGunLift;
     gunYawOffset = 0;
     gunRotX = Math.min(1, player.weaponReady / .35) * .5 - totalPitch * .85 - shotKick * .16;
   } else {
-    const fwdKick = -shotKick * .045 - rackPhase * .06 - shotgunPump * .04;
+    const fwdKick = -(tpKick ? recoilImpulse * tpKick.push * 1.15 : shotKick * .045) - rackPhase * .06 - shotgunPump * .04;
     const pitchLift = -Math.sin(-totalPitch * .85) * (profile.pistol ? .20 : .14);
     const pitchFwdAdj = -(1 - Math.cos(-totalPitch * .85)) * .07;
-    gunRight = profile.rightOffset + scopedAds * (profile.pistol ? 0 : -.025);
-    gunFwd = profile.fwd + fwdKick + pitchFwdAdj;
-    localGunY = (1.05 - .23 * crouchPose) - .065 * landSquash + profile.yOffset + pitchLift - reloadWeight * .09 + magSlap * .02 - (heavyGrip ? .02 : 0);
-    gunYawOffset = profile.yawOffset;
+    // Equip: the weapon comes up from a canted low-ready (long guns) or from the hip holster (pistols).
+    const draw = player.equipped === 'knife' || player.equipped === 'bomb' ? undefined : operativeDrawPose(player.weaponReady, !!profile.pistol);
+    gunRight = profile.rightOffset + scopedAds * (profile.pistol ? 0 : -.025) + (draw?.out ?? 0);
+    gunFwd = profile.fwd + fwdKick + pitchFwdAdj - (draw?.back ?? 0);
+    localGunY = (1.05 - .35 * crouchPose) - .065 * landSquash + profile.yOffset + pitchLift - reloadWeight * .09 + magSlap * .02 - (heavyGrip ? .02 : 0) - (draw?.drop ?? 0);
+    gunYawOffset = profile.yawOffset + (draw?.yaw ?? 0);
+    gunRotX += draw?.tilt ?? 0;
     gunRotZ = player.equipped === 'knife'
       ? Math.sin(Math.min(1, Math.max(0, (currentTime - player.lastSwing) / .35)) * Math.PI)
-      : reloadWeight * .34 + pouchReach * .16 - magSlap * .18 + rackPhase * .08 + boltCycling * .38;
+      : reloadWeight * .34 + pouchReach * .16 - magSlap * .18 + rackPhase * .08 + boltCycling * .38 + (draw?.cant ?? 0) + (tpKick ? recoilImpulse * tpKick.roll * .65 * shotBurstSign : 0);
   }
 
   const gunY = localGunY + jumpY;
   if (view.gunNode) {
     view.gunNode.position.set(player.x + forwardX * gunFwd + rightX * gunRight, gunY, player.z + forwardZ * gunFwd + rightZ * gunRight);
-    view.gunNode.rotation.y = player.yaw + gunYawOffset + (player.recoilYaw ?? 0) * .35;
+    view.gunNode.rotation.y = player.yaw + gunYawOffset + (player.recoilYaw ?? 0) * .35 + (tpKick ? recoilImpulse * tpKick.yawKick * .6 * shotBurstSign : 0);
     view.gunNode.rotation.x = gunRotX;
     view.gunNode.rotation.z = gunRotZ;
+    if (tpKick) applyWeaponRecoilMechanics(view.gunNode, tpKick, sinceShot);
     if (!planting && !defusing && (prepPhase === 'pin' || prepPhase === 'ready')) {
       for (const mesh of view.gunNode.getChildMeshes()) {
         if (mesh.name.endsWith('-grenade-pull-ring')) mesh.position.x = -.025 - Math.min(.1, (player.utilityPrep!.releaseAt - currentTime) * .08);
@@ -697,8 +736,11 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
     }
   }
 
-  view.operative.leftLegPivot.rotation.z = .085 * lateralStep;
-  view.operative.rightLegPivot.rotation.z = -.085 * lateralStep;
+  // Strafe: lead leg steps out, trailing leg closes in (alternating), with a slight stable stance width.
+  // Standing still, a soldier holds a ready stance: feet about shoulder-width apart, knees soft, weight forward.
+  const readyStance = airborne ? 0 : (1 - Math.min(1, walkAmount * 2)) * (1 - crouchPose);
+  view.operative.leftLegPivot.rotation.z = -.025 * crouchPose - .04 * readyStance + gait.leftSpread;
+  view.operative.rightLegPivot.rotation.z = .025 * crouchPose + .04 * readyStance + gait.rightSpread;
   if (airborne) {
     const jumpThrowSplit = isJumpThrow && (isThrowing || inUtilityPrep) ? .22 : 0;
     const riseTuck = airVel > .4 ? .16 : airVel < -.4 ? -.10 : 0;
@@ -707,10 +749,11 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
     view.operative.leftKneePivot.rotation.x = .55 + riseTuck * .7 + .55 * crouchPose;
     view.operative.rightKneePivot.rotation.x = .60 + riseTuck * .5 + .55 * crouchPose;
   } else {
-    view.operative.leftLegPivot.rotation.x = legSwing * .48 - .58 * crouchPose - .32 * landSquash;
-    view.operative.rightLegPivot.rotation.x = -legSwing * .48 - .58 * crouchPose - .32 * landSquash;
-    view.operative.leftKneePivot.rotation.x = 1.08 * crouchPose + .64 * landSquash + Math.max(0, legSwing) * .46 + Math.max(0, -legSwing) * .18;
-    view.operative.rightKneePivot.rotation.x = 1.08 * crouchPose + .64 * landSquash + Math.max(0, -legSwing) * .46 + Math.max(0, legSwing) * .18;
+    // Travel-driven gait: near-constant thigh rate in stance (planted foot), knee tuck in swing.
+    view.operative.leftLegPivot.rotation.x = gait.leftHip - .58 * crouchPose - .32 * landSquash - .05 * readyStance;
+    view.operative.rightLegPivot.rotation.x = gait.rightHip - .58 * crouchPose - .32 * landSquash - .05 * readyStance;
+    view.operative.leftKneePivot.rotation.x = 1.08 * crouchPose + .64 * landSquash + gait.leftKnee + .1 * readyStance;
+    view.operative.rightKneePivot.rotation.x = 1.08 * crouchPose + .64 * landSquash + gait.rightKnee + .1 * readyStance;
   }
 
   const magazineOut = isReloading && !isTubeShotgun && reloadProgress > .10 && reloadProgress < .78;
@@ -733,7 +776,30 @@ export function applyOperativeAnimation(view: ActorView, player: LivePlayer, cur
       r.set(mix(memory.rotations[i*3],r.x,weight),mix(memory.rotations[i*3+1],r.y,weight),mix(memory.rotations[i*3+2],r.z,weight));
     }
   }
+  const spineRx=view.operative.spine.rotation.x,spineRz=view.operative.spine.rotation.z;
+  const neckLen=.49-.02*crouchPose;
+  view.operative.headPivot.position.set(
+    -Math.sin(spineRz)*.38,
+    view.operative.spine.position.y+Math.cos(spineRx)*Math.cos(spineRz)*neckLen,
+    Math.sin(spineRx)*.38,
+  );
   memory.initialized=true;
+}
+
+const RAGDOLL_SCRATCH={a:new Vector3(),b:new Vector3(),c:new Vector3(),d:new Vector3(),forward:new Vector3(),axes:{x:new Vector3(),y:new Vector3(),z:new Vector3()}};
+/** Body-local joint positions (feet at y = 0, facing +z) of a live operative's current pose. */
+export function captureOperativeRagdollPose(o:OperativeView):LiveRagdollPose {
+  const inverse=o.root.computeWorldMatrix(true).clone().invert();
+  const local=(node:TransformNode,x=0,y=0,z=0):[number,number,number]=>{
+    const v=Vector3.TransformCoordinates(new Vector3(x,y,z),node.computeWorldMatrix(true).multiply(inverse));
+    return [v.x,v.y,v.z];
+  };
+  // Parents before children so each world matrix is current.
+  const pelvis=local(o.spine,0,-.27,0),chest=local(o.spine,0,.18,0),head=local(o.headPivot);
+  const ls=local(o.leftArmPivot),rs=local(o.rightArmPivot),le=local(o.leftElbowPivot),re=local(o.rightElbowPivot);
+  const lhp=local(o.leftLegPivot),rhp=local(o.rightLegPivot),lk=local(o.leftKneePivot),rk=local(o.rightKneePivot);
+  return {pelvis,chest,head,ls,le,lh:local(o.leftElbowPivot,0,-.24,0),rs,re,rh:local(o.rightElbowPivot,0,-.24,0),
+    lhp,lk,lf:local(o.leftKneePivot,0,-.31,.06),rhp,rk,rf:local(o.rightKneePivot,0,-.31,.06)};
 }
 
 interface SmokeView { root:TransformNode; lobes:Mesh[]; material:StandardMaterial|LiveSmokeRenderVolume['material'];volume?:LiveSmokeRenderVolume }
@@ -742,8 +808,19 @@ interface BloodView { splats:Mesh[] }
 interface BlastView {sphere:Mesh;ring:Mesh;sphereMaterial:StandardMaterial;ringMaterial:StandardMaterial}
 type ViewmodelReloadFamily = 'rifle_ak' | 'rifle_stanag' | 'sniper' | 'smg' | 'shotgun_tube' | 'shotgun_mag' | 'lmg' | 'pistol' | 'other';
 interface ViewmodelReloadParts { arm:TransformNode; wrist:TransformNode; magazine:Mesh; leftArmMeshes:Mesh[]; family:ViewmodelReloadFamily; magHome:readonly [number,number,number] }
-interface WeaponViewMetadata {weaponRoot?:TransformNode;muzzle?:TransformNode;reloadParts?:ViewmodelReloadParts;name?:string}
+interface WeaponViewMetadata {weaponRoot?:TransformNode;muzzle?:TransformNode;slide?:Mesh;slideHomeZ?:number;reloadParts?:ViewmodelReloadParts;name?:string}
 interface TracerView {world:LinesMesh;firstPerson?:LinesMesh;actorId:string}
+
+/** Drive pistol slide blowback on firing and cleanly return to rest between shots. */
+function applyWeaponRecoilMechanics(node: TransformNode | undefined, kick: LiveViewmodelKick, sinceShot: number): void {
+  const meta = node?.metadata as WeaponViewMetadata | undefined;
+  if (!meta?.slide || meta.slideHomeZ === undefined) return;
+  const travel = kick.slideTravel;
+  const blowback = travel > 0 && sinceShot >= 0 && sinceShot < .13
+    ? Math.sin(Math.min(1, sinceShot / .028) * Math.PI * .5) * Math.exp(-Math.max(0, sinceShot - .025) * 32)
+    : 0;
+  meta.slide.position.z = meta.slideHomeZ - travel * blowback;
+}
 
 /** Equipment detailing attaches to the articulated human pivots while keeping natural proportions. */
 function finishOperativeKit(
@@ -758,14 +835,18 @@ function finishOperativeKit(
   const part=(name:string,parent:TransformNode,x:number,y:number,z:number,w:number,h:number,d:number,color:string,shape:'box'|'sphere'|'cylinder'='box',rotX=0,rotY=0,rotZ=0,topScale=1):Mesh=>{
     const fullName=`${id}-${force}-kit-${name}`;
     let mesh:Mesh;
+    // Small fittings (eyes, buttons, lenses, straps) read the same with fewer facets at broadcast distance.
+    const small=Math.max(w,h,d)<.06,tiny=Math.max(w,h,d)<.035,large=Math.max(w,h,d)>.15;
     if(shape==='sphere'){
-      mesh=MeshBuilder.CreateSphere(fullName,{diameter:1,segments:12},scene);
+      mesh=MeshBuilder.CreateSphere(fullName,{diameter:1,segments:small?4:8},scene);
       mesh.scaling.set(w,h,d);
     }else if(shape==='cylinder'){
-      mesh=MeshBuilder.CreateCylinder(fullName,{height:1,diameterTop:topScale,diameterBottom:1,tessellation:12},scene);
+      // Collars, bands, cups and rims roll over at the edge like fabric and moulded plastic.
+      mesh=tiny?MeshBuilder.CreateCylinder(fullName,{height:1,diameterTop:topScale,diameterBottom:1,tessellation:8},scene):createRoundedOperativeCylinder(fullName,scene,topScale,small);
       mesh.scaling.set(w,h,d);
     }else{
-      mesh=MeshBuilder.CreateBox(fullName,{width:1,height:1,depth:1},scene);
+      // Pouches, plates and straps have sewn, rounded edges rather than brick corners.
+      mesh=tiny?MeshBuilder.CreateBox(fullName,{width:1,height:1,depth:1},scene):createRoundedOperativeBox(fullName,scene,small,large);
       mesh.scaling.set(w,h,d);
     }
     mesh.position.set(x,y,z);
@@ -780,46 +861,83 @@ function finishOperativeKit(
   const isSuited=style.headgear==='syndicate-suit';
   const hasBackpack=style.headgear==='anarchist-hoodie';
 
-  // Natural human neck, trapezius collar, and tapered pelvic/hip joint
-  part('neck-column',spine,0,.355,.006,.11,.15,.11,skin,'cylinder',0,0,0,.88);
-  part('trapezius',spine,0,.27,0,.38,.09,.195,fabric,'cylinder',0,0,0,.44);
-  part('collar-seam',spine,0,.305,.006,.145,.045,.135,isSuited?style.secondaryAccent:rig,'cylinder',0,0,0,.92);
+  // Natural human neck, sternocleidomastoid tendons, clavicles, trapezius collar, and tapered pelvic/hip joint
+  // A real neck is about as wide as the jaw; under a balaclava or hood it is covered by the same fabric.
+  const neckCovered=style.headgear==='fast-nvg'||style.headgear==='gign-shield'||style.headgear==='swat-cap';
+  const neckColor=neckCovered?style.eyePatchColor:skin;
+  part('neck-column',spine,0,.35,.004,.122,.15,.116,neckColor,'cylinder',0,0,0,.9);
+  for(const side of [-1,1]){
+    // Sternocleidomastoid V-muscles running from behind the ear down to the sternal notch
+    part(`neck-scm-${side}`,spine,side*.028,.335,.028,.034,.11,.036,neckColor,'cylinder',.24,0,side*-.22,.85);
+    // Collarbone/clavicle ridge + posterior scapular swell beneath the uniform fabric
+    part(`clavicle-${side}`,spine,side*.082,.268,.062,.105,.028,.044,fabric,'cylinder',-.12,side*-.26,side*-.16,.88);
+    part(`scapula-pad-${side}`,spine,side*.076,.175,-.084,.108,.145,.042,fabric,'sphere',.08,0,side*.12);
+    part(`hip-glute-${side}`,spine,side*.074,-.285,-.038,.125,.12,.145,pants,'sphere',.08,0,0);
+  }
+  // Trapezius rises from the shoulders into the neck, so the neck shows only a short column under the jaw.
+  part('trapezius',spine,0,.305,0,.37,.15,.2,fabric,'cylinder',0,0,0,.42);
+  part('collar-seam',spine,0,.335,.006,.142,.045,.134,isSuited?style.secondaryAccent:rig,'cylinder',0,0,0,.92);
   part('pelvis',spine,0,-.265,0,.305,.155,.205,pants,'cylinder',0,0,0,.92);
   part('waist-belt',spine,0,-.21,0,.315,.038,.212,darkTrim,'cylinder',0,0,0,.98);
   part('belt-buckle',spine,0,-.21,.108,.048,.038,.014,hardware,'box');
 
-  // Slim fitted hip holster (+ holstered sidearm), rear dump pouch & tourniquet, side utility pocket
+  // Slim fitted hip holster (+ holstered sidearm + thigh strap), rear dump pouch & tourniquet, side utility pocket
   part('hip-holster',spine,.158,-.25,-.005,.036,.105,.08,darkTrim,'box',0,0,-.06);
   part('holster-pistol-grip',spine,.164,-.19,-.012,.028,.055,.038,darkTrim,'box',.35,0,-.1);
   part('holster-pistol-slide',spine,.164,-.21,.012,.026,.048,.075,hardware,'box',.18,0,-.06);
+  part('holster-thigh-shroud',rightLegPivot,.09,-.13,-.004,.026,.125,.088,darkTrim,'box',0,0,-.04);
+  part('holster-leg-strap',rightLegPivot,0,-.135,0,.174,.026,.182,darkTrim,'cylinder',0,0,0,1);
   part('side-medpouch',spine,-.158,-.245,-.01,.036,.085,.075,pouchColor,'box',0,0,.05);
   part('belt-dump-pouch',spine,-.075,-.245,-.118,.115,.11,.045,pouchColor,'box',.08,0,0);
   part('belt-tourniquet',spine,.085,-.22,.112,.042,.072,.032,darkTrim,'box');
   part('belt-tourniquet-tab',spine,.085,-.185,.124,.024,.026,.016,'#dc2626','box');
 
   if(!isSuited){
-    // Fitted tactical chest carrier front/back, combat knife, utility canisters, PRC radio & hydration pack
-    part('rig-chest-panel',spine,0,.105,.098,.26,.24,.032,rig,'box');
-    part('rig-back-panel',spine,0,.105,-.098,.25,.24,.032,rig,'box');
+    // Fitted tactical chest carrier front/back, combat knife, utility canisters, PRC radio & hydration pack.
+    // CT wear a plate carrier (full plates, side cummerbund, raised shoulder straps); T wear a lighter open
+    // chest rig high on the sternum with an X-harness across the back.
+    const ctCarrier=force==='ct';
+    part('rig-chest-panel',spine,0,ctCarrier?.105:.135,ctCarrier?.1:.098,ctCarrier?.27:.25,ctCarrier?.25:.17,ctCarrier?.04:.03,rig,'box');
+    part('rig-back-panel',spine,0,.105,-.098,ctCarrier?.26:.2,ctCarrier?.25:.15,ctCarrier?.036:.02,rig,'box');
+    if(ctCarrier){
+      // The carrier wraps the whole chest over the shirt: plates front and back joined by the side cummerbund.
+      part('ct-carrier-shell',spine,0,.13,-.002,.34,.27,.24,rig,'cylinder',0,0,0,1.0);
+      part('ct-plate-front-crown',spine,0,.235,.104,.17,.035,.034,rig,'box',-.12,0,0);
+      part('ct-plate-back-crown',spine,0,.235,-.104,.17,.035,.03,rig,'box',.12,0,0);
+      part('ct-carrier-drag-handle',spine,0,.255,-.122,.07,.022,.022,darkTrim,'box');
+      for(const side of [-1,1]){
+        part(`ct-cummerbund-${side}`,spine,side*.15,.03,0,.032,.17,.2,rig,'box',0,0,side*.06);
+        part(`ct-cummerbund-pouch-${side}`,spine,side*.172,.03,.035,.03,.1,.06,pouchColor,'box',0,0,side*.06);
+        part(`ct-thigh-harness-${side}`,side<0?leftLegPivot:rightLegPivot,0,-.095,.006,.162,.024,.172,rig,'cylinder',0,0,side*-.12,1);
+        part(`ct-thigh-drop-${side}`,side<0?leftLegPivot:rightLegPivot,side*.076,-.05,.042,.026,.12,.022,rig,'box',0,0,side*.24);
+      }
+      part('ct-chest-mic',spine,.086,.162,.118,.032,.042,.022,darkTrim,'box',0,0,-.12);
+      part('ct-shoulder-flag',rightArmPivot,.054,-.075,0,.012,.05,.072,style.secondaryAccent,'box',0,0,.05);
+    }else{
+      for(const side of [-1,1]){
+        part(`t-harness-strap-${side}`,spine,0,.1,-.115,.03,.34,.012,rig,'box',0,0,side*.62);
+        part(`t-rig-shoulder-strap-${side}`,spine,side*.085,.215,.06,.03,.16,.012,rig,'box',-.55,0,0);
+      }
+      part('t-rig-side-pouch',spine,-.15,.07,.03,.03,.09,.07,pouchColor,'box',0,0,-.06);
+    }
     if(!hasBackpack){
       part('hydration-pack',spine,0,.095,-.13,.175,.23,.052,pouchColor,'cylinder',0,0,0,.86);
     }
     part('chest-knife-sheath',spine,-.098,.135,.118,.026,.115,.022,darkTrim,'box',0,0,.22);
     part('chest-knife-pommel',spine,-.112,.192,.12,.03,.04,.024,hardware,'box',0,0,.22);
-    part('chest-smoke-canister',spine,.102,.015,.122,.044,.095,.044,'#64748b','cylinder');
-    part('chest-flash-canister',spine,-.105,.015,.12,.038,.082,.038,'#475569','cylinder');
     for(const side of [-1,1]){
       part(`rig-shoulder-pad-${side}`,spine,side*.12,.225,0,.065,.045,.175,rig,'box',.05,0,-side*.14);
       part(`rig-strap-buckle-${side}`,spine,side*.11,.20,.105,.042,.024,.016,hardware,'box');
-      part(`thigh-cargo-pouch-${side}`,side<0?leftLegPivot:rightLegPivot,side*.088,-.20,.005,.036,.13,.105,pouchColor,'box',0,0,-side*.04);
-      part(`thigh-cargo-flap-${side}`,side<0?leftLegPivot:rightLegPivot,side*.092,-.145,.005,.034,.028,.102,rig,'box',0,0,-side*.04);
-      part(`knee-pad-shell-${side}`,side<0?leftKneePivot:rightKneePivot,0,.005,.068,.112,.115,.034,darkTrim,'sphere');
-      part(`knee-pad-strap-${side}`,side<0?leftKneePivot:rightKneePivot,0,.005,0,.122,.024,.128,rig,'cylinder');
+      part(`thigh-cargo-pouch-${side}`,side<0?leftLegPivot:rightLegPivot,side*.1,-.20,.005,.038,.135,.11,pouchColor,'box',0,0,-side*.04);
+      part(`thigh-cargo-flap-${side}`,side<0?leftLegPivot:rightLegPivot,side*.104,-.14,.005,.036,.028,.108,rig,'box',0,0,-side*.04);
+      part(`knee-pad-shell-${side}`,side<0?leftKneePivot:rightKneePivot,0,.0,.07,.104,.118,.036,darkTrim,'box',-.06,0,0);
+      part(`knee-pad-strap-${side}`,side<0?leftKneePivot:rightKneePivot,0,.005,0,.138,.024,.142,rig,'cylinder');
     }
     for(let i=0;i<3;i++){
       const x=(i-1)*.074;
-      part(`mag-pouch-${i}`,spine,x,-.01,.118,.062,.105,.034,pouchColor,'box');
-      part(`mag-pull-${i}`,spine,x,.042,.126,.048,.018,.014,darkTrim,'box');
+      part(`mag-pouch-${i}`,spine,x,-.01,.118,.064,.108,.038,pouchColor,'box');
+      part(`mag-flap-${i}`,spine,x,.028,.125,.066,.042,.032,rig,'box',-.12,0,0);
+      part(`mag-pull-${i}`,spine,x,.048,.128,.046,.016,.014,darkTrim,'box');
     }
   }
   part('prc-radio-body',spine,-.125,.09,-.115,.052,.115,.04,darkTrim,'box');
@@ -841,6 +959,22 @@ function finishOperativeKit(
     },
     part,
   );
+
+  // Grenades on the rig follow the real inventory, so an empty pouch never shows a smoke. Kept out of
+  // the merged batches (the `-kit-` name skips the merge loop) so each can be shown or hidden per frame.
+  const carry=(kind:'smoke'|'flash'|'he'|'incendiary',x:number,y:number,z:number,width:number,height:number,color:string)=>{
+    const mesh=createRoundedOperativeCylinder(`${id}-${force}-kit-carry-${kind}`,scene,kind==='he'?.78:1,true);
+    mesh.scaling.set(width,height,width);mesh.position.set(x,y,z);mesh.parent=spine;mesh.material=getMat(color);
+    mesh.isPickable=false;mesh.receiveShadows=true;mesh.setEnabled(false);
+    return {kind,mesh};
+  };
+  const chestZ=isSuited?.112:.124,carryY=isSuited?-.17:.015;
+  view.utilityCarry=[
+    carry('smoke',.102,carryY,chestZ,.044,.095,'#607d67'),
+    carry('flash',-.105,carryY,chestZ-.002,.038,.085,'#a6aca8'),
+    carry('he',.15,carryY-.03,chestZ-.03,.046,.058,'#4b5a3c'),
+    carry('incendiary',-.152,carryY-.025,chestZ-.03,.04,.082,force==='t'?'#635e31':'#a6462f'),
+  ];
 
   // Batch rigid fittings on each animated pivot; keep articulated limbs and the reload prop separate.
   for(const mesh of view.root.getChildMeshes()){
@@ -870,9 +1004,11 @@ export function createTacticalOperativeMesh(
   const style = resolveOperativeStyle(force, id, variantIndex);
   const root = new TransformNode(`operative-${id}`, scene);
   const spine = new TransformNode(`${id}-spine-pivot`, scene); spine.parent=root; spine.position.set(0,1.05,0);
+  // A full chest and back (and the vest over them): the torso and every fitting on it scale together.
+  spine.scaling.set(...OPERATIVE_BUILD.torsoScale);
   const headPivot = new TransformNode(`${id}-head-pivot`, scene); headPivot.parent=root; headPivot.position.set(0,1.54,0);
-  const leftArmPivot = new TransformNode(`${id}-arm-l-pivot`, scene); leftArmPivot.parent=root; leftArmPivot.position.set(-.192,1.29,0);
-  const rightArmPivot = new TransformNode(`${id}-arm-r-pivot`, scene); rightArmPivot.parent=root; rightArmPivot.position.set(.192,1.29,0);
+  const leftArmPivot = new TransformNode(`${id}-arm-l-pivot`, scene); leftArmPivot.parent=root; leftArmPivot.position.set(-SHOULDER_X,1.29,0);
+  const rightArmPivot = new TransformNode(`${id}-arm-r-pivot`, scene); rightArmPivot.parent=root; rightArmPivot.position.set(SHOULDER_X,1.29,0);
   const leftLegPivot = new TransformNode(`${id}-leg-l-pivot`, scene); leftLegPivot.parent=root; leftLegPivot.position.set(-.105,.74,0);
   const rightLegPivot = new TransformNode(`${id}-leg-r-pivot`, scene); rightLegPivot.parent=root; rightLegPivot.position.set(.105,.74,0);
   const leftKneePivot = new TransformNode(`${id}-knee-l-pivot`, scene); leftKneePivot.parent=leftLegPivot; leftKneePivot.position.set(0,-.36,0);
@@ -881,9 +1017,11 @@ export function createTacticalOperativeMesh(
   const leftElbowPivot=new TransformNode(`${id}-elbow-l-pivot`,scene);leftElbowPivot.parent=leftArmPivot;leftElbowPivot.position.y=-.25;
   const rightElbowPivot=new TransformNode(`${id}-elbow-r-pivot`,scene);rightElbowPivot.parent=rightArmPivot;rightElbowPivot.position.y=-.25;
 
-  // Tapered anatomical human limb segment
-  const taperedLimb=(name:string,topW:number,botW:number,h:number,dRatio=.96)=>{
-    const mesh=MeshBuilder.CreateCylinder(name,{height:h,diameterTop:topW,diameterBottom:botW,tessellation:12},scene);
+  // Tapered anatomical human limb segment, sculpted with mirrored medial/lateral muscle profiles.
+  // Rounded ends, so elbows, knees, hips and shoulders read as joints instead of cut tubes.
+  const taperedLimb=(name:string,topW:number,botW:number,h:number,dRatio=.96,profile?:OperativeSegmentProfile,side=1)=>{
+    const mesh=createCapsuleLimb(name,scene,topW,botW,h);
+    if(profile)sculptOperativeSegment(mesh,profile,side);
     mesh.scaling.z=dRatio;return mesh;
   };
   const add = (m: Mesh, x: number, y: number, z: number, rx = 0, ry = 0, rz = 0) => {
@@ -916,54 +1054,57 @@ export function createTacticalOperativeMesh(
   const fullBalaclava = style.headgear === 'fast-nvg' || style.headgear === 'gign-shield' || style.headgear === 'swat-cap';
 
   // V-taper human ribcage & waist
-  const torso = MeshBuilder.CreateCylinder(`${id}-torso`, { height: .49, diameterTop: .35, diameterBottom: .275, tessellation: 14 }, scene);
+  // Lathed torso: sloped trapezius/shoulder line into the neck and a rounded pelvis end (no flat cylinder caps).
+  const torso = createOperativeTorso(`${id}-torso`, scene, .49, .35, .275);
+  sculptOperativeSegment(torso, OPERATIVE_SEGMENT_PROFILES.torso);
   torso.scaling.z = .59;
   torso.material = uniform;
   add(torso, 0, 1.07, 0);
 
-  // Proportional human cranium & face
-  const head = MeshBuilder.CreateSphere(`${id}-head`, { diameter: .215, segments: 14 }, scene);
-  head.scaling.set(.86 * (style.face?.headScaleX ?? 1), 1.04 * (style.face?.headScaleY ?? 1), .92);
+  // Proportional sculpted human cranium & face
+  const head = MeshBuilder.CreateSphere(`${id}-head`, { diameter: .215, segments: 22, updatable: true }, scene);
+  sculptOperativeSegment(head, OPERATIVE_HEAD_PROFILE);
+  head.scaling.set(.88 * (style.face?.headScaleX ?? 1), 1.03 * (style.face?.headScaleY ?? 1), .95);
   head.material = fullBalaclava ? getMat(style.eyePatchColor) : skinMat;
   add(head, 0, 1.545, 0);
 
-  // Muscular tapered thighs & calves
-  const leftLeg = taperedLimb(`${id}-leg-l`, .155, .118, .38, 1.06);
+  // Muscular mirrored asymmetric thighs & calves
+  const leftLeg = taperedLimb(`${id}-leg-l`, .176, .13, .38, 1.04, OPERATIVE_SEGMENT_PROFILES.thigh, -1);
   leftLeg.material = trouserMat;
   add(leftLeg, -.105, .55, 0);
 
-  const rightLeg = taperedLimb(`${id}-leg-r`, .155, .118, .38, 1.06);
+  const rightLeg = taperedLimb(`${id}-leg-r`, .176, .13, .38, 1.04, OPERATIVE_SEGMENT_PROFILES.thigh, 1);
   rightLeg.material = trouserMat;
   add(rightLeg, .105, .55, 0);
 
-  const leftShin = taperedLimb(`${id}-shin-l`, .118, .086, .35, 1.04);
+  const leftShin = taperedLimb(`${id}-shin-l`, .13, .102, .35, 1.04, OPERATIVE_SEGMENT_PROFILES.shin, -1);
   leftShin.material = trouserMat;
   addKneePart(leftShin, leftKneePivot, 0, -.175, 0);
 
-  const rightShin = taperedLimb(`${id}-shin-r`, .118, .086, .35, 1.04);
+  const rightShin = taperedLimb(`${id}-shin-r`, .13, .102, .35, 1.04, OPERATIVE_SEGMENT_PROFILES.shin, 1);
   rightShin.material = trouserMat;
   addKneePart(rightShin, rightKneePivot, 0, -.175, 0);
 
-  // Contoured combat boots
-  const bootL = MeshBuilder.CreateBox(`${id}-boot-l`, { width: .096, height: .076, depth: .195 }, scene);
+  // Contoured anatomical 3D combat boots
+  const bootL = createOperativeBoot(`${id}-boot-l`, scene, .108, .1, .25, -1);
   bootL.material = bootMat;
-  addKneePart(bootL, leftKneePivot, 0, -.355, .034);
+  addKneePart(bootL, leftKneePivot, 0, -.35, .042);
 
-  const bootR = MeshBuilder.CreateBox(`${id}-boot-r`, { width: .096, height: .076, depth: .195 }, scene);
+  const bootR = createOperativeBoot(`${id}-boot-r`, scene, .108, .1, .25, 1);
   bootR.material = bootMat;
-  addKneePart(bootR, rightKneePivot, 0, -.355, .034);
+  addKneePart(bootR, rightKneePivot, 0, -.35, .042);
 
   // Tapered upper arms & forearms
-  const leftArm = taperedLimb(`${id}-arm-l`, .106, .088, .27, 1.02);
+  const leftArm = taperedLimb(`${id}-arm-l`, .124, .098, .27, 1.02, OPERATIVE_SEGMENT_PROFILES.upperArm, -1);
   leftArm.material = uniform;
-  add(leftArm, -.192, 1.165, 0);
+  add(leftArm, -SHOULDER_X, 1.165, 0);
 
-  const rightArm = taperedLimb(`${id}-arm-r`, .106, .088, .27, 1.02);
+  const rightArm = taperedLimb(`${id}-arm-r`, .124, .098, .27, 1.02, OPERATIVE_SEGMENT_PROFILES.upperArm, 1);
   rightArm.material = uniform;
-  add(rightArm, .192, 1.165, 0);
+  add(rightArm, SHOULDER_X, 1.165, 0);
 
   for (const [side, pivot] of [[-1, leftElbowPivot], [1, rightElbowPivot]] as const) {
-    const forearm = taperedLimb(`${id}-forearm-${side < 0 ? 'l' : 'r'}`, .086, .066, .25, 1);
+    const forearm = taperedLimb(`${id}-forearm-${side < 0 ? 'l' : 'r'}`, .098, .072, .25, 1, OPERATIVE_SEGMENT_PROFILES.forearm, side);
     forearm.parent = pivot;
     forearm.position.y = -.12;
     forearm.material = forearmMat;
@@ -971,14 +1112,14 @@ export function createTacticalOperativeMesh(
     forearm.receiveShadows = true;
   }
 
-  // Tactically articulated hands/gloves at wrist (palm center aligns with IK lowerLen = 0.24)
-  const gloveL = MeshBuilder.CreateBox(`${id}-glove-l`, { width: .064, height: .082, depth: .076 }, scene);
+  // Tactically articulated 3D metacarpal hands/gloves at wrist (palm center aligns with IK lowerLen = 0.24)
+  const gloveL = createOperativeHand(`${id}-glove-l`, scene, .07, .08, .036, -1);
   gloveL.material = gloveMat;
-  add(gloveL, -.192, .80, 0);
+  add(gloveL, -SHOULDER_X, .80, 0);
 
-  const gloveR = MeshBuilder.CreateBox(`${id}-glove-r`, { width: .064, height: .082, depth: .076 }, scene);
+  const gloveR = createOperativeHand(`${id}-glove-r`, scene, .07, .08, .036, 1);
   gloveR.material = gloveMat;
-  add(gloveR, .192, .80, 0);
+  add(gloveR, SHOULDER_X, .80, 0);
 
   const magazine = MeshBuilder.CreateBox(`${id}-reload-magazine`, { width: .062, height: .165, depth: .048 }, scene);
   magazine.material = bootMat;
@@ -1042,13 +1183,18 @@ export function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene
     return m;
   };
 
+  const boxPart = (name: string, w: number, h: number, d: number, small = false) =>
+    createRoundedOperativeBlock(`${id}-${name}`, scene, w, h, d, small);
+
   if (weapon === 'knife') {
-    const grip=MeshBuilder.CreateBox(`${id}-knife-grip`,{width:.04,height:.045,depth:.13},scene);
+    const grip=boxPart('knife-grip',.038,.042,.13,true);
     grip.material=darkMetal;add(grip,0,0,0);
-    const guard=MeshBuilder.CreateBox(`${id}-knife-guard`,{width:.1,height:.025,depth:.02},scene);
+    const guard=boxPart('knife-guard',.095,.024,.02,true);
     guard.material=gunmetal;add(guard,0,0,.075);
-    const blade=MeshBuilder.CreateCylinder(`${id}-knife-blade`,{height:.25,diameterTop:0,diameterBottom:.065,tessellation:4},scene);
+    const blade=MeshBuilder.CreateCylinder(`${id}-knife-blade`,{height:.25,diameterTop:0,diameterBottom:.065,tessellation:6},scene);
     blade.scaling.z=.18;blade.material=silver;add(blade,0,0,.21,Math.PI/2);
+    const spineFullers=boxPart('knife-fuller',.008,.014,.15,true);
+    spineFullers.material=gunmetal;add(spineFullers,0,.008,.18);
     root.metadata={name:LIVE_KNIFE.name};
   } else if (weapon === 'flash' || weapon === 'smoke' || weapon === 'incendiary' || weapon==='he') {
     const cylinder=(name:string,height:number,diameter:number,y:number,color:string)=>{
@@ -1096,160 +1242,202 @@ export function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene
       const wire=MeshBuilder.CreateTube(`${id}-c4-wire-${i}`,{path:[new Vector3(-.12+i*.03,.1,.055),new Vector3(-.13+i*.025,.16,.06),new Vector3(.05,.14,.095),new Vector3(.055,.09,.11)],radius:.003,tessellation:5},scene);wire.material=getMat(color);wire.parent=root;wire.isPickable=false;
     }
   } else if (weapon === 'usp_s') {
-    const slide = MeshBuilder.CreateBox(`${id}-slide`, { width: 0.042, height: 0.052, depth: 0.20 }, scene);
+    const slide = boxPart('slide', 0.040, 0.048, 0.20, true);
     slide.material = darkMetal; add(slide, 0, 0.028, 0.02);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.038, height: 0.12, depth: 0.055 }, scene);
+    const frame = boxPart('frame', 0.038, 0.024, 0.18, true);
+    frame.material = gunmetal; add(frame, 0, -0.002, 0.02);
+    const grip = boxPart('grip', 0.036, 0.12, 0.052, true);
     grip.material = darkMetal; add(grip, 0, -0.05, -0.03, 0.2, 0, 0);
     const silencer = MeshBuilder.CreateCylinder(`${id}-silencer`, { height: 0.19, diameter: 0.038 }, scene);
     silencer.material = darkMetal; add(silencer, 0, 0.038, 0.21, Math.PI / 2, 0, 0);
   } else if (weapon === 'deagle') {
-    const slide = MeshBuilder.CreateBox(`${id}-slide`, { width: 0.052, height: 0.065, depth: 0.26 }, scene);
+    const slide = boxPart('slide', 0.050, 0.062, 0.26, true);
     slide.material = silver; add(slide, 0, 0.032, 0.04);
-    const frame = MeshBuilder.CreateBox(`${id}-frame`, { width: 0.048, height: 0.04, depth: 0.24 }, scene);
+    const frame = boxPart('frame', 0.046, 0.038, 0.24, true);
     frame.material = gunmetal; add(frame, 0, -0.015, 0.03);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.045, height: 0.13, depth: 0.065 }, scene);
+    const grip = boxPart('grip', 0.042, 0.13, 0.062, true);
     grip.material = darkMetal; add(grip, 0, -0.065, -0.03, 0.24, 0, 0);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.08, diameter: 0.032 }, scene);
     barrel.material = silver; add(barrel, 0, 0.04, 0.20, Math.PI / 2, 0, 0);
   } else if (weapon === 'm4a1_s'||weapon==='budget_ct') {
-    const rec = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.052, height: 0.078, depth: 0.30 }, scene);
-    rec.material = darkMetal; add(rec, 0, 0.03, 0);
+    const rec = boxPart('rec', 0.050, 0.066, 0.30);
+    rec.material = darkMetal; add(rec, 0, 0.026, 0);
+    const upperCrown = createRoundedOperativeCylinder(`${id}-upper-crown`, scene, 1, true);
+    upperCrown.scaling.set(.044, .28, .044); upperCrown.material = darkMetal;
+    add(upperCrown, 0, .054, .01, Math.PI / 2, 0, 0);
     const guard = MeshBuilder.CreateCylinder(`${id}-guard`, { height: 0.18, diameter: 0.046 }, scene);
     guard.material = darkMetal; add(guard, 0, 0.035, 0.22, Math.PI / 2, 0, 0);
     const silencer = MeshBuilder.CreateCylinder(`${id}-silencer`, { height: 0.24, diameter: 0.040 }, scene);
     silencer.material = darkMetal; add(silencer, 0, 0.035, 0.42, Math.PI / 2, 0, 0);
-    const mag = MeshBuilder.CreateBox(`${id}-mag`, { width: 0.034, height: 0.16, depth: 0.055 }, scene);
+    const mag = boxPart('mag', 0.032, 0.16, 0.052);
     mag.material = gunmetal; add(mag, 0, -0.075, 0.07, -0.2, 0, 0);
-    const stock = MeshBuilder.CreateBox(`${id}-stock`, { width: 0.045, height: 0.095, depth: 0.18 }, scene);
+    const bufferTube = MeshBuilder.CreateCylinder(`${id}-buffer-tube`, { height: 0.22, diameter: 0.034 }, scene);
+    bufferTube.material = gunmetal; add(bufferTube, 0, 0.042, -0.19, Math.PI / 2, 0, 0);
+    const deltaRing = MeshBuilder.CreateCylinder(`${id}-delta-ring`, { height: 0.026, diameter: 0.054 }, scene);
+    deltaRing.material = gunmetal; add(deltaRing, 0, 0.036, 0.135, Math.PI / 2, 0, 0);
+    const chargingHandle = boxPart('charging-handle', 0.038, 0.010, 0.022, true);
+    chargingHandle.material = gunmetal; add(chargingHandle, 0, 0.064, -0.138);
+    const forwardAssist = boxPart('forward-assist', 0.014, 0.018, 0.028, true);
+    forwardAssist.material = gunmetal; add(forwardAssist, 0.026, 0.044, -0.088, 0, -0.35, 0);
+    const brassDeflector = boxPart('brass-deflector', 0.014, 0.022, 0.022, true);
+    brassDeflector.material = darkMetal; add(brassDeflector, 0.026, 0.048, -0.045, 0, 0.45, 0);
+    const stock = boxPart('stock', 0.042, 0.092, 0.18);
     stock.material = darkMetal; add(stock, 0, 0.01, -0.22);
-    const handle = MeshBuilder.CreateBox(`${id}-handle`, { width: 0.032, height: 0.045, depth: 0.14 }, scene);
-    handle.material = darkMetal; add(handle, 0, 0.085, 0.02);
+    const stockPad = boxPart('stock-pad', 0.044, 0.096, 0.018, true);
+    stockPad.material = gunmetal; add(stockPad, 0, 0.008, -0.308);
+    const handle = boxPart('handle', 0.026, 0.034, 0.14, true);
+    handle.material = darkMetal; add(handle, 0, 0.078, 0.02);
   } else if (weapon === 'ak47' || weapon === 'rifle'||weapon==='budget_t') {
-    const receiver = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.055, height: 0.08, depth: 0.32 }, scene);
-    receiver.material = darkMetal; add(receiver, 0, 0.03, 0);
-    const handguard = MeshBuilder.CreateBox(`${id}-guard`, { width: 0.06, height: 0.075, depth: 0.22 }, scene);
-    handguard.material = wood; add(handguard, 0, 0.03, 0.24);
+    const receiver = boxPart('rec', 0.052, 0.068, 0.31);
+    receiver.material = darkMetal; add(receiver, 0, 0.026, 0);
+    const dustCover = createRoundedOperativeCylinder(`${id}-dust-cover`, scene, .94, true);
+    dustCover.scaling.set(.048, .305, .048); dustCover.material = gunmetal;
+    add(dustCover, 0, .054, -.002, Math.PI / 2, 0, 0);
+    const handguard = boxPart('guard', 0.056, 0.058, 0.21);
+    handguard.material = wood; add(handguard, 0, 0.025, 0.24);
+    const upperGuard = boxPart('upper-guard', 0.048, 0.034, 0.185);
+    upperGuard.material = wood; add(upperGuard, 0, 0.055, 0.23);
+    const gasTube = MeshBuilder.CreateCylinder(`${id}-gas-tube`, { height: 0.22, diameter: 0.026 }, scene);
+    gasTube.material = gunmetal; add(gasTube, 0, 0.060, 0.24, Math.PI / 2, 0, 0);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.22, diameter: 0.024 }, scene);
     barrel.material = silver; add(barrel, 0, 0.035, 0.44, Math.PI / 2, 0, 0);
     const muzzle = MeshBuilder.CreateCylinder(`${id}-muzzle`, { height: 0.05, diameter: 0.032 }, scene);
     muzzle.material = gunmetal; add(muzzle, 0, 0.035, 0.56, Math.PI / 2, 0, 0);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.044, height: 0.14, depth: 0.058 }, scene);
+    const frontPost = boxPart('front-post', 0.016, 0.042, 0.022, true);
+    frontPost.material = darkMetal; add(frontPost, 0, 0.056, 0.50);
+    for (const side of [-1, 1]) {
+      const ear = boxPart(`front-ear-${side < 0 ? 'l' : 'r'}`, .0035, .022, .016, true);
+      ear.material = darkMetal; add(ear, side * .007, .078, .50);
+    }
+    const gasBlock = boxPart('gas-block', .028, .034, .036, true);
+    gasBlock.material = gunmetal; add(gasBlock, 0, .052, .355, .34, 0, 0);
+    const cleaningRod = MeshBuilder.CreateCylinder(`${id}-cleaning-rod`, { height: .22, diameter: .006 }, scene);
+    cleaningRod.material = darkMetal; add(cleaningRod, 0, .021, .41, Math.PI / 2, 0, 0);
+    for (const [tag, fz] of [['r', .135], ['f', .345]] as const) {
+      const ferrule = boxPart(`guard-ferrule-${tag}`, .058, .052, .014, true);
+      ferrule.material = darkMetal; add(ferrule, 0, .032, fz);
+    }
+    const rearBlock = boxPart('rear-sight-block', .036, .028, .052, true);
+    rearBlock.material = darkMetal; add(rearBlock, 0, .062, .112);
+    const sightLeaf = boxPart('sight-leaf', .022, .010, .042, true);
+    sightLeaf.material = silver; add(sightLeaf, 0, .074, .112, -.05, 0, 0);
+    const grip = boxPart('grip', 0.040, 0.14, 0.054);
     grip.material = wood; add(grip, 0, -0.065, -0.06, 0.3, 0, 0);
     for(const [segment,y,z,height,angle] of [[0,-.045,.085,.105,-.12],[1,-.13,.115,.09,-.38],[2,-.195,.16,.07,-.63]]){
-      const mag=MeshBuilder.CreateBox(`${id}-mag-${segment}`,{width:.038,height,depth:.072},scene);
+      const mag=boxPart(`mag-${segment}`,.036,height,.068,true);
       mag.material=gunmetal;add(mag,0,y,z,angle,0,0);
     }
-    const stock = MeshBuilder.CreateBox(`${id}-stock`, { width: 0.05, height: 0.11, depth: 0.2 }, scene);
+    const stock = boxPart('stock', 0.046, 0.105, 0.20);
     stock.material = wood; add(stock, 0, 0.01, -0.24);
   } else if (weapon === 'mp9') {
-    const rec = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.048, height: 0.072, depth: 0.28 }, scene);
+    const rec = boxPart('rec', 0.046, 0.068, 0.28);
     rec.material = darkMetal; add(rec, 0, 0.025, 0.04);
-    const foregrip = MeshBuilder.CreateBox(`${id}-fgrip`, { width: 0.036, height: 0.10, depth: 0.042 }, scene);
+    const foregrip = boxPart('fgrip', 0.034, 0.10, 0.040, true);
     foregrip.material = darkMetal; add(foregrip, 0, -0.05, 0.14);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.08, diameter: 0.026 }, scene);
     barrel.material = silver; add(barrel, 0, 0.035, 0.20, Math.PI / 2, 0, 0);
-    const mag = MeshBuilder.CreateBox(`${id}-mag`, { width: 0.032, height: 0.18, depth: 0.042 }, scene);
+    const mag = boxPart('mag', 0.030, 0.18, 0.040);
     mag.material = gunmetal; add(mag, 0, -0.08, 0.02, 0.2, 0, 0);
   } else if (weapon === 'mac10') {
-    const rec = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.050, height: 0.075, depth: 0.26 }, scene);
+    const rec = boxPart('rec', 0.048, 0.072, 0.26);
     rec.material = gunmetal; add(rec, 0, 0.025, 0.02);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.08, diameter: 0.024 }, scene);
     barrel.material = silver; add(barrel, 0, 0.03, 0.18, Math.PI / 2, 0, 0);
-    const mag = MeshBuilder.CreateBox(`${id}-mag`, { width: 0.032, height: 0.20, depth: 0.042 }, scene);
+    const mag = boxPart('mag', 0.030, 0.20, 0.040);
     mag.material = darkMetal; add(mag, 0, -0.09, -0.02, 0.15, 0, 0);
   } else if (weapon === 'mag7') {
-    const rec = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.055, height: 0.095, depth: 0.34 }, scene);
+    const rec = boxPart('rec', 0.052, 0.090, 0.34);
     rec.material = darkMetal; add(rec, 0, 0.03, 0.04);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.14, diameter: 0.032 }, scene);
     barrel.material = silver; add(barrel, 0, 0.045, 0.26, Math.PI / 2, 0, 0);
     const pump = MeshBuilder.CreateCylinder(`${id}-pump`, { height: 0.10, diameter: 0.042 }, scene);
     pump.material = gunmetal; add(pump, 0, 0.015, 0.22, Math.PI / 2, 0, 0);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.044, height: 0.14, depth: 0.058 }, scene);
+    const grip = boxPart('grip', 0.042, 0.14, 0.056);
     grip.material = darkMetal; add(grip, 0, -0.065, -0.08, 0.25, 0, 0);
   } else if (weapon === 'nova') {
-    const rec = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.052, height: 0.085, depth: 0.38 }, scene);
+    const rec = boxPart('rec', 0.050, 0.082, 0.38);
     rec.material = darkMetal; add(rec, 0, 0.03, 0);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.35, diameter: 0.028 }, scene);
     barrel.material = silver; add(barrel, 0, 0.042, 0.36, Math.PI / 2, 0, 0);
     const pump = MeshBuilder.CreateCylinder(`${id}-pump`, { height: 0.14, diameter: 0.044 }, scene);
     pump.material = gunmetal; add(pump, 0, 0.015, 0.28, Math.PI / 2, 0, 0);
-    const stock = MeshBuilder.CreateBox(`${id}-stock`, { width: 0.048, height: 0.10, depth: 0.22 }, scene);
+    const stock = boxPart('stock', 0.046, 0.096, 0.22);
     stock.material = darkMetal; add(stock, 0, 0.01, -0.26);
   } else if (weapon === 'negev') {
-    const rec = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.065, height: 0.095, depth: 0.42 }, scene);
+    const rec = boxPart('rec', 0.062, 0.090, 0.42);
     rec.material = darkMetal; add(rec, 0, 0.035, 0.02);
     const shroud = MeshBuilder.CreateCylinder(`${id}-shroud`, { height: 0.26, diameter: 0.048 }, scene);
     shroud.material = gunmetal; add(shroud, 0, 0.04, 0.34, Math.PI / 2, 0, 0);
     const drum = MeshBuilder.CreateCylinder(`${id}-drum`, { height: 0.08, diameter: 0.15 }, scene);
     drum.material = olive; add(drum, 0, -0.075, 0.06, 0, 0, Math.PI / 2);
-    const handle = MeshBuilder.CreateBox(`${id}-handle`, { width: 0.03, height: 0.06, depth: 0.16 }, scene);
+    const handle = boxPart('handle', 0.028, 0.055, 0.16, true);
     handle.material = gunmetal; add(handle, 0, 0.10, 0.12);
   } else if (weapon === 'scout') {
-    const chassis = MeshBuilder.CreateBox(`${id}-chassis`, { width: 0.055, height: 0.075, depth: 0.44 }, scene);
+    const chassis = boxPart('chassis', 0.052, 0.072, 0.44);
     chassis.material = gunmetal; add(chassis, 0, 0.025, 0.04);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.42, diameter: 0.024 }, scene);
     barrel.material = silver; add(barrel, 0, 0.035, 0.46, Math.PI / 2, 0, 0);
     const scopeTube = MeshBuilder.CreateCylinder(`${id}-scope`, { height: 0.24, diameter: 0.038 }, scene);
     scopeTube.material = darkMetal; add(scopeTube, 0, 0.095, 0.04, Math.PI / 2, 0, 0);
   } else if (weapon === 'p250') {
-    const slide = MeshBuilder.CreateBox(`${id}-slide`, { width: 0.044, height: 0.052, depth: 0.21 }, scene);
+    const slide = boxPart('slide', 0.042, 0.048, 0.21, true);
     slide.material = darkMetal; add(slide, 0, 0.028, 0.03);
-    const frame = MeshBuilder.CreateBox(`${id}-frame`, { width: 0.042, height: 0.026, depth: 0.19 }, scene);
+    const frame = boxPart('frame', 0.040, 0.024, 0.19, true);
     frame.material = olive; add(frame, 0, -0.005, 0.025);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.040, height: 0.115, depth: 0.052 }, scene);
+    const grip = boxPart('grip', 0.038, 0.115, 0.050, true);
     grip.material = gunmetal; add(grip, 0, -0.05, -0.025, 0.21, 0, 0);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.05, diameter: 0.022 }, scene);
     barrel.material = silver; add(barrel, 0, 0.036, 0.155, Math.PI / 2, 0, 0);
   } else if (weapon === 'fiveseven') {
-    const slide = MeshBuilder.CreateBox(`${id}-slide`, { width: 0.046, height: 0.054, depth: 0.25 }, scene);
+    const slide = boxPart('slide', 0.044, 0.050, 0.25, true);
     slide.material = gunmetal; add(slide, 0, 0.030, 0.055);
-    const frame = MeshBuilder.CreateBox(`${id}-frame`, { width: 0.044, height: 0.032, depth: 0.24 }, scene);
+    const frame = boxPart('frame', 0.042, 0.030, 0.24, true);
     frame.material = darkMetal; add(frame, 0, -0.006, 0.045);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.042, height: 0.122, depth: 0.058 }, scene);
+    const grip = boxPart('grip', 0.040, 0.122, 0.054, true);
     grip.material = darkMetal; add(grip, 0, -0.055, -0.03, 0.20, 0, 0);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.06, diameter: 0.022 }, scene);
     barrel.material = silver; add(barrel, 0, 0.038, 0.19, Math.PI / 2, 0, 0);
   } else if (weapon === 'tec9') {
-    const rec = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.048, height: 0.062, depth: 0.21 }, scene);
+    const rec = boxPart('rec', 0.046, 0.060, 0.21, true);
     rec.material = darkMetal; add(rec, 0, 0.026, 0.01);
     const shroud = MeshBuilder.CreateCylinder(`${id}-shroud`, { height: 0.14, diameter: 0.038 }, scene);
     shroud.material = gunmetal; add(shroud, 0, 0.036, 0.185, Math.PI / 2, 0, 0);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.040, height: 0.12, depth: 0.054 }, scene);
+    const grip = boxPart('grip', 0.038, 0.12, 0.052, true);
     grip.material = darkMetal; add(grip, 0, -0.055, -0.045, 0.22, 0, 0);
-    const frontMag = MeshBuilder.CreateBox(`${id}-front-mag`, { width: 0.034, height: 0.145, depth: 0.044 }, scene);
+    const frontMag = boxPart('front-mag', 0.032, 0.145, 0.042, true);
     frontMag.material = gunmetal; add(frontMag, 0, -0.068, 0.085, -0.08, 0, 0);
   } else if (weapon === 'cz75') {
-    const slide = MeshBuilder.CreateBox(`${id}-slide`, { width: 0.044, height: 0.050, depth: 0.23 }, scene);
+    const slide = boxPart('slide', 0.042, 0.046, 0.23, true);
     slide.material = gunmetal; add(slide, 0, 0.029, 0.045);
-    const frame = MeshBuilder.CreateBox(`${id}-frame`, { width: 0.042, height: 0.028, depth: 0.21 }, scene);
+    const frame = boxPart('frame', 0.040, 0.026, 0.21, true);
     frame.material = silver; add(frame, 0, -0.005, 0.035);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.040, height: 0.118, depth: 0.054 }, scene);
+    const grip = boxPart('grip', 0.038, 0.118, 0.052, true);
     grip.material = darkMetal; add(grip, 0, -0.052, -0.03, 0.22, 0, 0);
-    const spareMag = MeshBuilder.CreateBox(`${id}-spare-mag`, { width: 0.030, height: 0.11, depth: 0.040 }, scene);
+    const spareMag = boxPart('spare-mag', 0.028, 0.11, 0.038, true);
     spareMag.material = darkMetal; add(spareMag, 0, -0.048, 0.11, 0.16, 0, 0);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.07, diameter: 0.024 }, scene);
     barrel.material = silver; add(barrel, 0, 0.038, 0.175, Math.PI / 2, 0, 0);
   } else if (weapon === 'pistol' || weapon === 'glock') {
-    const slide = MeshBuilder.CreateBox(`${id}-slide`, { width: 0.045, height: 0.055, depth: 0.22 }, scene);
+    const slide = boxPart('slide', 0.043, 0.052, 0.22, true);
     slide.material = gunmetal; add(slide, 0, 0.028, 0.04);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.04, height: 0.12, depth: 0.055 }, scene);
+    const grip = boxPart('grip', 0.038, 0.12, 0.052, true);
     grip.material = darkMetal; add(grip, 0, -0.05, -0.02, 0.2, 0, 0);
     const barrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.06, diameter: 0.022 }, scene);
     barrel.material = silver; add(barrel, 0, 0.038, 0.16, Math.PI / 2, 0, 0);
   } else if (weapon === 'smg') {
-    const receiver = MeshBuilder.CreateBox(`${id}-rec`, { width: 0.052, height: 0.075, depth: 0.36 }, scene);
+    const receiver = boxPart('rec', 0.050, 0.072, 0.36);
     receiver.material = darkMetal; add(receiver, 0, 0.025, 0.06);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.042, height: 0.13, depth: 0.055 }, scene);
+    const grip = boxPart('grip', 0.040, 0.13, 0.052);
     grip.material = darkMetal; add(grip, 0, -0.055, -0.04, 0.25, 0, 0);
-    const mag = MeshBuilder.CreateBox(`${id}-mag`, { width: 0.032, height: 0.18, depth: 0.048 }, scene);
+    const mag = boxPart('mag', 0.030, 0.18, 0.046);
     mag.material = gunmetal; add(mag, 0, -0.075, 0.08, -0.25, 0, 0);
     const shroud = MeshBuilder.CreateCylinder(`${id}-shroud`, { height: 0.14, diameter: 0.035 }, scene);
     shroud.material = gunmetal; add(shroud, 0, 0.03, 0.28, Math.PI / 2, 0, 0);
-    const stock = MeshBuilder.CreateBox(`${id}-stock`, { width: 0.038, height: 0.06, depth: 0.15 }, scene);
+    const stock = boxPart('stock', 0.036, 0.056, 0.15);
     stock.material = darkMetal; add(stock, 0, 0.015, -0.18);
   } else {
     // SR-7 Sniper Rifle (heavy long chassis, elevated optical scope, muzzle brake)
-    const chassis = MeshBuilder.CreateBox(`${id}-chassis`, { width: 0.065, height: 0.085, depth: 0.5 }, scene);
+    const chassis = boxPart('chassis', 0.062, 0.082, 0.5);
     chassis.material = olive; add(chassis, 0, 0.03, 0.05);
     const longBarrel = MeshBuilder.CreateCylinder(`${id}-barrel`, { height: 0.48, diameter: 0.028 }, scene);
     longBarrel.material = gunmetal; add(longBarrel, 0, 0.038, 0.52, Math.PI / 2, 0, 0);
@@ -1259,42 +1447,79 @@ export function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene
     scopeTube.material = darkMetal; add(scopeTube, 0, 0.11, 0.04, Math.PI / 2, 0, 0);
     const scopeLens = MeshBuilder.CreateCylinder(`${id}-lens`, { height: 0.05, diameter: 0.056 }, scene);
     scopeLens.material = gunmetal; add(scopeLens, 0, 0.11, 0.18, Math.PI / 2, 0, 0);
-    const mount = MeshBuilder.CreateBox(`${id}-mount`, { width: 0.03, height: 0.04, depth: 0.16 }, scene);
+    const scopeBellR = MeshBuilder.CreateCylinder(`${id}-scope-bell-r`, { height: 0.045, diameter: 0.050 }, scene);
+    scopeBellR.material = darkMetal; add(scopeBellR, 0, 0.11, -0.10, Math.PI / 2, 0, 0);
+    const lensGlass = getMat('#1b232c');
+    for (const [side, lz] of [['f', .204], ['r', -.122]] as const) {
+      const glass = MeshBuilder.CreateCylinder(`${id}-scope-glass-${side}`, { height: .006, diameter: .042 }, scene);
+      glass.material = lensGlass; add(glass, 0, .11, lz, Math.PI / 2, 0, 0);
+    }
+    const turretTop = MeshBuilder.CreateCylinder(`${id}-scope-turret-top`, { height: .018, diameter: .022 }, scene);
+    turretTop.material = gunmetal; add(turretTop, 0, .138, .04);
+    const turretSide = MeshBuilder.CreateCylinder(`${id}-scope-turret-side`, { height: .018, diameter: .022 }, scene);
+    turretSide.material = gunmetal; add(turretSide, .028, .11, .04, 0, 0, Math.PI / 2);
+    const mount = boxPart('mount', 0.028, 0.038, 0.16, true);
     mount.material = darkMetal; add(mount, 0, 0.075, 0.04);
-    const grip = MeshBuilder.CreateBox(`${id}-grip`, { width: 0.045, height: 0.14, depth: 0.058 }, scene);
+    const boltKnob = MeshBuilder.CreateSphere(`${id}-bolt-knob`, { diameter: .022, segments: 8 }, scene);
+    boltKnob.material = silver; add(boltKnob, .036, .040, -.042);
+    for (const side of [-1, 1]) {
+      const bipod = MeshBuilder.CreateCylinder(`${id}-bipod-${side < 0 ? 'l' : 'r'}`, { height: .18, diameter: .014 }, scene);
+      bipod.material = darkMetal; add(bipod, side * .022, -.014, .22, Math.PI / 2, 0, 0);
+    }
+    const grip = boxPart('grip', 0.042, 0.14, 0.056);
     grip.material = darkMetal; add(grip, 0, -0.065, -0.12, 0.25, 0, 0);
-    const stock = MeshBuilder.CreateBox(`${id}-stock`, { width: 0.055, height: 0.12, depth: 0.24 }, scene);
+    const cheekPad = boxPart('cheek-pad', 0.054, 0.026, 0.14, true);
+    cheekPad.material = darkMetal; add(cheekPad, 0, 0.064, -0.25);
+    const stock = boxPart('stock', 0.052, 0.115, 0.24);
     stock.material = olive; add(stock, 0, 0.015, -0.32);
   }
 
-  if(weapon==='budget_ct'||weapon==='budget_t'){for(const mesh of root.getChildMeshes()){if(mesh.name.endsWith('-silencer'))mesh.scaling.y=.35;if(mesh.name.endsWith('-stock'))mesh.scaling.x=1.25;if(mesh.name.includes('-handguard'))mesh.material=getMat(weapon==='budget_ct'?'#777e72':'#596850');}}
+  if(weapon==='budget_ct'||weapon==='budget_t'){for(const mesh of root.getChildMeshes()){if(mesh.name.endsWith('-silencer'))mesh.scaling.y=.35;if(mesh.name.endsWith('-stock'))mesh.scaling.x=1.25;if(mesh.name.includes('guard'))mesh.material=getMat(weapon==='budget_ct'?'#777e72':'#596850');}}
   if(Object.hasOwn(LIVE_WEAPONS,weapon)) {
     const family=LIVE_WEAPONS[weapon as keyof typeof LIVE_WEAPONS].category;
+    const isAkFamily=weapon==='ak47'||weapon==='rifle'||weapon==='budget_t';
     const details:Mesh[]=[];
     const detail=(name:string,x:number,y:number,z:number,w:number,h:number,d:number,hex='#52616a')=>{
-      const mesh=MeshBuilder.CreateBox(`${id}-detail-${name}`,{width:w,height:h,depth:d},scene);
+      const mesh=Math.max(w,h,d)>.045?createRoundedOperativeBlock(`${id}-detail-${name}`,scene,w,h,d,true):MeshBuilder.CreateBox(`${id}-detail-${name}`,{width:w,height:h,depth:d},scene);
       const finish=getMat(hex);finish.specularColor=new Color3(.3,.32,.33);finish.specularPower=48;mesh.material=finish;
       add(mesh,x,y,z);details.push(mesh);return mesh;
     };
     const pistol=family==='pistol';
-    detail('ejection-port',.028,.042,pistol?.015:.035,.004,.025,pistol?.055:.08,'#151c20');
-    detail('bolt',.032,.039,pistol?.005:.07,.008,.012,.025,'#819098');
+    detail('ejection-port',.028,.042,pistol?.015:.035,.004,.022,pistol?.055:.08,'#151c20');
+    detail('bolt',.032,.039,pistol?.005:.07,.007,.011,.025,'#819098');
     if(!root.getChildMeshes().some(mesh=>mesh.name.endsWith('-grip'))){
-      detail('pistol-grip',0,-.07,-.055,.038,.115,.055,'#283236').rotation.x=.24;
+      detail('pistol-grip',0,-.07,-.055,.036,.115,.052,'#283236').rotation.x=.24;
     }
     const trigger=MeshBuilder.CreateTorus(`${id}-detail-trigger-guard`,{diameter:.064,thickness:.008,tessellation:14},scene);
     trigger.material=gunmetal;add(trigger,0,-.035,pistol?.025:-.025,0,0,Math.PI/2);details.push(trigger);
     if(pistol){
-      for(const side of [-1,1])for(let i=0;i<6;i++)detail(`slide-serration-${side}-${i}`,side*.024,.04,-.055+i*.012,.003,.035,.004,'#78858a');
-      detail('rear-sight',0,.065,-.07,.04,.015,.015,'#101719');
-      detail('front-sight',0,.065,.105,.012,.013,.012,'#101719');
+      for(const side of [-1,1]){
+        for(let i=0;i<6;i++)detail(`slide-serration-${side}-${i}`,side*.022,.04,-.055+i*.012,.0025,.03,.0035,'#78858a');
+        detail(`grip-panel-${side<0?'l':'r'}`,side*.021,-.052,-.026,.004,.078,.038,'#252a30').rotation.x=.21;
+        detail(`tritium-rear-${side<0?'l':'r'}`,side*.008,.058,-.072,.0035,.0035,.0035,'#77d99d');
+      }
+      detail('rear-hammer',0,.042,-.076,.012,.016,.016,'#3a4248');
+      detail('rear-sight',0,.056,-.07,.026,.009,.011,'#101719');
+      detail('front-sight',0,.056,.105,.005,.009,.009,'#101719');
+      detail('tritium-front',0,.059,.104,.0038,.0038,.0038,'#77d99d');
     }else{
-      for(let i=0;i<7;i++)detail(`top-rail-${i}`,0,.079,-.08+i*.025,.048,.012,.012,'#667279');
-      for(const side of [-1,1])for(let i=0;i<5;i++)detail(`handguard-vent-${side}-${i}`,side*.031,.038,.16+i*.027,.003,.025,.015,'#151c20');
-      if(family==='rifle'){for(const side of [-1,1])detail(`rear-iron-${side}`,side*.018,.104,-.1,.012,.024,.015,'#151b1f');detail('front-iron',0,.1,.3,.009,.028,.012,'#151b1f');}
-      detail('selector',-.03,.012,-.07,.006,.018,.027,'#94a0a2');
-      detail('receiver-pin-a',.032,.008,-.08,.005,.01,.01,'#a5ada9');
-      detail('receiver-pin-b',.032,.008,.06,.005,.01,.01,'#a5ada9');
+      if(!isAkFamily&&family!=='sniper'){
+        detail('top-rail-base',0,.066,0,.020,.004,.16,'#2d3238');
+        for(let i=0;i<6;i++)detail(`top-rail-${i}`,0,.070,-.065+i*.024,.022,.004,.009,'#4b555c');
+      }
+      for(const side of [-1,1])for(let i=0;i<5;i++)detail(`handguard-vent-${side}-${i}`,side*.029,.036,.16+i*.027,.003,.018,.013,'#151c20');
+      if(family==='rifle'){
+        const sightY=isAkFamily?.078:.082,rearZ=isAkFamily?.105:-.1,frontZ=isAkFamily?.50:.30;
+        for(const side of [-1,1]){
+          detail(`rear-iron-${side}`,side*.009,sightY,rearZ,.0035,.012,.012,'#151b1f');
+          detail(`tritium-rear-${side<0?'l':'r'}`,side*.0085,sightY+.003,rearZ-.005,.003,.003,.003,'#77d99d');
+        }
+        detail('front-iron',0,isAkFamily?.086:.082,frontZ,.0035,.016,.007,'#151b1f');
+        detail('tritium-front',0,(isAkFamily?.091:.087),frontZ-.002,.0035,.0035,.0035,'#77d99d');
+      }
+      detail('selector',-.028,.012,-.07,.005,.014,.024,'#94a0a2');
+      detail('receiver-pin-a',.029,.008,-.08,.004,.008,.008,'#a5ada9');
+      detail('receiver-pin-b',.029,.008,.06,.004,.008,.008,'#a5ada9');
     }
     // The socket comes from the actual forward barrel/suppressor geometry,
     // including each weapon's bore height and muzzle brake length.
@@ -1313,6 +1538,8 @@ export function create3DWeaponMesh(weapon: LiveEquippedWeapon, id: string, scene
     const groups=new Map<StandardMaterial,Mesh[]>();
     for(const mesh of details){mesh.parent=null;const mat=mesh.material as StandardMaterial;groups.set(mat,[...(groups.get(mat)??[]),mesh]);}
     for(const group of groups.values()){const merged=Mesh.MergeMeshes(group,true,true);if(merged){merged.parent=root;merged.isPickable=false;merged.receiveShadows=true;}}
+    const slide=root.getChildMeshes().find(mesh=>mesh.name===`${id}-slide`);
+    if(slide instanceof Mesh){root.metadata={...root.metadata,slide,slideHomeZ:slide.position.z} satisfies WeaponViewMetadata;}
   }
   return root;
 }
@@ -1365,39 +1592,57 @@ export function createViewmodelMesh(
     : isRifleWeapon ? { x: 0, y: -0.065, z: -0.06 }
     : { x: 0, y: -0.065, z: -0.12 };
 
-  // Right palm
-  const palmR = MeshBuilder.CreateBox(`${id}-r-palm`, { width: 0.056, height: 0.076, depth: 0.082 }, scene);
+  // Contoured 3D right palm, knuckles, curled fingers & thumb
+  const palmR = createOperativeHand(`${id}-r-palm`, scene, 0.052, 0.072, 0.076, 1);
   palmR.material = gloveMat;
   addPart(palmR, gripPos.x + 0.014, gripPos.y, gripPos.z - 0.01, 0.25, -0.1, 0.05);
 
-  // Knuckle guard
-  const knuckleR = MeshBuilder.CreateBox(`${id}-r-knuckle`, { width: 0.058, height: 0.028, depth: 0.06 }, scene);
+  const knuckleR = createRoundedOperativeBlock(`${id}-r-knuckle`, scene, 0.054, 0.024, 0.056, true);
   knuckleR.material = knuckleMat;
-  addPart(knuckleR, gripPos.x + 0.028, gripPos.y + 0.018, gripPos.z - 0.01, 0.25, -0.1, 0.05);
+  addPart(knuckleR, gripPos.x + 0.027, gripPos.y + 0.018, gripPos.z - 0.01, 0.25, -0.1, 0.05);
 
-  // Fingers wrapped around grip
-  const fingersR = MeshBuilder.CreateBox(`${id}-r-fingers`, { width: 0.052, height: 0.066, depth: 0.048 }, scene);
+  const fingersR = createViewmodelFingerCluster(`${id}-r-fingers`, scene, 0.048, 0.062, 0.044, 1);
   fingersR.material = fingerMat;
-  addPart(fingersR, gripPos.x - 0.008, gripPos.y - 0.012, gripPos.z + 0.026, 0.2, -0.05, 0);
+  addPart(fingersR, gripPos.x - 0.008, gripPos.y - 0.012, gripPos.z + 0.025, 0.2, -0.05, 0);
 
-  // Thumb
-  const thumbR = MeshBuilder.CreateBox(`${id}-r-thumb`, { width: 0.028, height: 0.032, depth: 0.048 }, scene);
+  for (let d = 0; d < 4; d++) {
+    const dy = gripPos.y + .012 - d * .014;
+    const dome = MeshBuilder.CreateSphere(`${id}-r-knuckle-dome-${d}`, { diameter: .015, segments: 6 }, scene);
+    dome.material = knuckleMat; addPart(dome, gripPos.x + .030, dy, gripPos.z + .004 - d * .007);
+    const digit = createRoundedOperativeBlock(`${id}-r-digit-${d}`, scene, .036, .012, .026, true);
+    digit.material = fingerMat; addPart(digit, gripPos.x - .010, dy - .004, gripPos.z + .026 - d * .005, .2, -.05, 0);
+  }
+  const rGloveAccent = createRoundedOperativeBlock(`${id}-r-glove-accent`, scene, .006, .042, .038, true);
+  rGloveAccent.material = getMat(style.secondaryAccent);
+  addPart(rGloveAccent, gripPos.x + .032, gripPos.y + .006, gripPos.z - .018, .25, -.1, .05);
+
+  const thumbBaseR = createRoundedOperativeBlock(`${id}-r-thumb-base`, scene, 0.026, 0.030, 0.030, true);
+  thumbBaseR.material = gloveMat;
+  addPart(thumbBaseR, gripPos.x + 0.022, gripPos.y + 0.016, gripPos.z - 0.028, -0.2, 0.25, 0);
+
+  const thumbR = createRoundedOperativeBlock(`${id}-r-thumb`, scene, 0.024, 0.028, 0.046, true);
   thumbR.material = fingerMat;
-  addPart(thumbR, gripPos.x + 0.026, gripPos.y + 0.02, gripPos.z - 0.016, -0.2, 0.28, 0);
+  addPart(thumbR, gripPos.x + 0.025, gripPos.y + 0.02, gripPos.z - 0.016, -0.2, 0.28, 0);
 
-  // Forearm extending back into bottom-right viewport
-  const forearmR = MeshBuilder.CreateBox(`${id}-r-forearm`, { width: 0.085, height: 0.095, depth: 0.28 }, scene);
+  if (!isGrenade && weapon !== 'knife') {
+    const trigFinger = createRoundedOperativeBlock(`${id}-r-trigger-finger`, scene, 0.016, 0.016, 0.044, true);
+    trigFinger.material = fingerMat;
+    addPart(trigFinger, gripPos.x + 0.022, gripPos.y + 0.016, gripPos.z + 0.032, -0.08, -0.22, 0);
+  }
+
+  // Sculpted muscular forearm extending cleanly into bottom-right viewport
+  const forearmR = createViewmodelForearm(`${id}-r-forearm`, scene, 0.060, 0.080, 0.28, 1);
   forearmR.material = sleeveMat;
-  addPart(forearmR, gripPos.x + 0.075, gripPos.y - 0.12, gripPos.z - 0.17, 0.44, -0.24, -0.15);
+  addPart(forearmR, gripPos.x + 0.068, gripPos.y - 0.112, gripPos.z - 0.16, 0.44, -0.24, -0.15);
 
   if (style.sleeveRolled) {
-    const rolledR = MeshBuilder.CreateBox(`${id}-r-sleeve`, { width: 0.098, height: 0.108, depth: 0.13 }, scene);
+    const rolledR = createViewmodelCuff(`${id}-r-sleeve`, scene, 0.088, 0.094, 0.13);
     rolledR.material = cuffMat;
-    addPart(rolledR, gripPos.x + 0.105, gripPos.y - 0.20, gripPos.z - 0.27, 0.44, -0.24, -0.15);
+    addPart(rolledR, gripPos.x + 0.098, gripPos.y - 0.19, gripPos.z - 0.26, 0.44, -0.24, -0.15);
   } else {
-    const strapR = MeshBuilder.CreateBox(`${id}-r-strap`, { width: 0.09, height: 0.10, depth: 0.045 }, scene);
+    const strapR = createViewmodelCuff(`${id}-r-strap`, scene, 0.082, 0.086, 0.042);
     strapR.material = strapMat;
-    addPart(strapR, gripPos.x + 0.045, gripPos.y - 0.065, gripPos.z - 0.09, 0.44, -0.24, -0.15);
+    addPart(strapR, gripPos.x + 0.042, gripPos.y - 0.062, gripPos.z - 0.085, 0.44, -0.24, -0.15);
   }
 
   // 4. Left Arm & Hand (supporting the weapon; tracked so reload motion swaps in without ghosting a duplicate hand)
@@ -1408,93 +1653,128 @@ export function createViewmodelMesh(
     return m;
   };
   const addLeftCuff = (w: number, h: number, d: number, x: number, y: number, z: number, rx: number, ry: number, rz: number) => {
+    const watchStrap = createViewmodelCuff(`${id}-l-watch-strap`, scene, w * .84, h * .84, .026);
+    watchStrap.material = strapMat;
+    addLeftPart(watchStrap, x * .78, y * .78, z + .055, rx, ry, rz);
+    const watchCase = createRoundedOperativeBlock(`${id}-l-watch-case`, scene, .026, .012, .028, true);
+    watchCase.material = getMat(style.hardware);
+    addLeftPart(watchCase, x * .78 + .022, y * .78 + .032, z + .058, rx, ry, rz);
+    const watchDial = createRoundedOperativeBlock(`${id}-l-watch-dial`, scene, .020, .006, .022, true);
+    watchDial.material = getMat('#151c20');
+    addLeftPart(watchDial, x * .78 + .022, y * .78 + .038, z + .058, rx, ry, rz);
     if (!style.sleeveRolled) return;
-    const rolledL = MeshBuilder.CreateBox(`${id}-l-sleeve`, { width: w, height: h, depth: d }, scene);
+    const rolledL = createViewmodelCuff(`${id}-l-sleeve`, scene, w, h, d);
     rolledL.material = cuffMat;
     addLeftPart(rolledL, x, y, z, rx, ry, rz);
   };
+  const addLeftGripDetails = (baseX: number, baseY: number, baseZ: number, rx: number, ry: number, rz: number) => {
+    for (let d = 0; d < 4; d++) {
+      const reach = d === 3 ? .012 : d === 0 ? .022 : .026;
+      const digit = createRoundedOperativeBlock(`${id}-l-digit-${d}`, scene, .013, reach, .014, true);
+      digit.material = fingerMat;
+      addLeftPart(digit, baseX - .002, baseY + .018 + (3 - d) * .002, baseZ + .022 - d * .014, rx, ry, rz - .28);
+    }
+    const accentL = createRoundedOperativeBlock(`${id}-l-glove-accent`, scene, .006, .020, .042, true);
+    accentL.material = getMat(style.secondaryAccent);
+    addLeftPart(accentL, baseX - .018, baseY - .012, baseZ - .010, rx, ry, rz);
+  };
   if (isRifleWeapon) {
-    // Support hand cradles underneath the forward barrel handguard while fingers and thumb wrap the left wood guard (CS2 right-side rifle hold)
-    const palmL = MeshBuilder.CreateBox(`${id}-l-palm`, { width: 0.068, height: 0.044, depth: 0.084 }, scene);
+    // Support hand cradles underneath the forward barrel handguard while contoured fingers and thumb wrap the handguard
+    const palmL = createOperativeHand(`${id}-l-palm`, scene, 0.062, 0.040, 0.076, -1);
     palmL.material = gloveMat;
-    addLeftPart(palmL, -0.008, -0.022, 0.23, 0.08, 0.32, 0.18);
+    addLeftPart(palmL, -0.010, -0.022, 0.23, 0.08, 0.30, 0.18);
 
-    const fingersL = MeshBuilder.CreateBox(`${id}-l-fingers`, { width: 0.042, height: 0.056, depth: 0.068 }, scene);
+    const knuckleL = createRoundedOperativeBlock(`${id}-l-knuckle`, scene, 0.042, 0.022, 0.056, true);
+    knuckleL.material = knuckleMat;
+    addLeftPart(knuckleL, -0.028, -0.010, 0.232, 0.08, 0.28, -0.06);
+
+    const fingersL = createViewmodelFingerCluster(`${id}-l-fingers`, scene, 0.036, 0.050, 0.064, -1);
     fingersL.material = fingerMat;
     addLeftPart(fingersL, -0.032, 0.010, 0.238, 0.08, 0.26, -0.08);
+    addLeftGripDetails(-0.032, 0.010, 0.238, 0.08, 0.26, -0.08);
 
-    const thumbL = MeshBuilder.CreateBox(`${id}-l-thumb`, { width: 0.026, height: 0.048, depth: 0.036 }, scene);
+    const thumbL = createRoundedOperativeBlock(`${id}-l-thumb`, scene, 0.024, 0.044, 0.034, true);
     thumbL.material = fingerMat;
-    addLeftPart(thumbL, -0.033, 0.036, 0.212, -0.24, 0.22, -0.18);
+    addLeftPart(thumbL, -0.033, 0.034, 0.212, -0.24, 0.22, -0.18);
 
-    const forearmL = MeshBuilder.CreateBox(`${id}-l-forearm`, { width: 0.085, height: 0.095, depth: 0.32 }, scene);
+    const forearmL = createViewmodelForearm(`${id}-l-forearm`, scene, 0.060, 0.080, 0.31, -1);
     forearmL.material = sleeveMat;
-    addLeftPart(forearmL, -0.125, -0.145, 0.065, -0.44, 0.52, -0.32);
+    addLeftPart(forearmL, -0.105, -0.125, 0.085, -0.36, 0.44, -0.24);
 
-    addLeftCuff(0.098, 0.108, 0.14, -0.195, -0.235, -0.035, -0.44, 0.52, -0.32);
+    addLeftCuff(0.088, 0.092, 0.13, -0.165, -0.205, -0.015, -0.36, 0.44, -0.24);
   } else if (isSmgWeapon) {
-    const palmL = MeshBuilder.CreateBox(`${id}-l-palm`, { width: 0.06, height: 0.05, depth: 0.076 }, scene);
+    const palmL = createOperativeHand(`${id}-l-palm`, scene, 0.056, 0.046, 0.072, -1);
     palmL.material = gloveMat;
     addLeftPart(palmL, -0.018, -0.01, 0.17, 0.1, 0.3, 0.25);
 
-    const fingersL = MeshBuilder.CreateBox(`${id}-l-fingers`, { width: 0.04, height: 0.055, depth: 0.062 }, scene);
+    const knuckleL = createRoundedOperativeBlock(`${id}-l-knuckle`, scene, 0.038, 0.020, 0.052, true);
+    knuckleL.material = knuckleMat;
+    addLeftPart(knuckleL, -0.030, 0.002, 0.174, 0.1, 0.3, 0.1);
+
+    const fingersL = createViewmodelFingerCluster(`${id}-l-fingers`, scene, 0.036, 0.050, 0.058, -1);
     fingersL.material = fingerMat;
     addLeftPart(fingersL, -0.034, 0.015, 0.18, 0.1, 0.3, 0.1);
+    addLeftGripDetails(-0.034, 0.015, 0.18, 0.1, 0.3, 0.1);
 
-    const forearmL = MeshBuilder.CreateBox(`${id}-l-forearm`, { width: 0.082, height: 0.092, depth: 0.30 }, scene);
+    const forearmL = createViewmodelForearm(`${id}-l-forearm`, scene, 0.058, 0.078, 0.29, -1);
     forearmL.material = sleeveMat;
-    addLeftPart(forearmL, -0.13, -0.14, 0.02, -0.4, 0.5, -0.3);
+    addLeftPart(forearmL, -0.115, -0.128, 0.035, -0.36, 0.45, -0.24);
 
-    addLeftCuff(0.095, 0.105, 0.13, -0.19, -0.22, -0.07, -0.4, 0.5, -0.3);
+    addLeftCuff(0.086, 0.090, 0.12, -0.17, -0.20, -0.055, -0.36, 0.45, -0.24);
   } else if (isSniperWeapon) {
-    const palmL = MeshBuilder.CreateBox(`${id}-l-palm`, { width: 0.068, height: 0.052, depth: 0.092 }, scene);
+    const palmL = createOperativeHand(`${id}-l-palm`, scene, 0.062, 0.048, 0.084, -1);
     palmL.material = gloveMat;
     addLeftPart(palmL, -0.02, 0.005, 0.23, 0.1, 0.35, 0.3);
 
-    const fingersL = MeshBuilder.CreateBox(`${id}-l-fingers`, { width: 0.044, height: 0.06, depth: 0.072 }, scene);
+    const knuckleL = createRoundedOperativeBlock(`${id}-l-knuckle`, scene, 0.042, 0.022, 0.058, true);
+    knuckleL.material = knuckleMat;
+    addLeftPart(knuckleL, -0.034, 0.018, 0.235, 0.1, 0.3, 0.1);
+
+    const fingersL = createViewmodelFingerCluster(`${id}-l-fingers`, scene, 0.040, 0.056, 0.068, -1);
     fingersL.material = fingerMat;
     addLeftPart(fingersL, -0.038, 0.032, 0.24, 0.1, 0.3, 0.1);
+    addLeftGripDetails(-0.038, 0.032, 0.24, 0.1, 0.3, 0.1);
 
-    const forearmL = MeshBuilder.CreateBox(`${id}-l-forearm`, { width: 0.086, height: 0.096, depth: 0.34 }, scene);
+    const forearmL = createViewmodelForearm(`${id}-l-forearm`, scene, 0.062, 0.082, 0.33, -1);
     forearmL.material = sleeveMat;
-    addLeftPart(forearmL, -0.15, -0.15, 0.05, -0.45, 0.55, -0.35);
+    addLeftPart(forearmL, -0.13, -0.135, 0.065, -0.38, 0.48, -0.26);
 
-    addLeftCuff(0.098, 0.108, 0.14, -0.22, -0.24, -0.06, -0.45, 0.55, -0.35);
+    addLeftCuff(0.090, 0.094, 0.13, -0.195, -0.215, -0.04, -0.38, 0.48, -0.26);
   } else if (isPistolWeapon) {
-    const palmL = MeshBuilder.CreateBox(`${id}-l-palm`, { width: 0.066, height: 0.076, depth: 0.082 }, scene);
+    const palmL = createOperativeHand(`${id}-l-palm`, scene, 0.060, 0.072, 0.076, -1);
     palmL.material = gloveMat;
     addLeftPart(palmL, -0.024, -0.065, -0.02, 0.15, 0.2, 0.1);
 
-    const fingersL = MeshBuilder.CreateBox(`${id}-l-fingers`, { width: 0.046, height: 0.066, depth: 0.062 }, scene);
+    const fingersL = createViewmodelFingerCluster(`${id}-l-fingers`, scene, 0.042, 0.062, 0.058, -1);
     fingersL.material = fingerMat;
     addLeftPart(fingersL, 0.012, -0.07, 0.016, 0.1, 0.05, 0);
 
-    const forearmL = MeshBuilder.CreateBox(`${id}-l-forearm`, { width: 0.082, height: 0.088, depth: 0.27 }, scene);
+    const forearmL = createViewmodelForearm(`${id}-l-forearm`, scene, 0.058, 0.076, 0.27, -1);
     forearmL.material = sleeveMat;
-    addLeftPart(forearmL, -0.11, -0.17, -0.14, 0.4, 0.3, -0.15);
+    addLeftPart(forearmL, -0.10, -0.16, -0.13, 0.4, 0.3, -0.15);
 
-    addLeftCuff(0.095, 0.102, 0.13, -0.16, -0.25, -0.24, 0.4, 0.3, -0.15);
+    addLeftCuff(0.084, 0.088, 0.12, -0.15, -0.235, -0.225, 0.4, 0.3, -0.15);
   } else if (isGrenade) {
-    const palmL = MeshBuilder.CreateBox(`${id}-l-palm`, { width: 0.056, height: 0.065, depth: 0.072 }, scene);
+    const palmL = createOperativeHand(`${id}-l-palm`, scene, 0.054, 0.062, 0.070, -1);
     palmL.material = gloveMat;
     addLeftPart(palmL, -0.05, 0.04, 0.02, 0.2, 0.4, 0.2);
-    const fingersL = MeshBuilder.CreateBox(`${id}-l-fingers`, { width: 0.038, height: 0.045, depth: 0.052 }, scene);
+    const fingersL = createViewmodelFingerCluster(`${id}-l-fingers`, scene, 0.034, 0.042, 0.050, -1);
     fingersL.material = fingerMat;
     addLeftPart(fingersL, -0.025, 0.065, 0.01, 0.2, 0.4, 0.2);
-    const forearmL = MeshBuilder.CreateBox(`${id}-l-forearm`, { width: 0.082, height: 0.092, depth: 0.27 }, scene);
+    const forearmL = createViewmodelForearm(`${id}-l-forearm`, scene, 0.058, 0.076, 0.27, -1);
     forearmL.material = sleeveMat;
-    addLeftPart(forearmL, -0.16, -0.08, -0.08, -0.3, 0.4, -0.2);
+    addLeftPart(forearmL, -0.15, -0.08, -0.08, -0.3, 0.4, -0.2);
   } else {
     // Knife off-hand guard
-    const palmL = MeshBuilder.CreateBox(`${id}-l-palm`, { width: 0.062, height: 0.072, depth: 0.082 }, scene);
+    const palmL = createOperativeHand(`${id}-l-palm`, scene, 0.058, 0.068, 0.076, -1);
     palmL.material = gloveMat;
     addLeftPart(palmL, -0.18, -0.14, 0.08, 0.2, 0.4, 0.2);
 
-    const forearmL = MeshBuilder.CreateBox(`${id}-l-forearm`, { width: 0.082, height: 0.092, depth: 0.27 }, scene);
+    const forearmL = createViewmodelForearm(`${id}-l-forearm`, scene, 0.058, 0.078, 0.27, -1);
     forearmL.material = sleeveMat;
-    addLeftPart(forearmL, -0.25, -0.22, -0.04, 0.3, 0.5, -0.2);
+    addLeftPart(forearmL, -0.24, -0.21, -0.04, 0.3, 0.5, -0.2);
 
-    addLeftCuff(0.095, 0.105, 0.13, -0.31, -0.30, -0.14, 0.3, 0.5, -0.2);
+    addLeftCuff(0.086, 0.090, 0.12, -0.30, -0.285, -0.135, 0.3, 0.5, -0.2);
   }
 
   const reloadFamily: ViewmodelReloadFamily = (weapon === 'ak47' || weapon === 'rifle' || weapon === 'budget_t') ? 'rifle_ak'
@@ -1509,20 +1789,20 @@ export function createViewmodelMesh(
   const magHome = WEAPON_GRIP_PROFILES[weapon]?.magWell ?? (isPistolWeapon ? [0, -.06, -.025] : [0, -.065, .06]);
 
   const reloadArm = new TransformNode(`${id}-reload-arm`, scene); reloadArm.parent = root; reloadArm.setEnabled(false);
-  const reloadSleeve = MeshBuilder.CreateBox(`${id}-reload-sleeve`, { width: .082, height: .092, depth: .26 }, scene);
+  const reloadSleeve = createViewmodelForearm(`${id}-reload-sleeve`, scene, .058, .078, .26, -1);
   reloadSleeve.material = sleeveMat; reloadSleeve.parent = reloadArm; reloadSleeve.position.set(-.01, -.02, -.14); reloadSleeve.isPickable = false;
   if (style.sleeveRolled) {
-    const reloadCuff = MeshBuilder.CreateBox(`${id}-reload-cuff`, { width: .095, height: .104, depth: .11 }, scene);
+    const reloadCuff = createViewmodelCuff(`${id}-reload-cuff`, scene, .086, .090, .11);
     reloadCuff.material = cuffMat; reloadCuff.parent = reloadArm; reloadCuff.position.set(-.015, -.03, -.24); reloadCuff.isPickable = false;
   }
   const reloadWrist = new TransformNode(`${id}-reload-wrist`, scene); reloadWrist.parent = reloadArm; reloadWrist.position.set(0, 0, .005);
-  const reloadHand = MeshBuilder.CreateBox(`${id}-reload-hand`, { width: .064, height: .052, depth: .078 }, scene);
+  const reloadHand = createOperativeHand(`${id}-reload-hand`, scene, .060, .048, .074, -1);
   reloadHand.material = gloveMat; reloadHand.parent = reloadWrist; reloadHand.position.set(0, 0, .035); reloadHand.isPickable = false;
-  const reloadKnuckle = MeshBuilder.CreateBox(`${id}-reload-knuckle`, { width: .066, height: .022, depth: .05 }, scene);
+  const reloadKnuckle = createRoundedOperativeBlock(`${id}-reload-knuckle`, scene, .062, .020, .048, true);
   reloadKnuckle.material = knuckleMat; reloadKnuckle.parent = reloadWrist; reloadKnuckle.position.set(0, .022, .032); reloadKnuckle.isPickable = false;
-  const reloadFingers = MeshBuilder.CreateBox(`${id}-reload-fingers`, { width: .058, height: .042, depth: .054 }, scene);
+  const reloadFingers = createViewmodelFingerCluster(`${id}-reload-fingers`, scene, .054, .038, .050, -1);
   reloadFingers.material = fingerMat; reloadFingers.parent = reloadWrist; reloadFingers.position.set(.018, -.014, .066); reloadFingers.rotation.set(.32, -.16, 0); reloadFingers.isPickable = false;
-  const reloadThumb = MeshBuilder.CreateBox(`${id}-reload-thumb`, { width: .026, height: .036, depth: .046 }, scene);
+  const reloadThumb = createRoundedOperativeBlock(`${id}-reload-thumb`, scene, .024, .032, .044, true);
   reloadThumb.material = fingerMat; reloadThumb.parent = reloadWrist; reloadThumb.position.set(-.028, .016, .05); reloadThumb.rotation.set(-.2, .24, 0); reloadThumb.isPickable = false;
 
   const reloadMagazine = reloadFamily === 'shotgun_tube'
@@ -1547,9 +1827,11 @@ export function createViewmodelMesh(
     reloadMagazine.material = getMat('#252d33');
   }
   reloadMagazine.parent = root; reloadMagazine.isPickable = false; reloadMagazine.setEnabled(false);
-  root.metadata = { weaponRoot: gun, muzzle: (gun.metadata as WeaponViewMetadata | undefined)?.muzzle,
+  const gunMeta = gun.metadata as WeaponViewMetadata | undefined;
+  root.metadata = { weaponRoot: gun, muzzle: gunMeta?.muzzle, slide: gunMeta?.slide, slideHomeZ: gunMeta?.slideHomeZ,
     reloadParts: { arm: reloadArm, wrist: reloadWrist, magazine: reloadMagazine, leftArmMeshes, family: reloadFamily, magHome } } satisfies WeaponViewMetadata;
 
+  for (const mesh of root.getChildMeshes()) mesh.renderingGroupId = 1;
   return root;
 }
 
@@ -1557,10 +1839,15 @@ const SPILLWAY_SCULPTED_SOLIDS = new Set([
   'b-silo-pillar',
   'b-pump-west',
   'b-pump-east',
+  'b-barrels-cluster',
   'gardens-fountain',
   'gardens-pergola-roof',
+  'gardens-playground-frame',
+  'long-boulder-rock',
+  'a-flowers-sign',
   't-service-truck',
   'a-response-truck',
+  'a-bank-van',
   'ct-security-van',
   'gardens-tree-sw',
   'promenade-tree-mid',
@@ -1615,6 +1902,7 @@ export class FpsLiveViewer {
   private bloodMeshes=new Map<number,BloodView>();
   private bloodMaterials:StandardMaterial[]=[];
   private smokes=new Map<number,SmokeView>();
+  private lastScopeZoom=.28;
   private fires=new Map<number,FireView>();
   private blasts=new Map<number,BlastView>();
   private smokeTexture?:DynamicTexture;
@@ -1704,10 +1992,12 @@ export class FpsLiveViewer {
       this.camera.viewport=this.fullViewport;
       this.pipCamera.minZ=.08;this.pipCamera.maxZ=220;this.pipCamera.fov=.9;
       this.pipCamera.viewport=new Viewport(.72,.26,.25,.22);
+      this.scene.setRenderingAutoClearDepthStencil(1,true);
       this.scene.activeCamera=this.camera;
       this.scene.activeCameras=[this.camera];
       this.scene.onBeforeCameraRenderObservable.add(cam=>{
         if(this.disposed)return;
+        this.scene.activeCamera=cam;
         if(cam===this.pipCamera){
           const rw=this.engine.getRenderWidth();
           const rh=this.engine.getRenderHeight();
@@ -1959,7 +2249,7 @@ export class FpsLiveViewer {
       this.mapMaterials.push(mosaicMaterial);
       for(const [site,position] of Object.entries(runtime.definition.sites)) {
         const siteSize=site==='B'?6.2:8.5;
-        const pad=MeshBuilder.CreateGround(`site-${site}`,{width:siteSize,height:siteSize},this.scene);pad.position.set(position.x,.025,position.z);pad.material=site==='B'?mosaicMaterial:this.surfaces.material('paving','#d0c5aa');pad.receiveShadows=true;pad.isPickable=false;
+        const pad=MeshBuilder.CreateGround(`site-${site}`,{width:siteSize,height:siteSize},this.scene);pad.position.set(position.x,runtime.terrain.groundHeight(position)+.025,position.z);pad.material=site==='B'?mosaicMaterial:this.surfaces.material('paving','#d0c5aa');pad.receiveShadows=true;pad.isPickable=false;
         if(site==='A'){const repeat=siteSize/LIVE_SURFACE_METRES.paving;pad.setVerticesData('uv',[0,0,repeat,0,0,repeat,repeat,repeat]);}
         if(site==='B')for(const [edgeX,edgeZ,width,depth] of [
           [position.x,position.z-2.96,6.2,.28],[position.x,position.z+2.96,6.2,.28],
@@ -2039,8 +2329,47 @@ export class FpsLiveViewer {
   }
   private material(hex:string):StandardMaterial {
     const existing=this.materials.get(hex);if(existing)return existing;
-    const material=new StandardMaterial(hex,this.scene);material.diffuseColor=Color3.FromHexString(hex);material.specularColor=new Color3(.08,.08,.08);
+    const lower=hex.toLowerCase();
+    const material=new StandardMaterial(hex,this.scene);
+    material.diffuseColor=Color3.FromHexString(hex);
+    const micro=this.ensureMicroNormal();
+    if(micro)material.bumpTexture=micro;
+    if(['#1b232c','#38bdf8','#7dd3fc','#eab308','#14181e','#181c24','#1f2937'].includes(lower)){
+      material.specularColor=new Color3(.52,.58,.64);material.specularPower=96;
+    }else if(['#1a1c20','#2d3238','#8a9199','#64748b','#94a3b8','#71717a','#819098','#52616a','#667279'].includes(lower)){
+      material.specularColor=new Color3(.26,.28,.31);material.specularPower=52;
+    }else if(['#4e3725','#5e3422'].includes(lower)){
+      material.specularColor=new Color3(.15,.11,.07);material.specularPower=28;
+    }else if(['#c99772','#d4a37d','#bc8863','#c48f6a','#a57250','#b8845f','#cf9e79','#d6a885','#be8962','#d8ab87','#b37d58','#e0ba99','#9d6a49'].includes(lower)){
+      material.specularColor=new Color3(.10,.08,.07);material.specularPower=22;
+      material.emissiveColor=material.diffuseColor.scale(.06);
+    }else{
+      material.specularColor=new Color3(.06,.06,.07);material.specularPower=16;
+    }
     this.materials.set(hex,material);return material;
+  }
+  private microNormal?:DynamicTexture;
+  private ensureMicroNormal():DynamicTexture|undefined {
+    if(this.microNormal)return this.microNormal;
+    const tex=new DynamicTexture('operative-micro-normal',64,this.scene,true,Texture.TRILINEAR_SAMPLINGMODE);
+    const ctx=tex.getContext() as unknown as CanvasRenderingContext2D|undefined;
+    if(!ctx||typeof ctx.createImageData!=='function'){tex.dispose();return undefined;}
+    const pixels=ctx.createImageData(64,64);
+    for(let y=0;y<64;y++)for(let x=0;x<64;x++){
+      let h=((Math.imul(x+17,374761393)^Math.imul(y+53,668265263))>>>0);
+      h=Math.imul(h^(h>>>13),1274126177);
+      const v=((h^(h>>>16))>>>0)/4294967295-.5;
+      const at=(y*64+x)*4;
+      pixels.data[at]=Math.round(128+v*26);
+      pixels.data[at+1]=Math.round(128+((x^y)&1?10:-10)+v*22);
+      pixels.data[at+2]=250;
+      pixels.data[at+3]=255;
+    }
+    ctx.putImageData(pixels,0,0);tex.update(false);
+    tex.gammaSpace=false;tex.level=.14;tex.uScale=tex.vScale=6;
+    tex.wrapU=tex.wrapV=Texture.WRAP_ADDRESSMODE;
+    this.microNormal=tex;
+    return tex;
   }
   private smokeVolumeTexture():DynamicTexture {
     if(this.smokeTexture)return this.smokeTexture;
@@ -2078,12 +2407,21 @@ export class FpsLiveViewer {
     if(!this.disposed)this.engine.resize();
   }
   private createMuzzleFlash(name:string,socket:TransformNode):Mesh {
-    const flash=MeshBuilder.CreateSphere(name,{diameter:.11,segments:6},this.scene);
+    const core=MeshBuilder.CreateSphere(`${name}-core`,{diameter:.095,segments:6},this.scene);
+    const finA=MeshBuilder.CreateCylinder(`${name}-fin-a`,{height:.18,diameterTop:.004,diameterBottom:.07,tessellation:6},this.scene);
+    finA.scaling.x=.22;finA.rotation.x=Math.PI/2;finA.position.z=.05;
+    const finB=MeshBuilder.CreateCylinder(`${name}-fin-b`,{height:.16,diameterTop:.004,diameterBottom:.09,tessellation:6},this.scene);
+    finB.scaling.z=.22;finB.position.z=.015;
+    const finC=MeshBuilder.CreateCylinder(`${name}-fin-c`,{height:.16,diameterTop:.004,diameterBottom:.09,tessellation:6},this.scene);
+    finC.scaling.z=.22;finC.rotation.z=Math.PI/2;finC.position.z=.015;
+    const flash=Mesh.MergeMeshes([core,finA,finB,finC],true,true,undefined,false,false)??core;
+    flash.name=name;
     const material=new StandardMaterial(`${name}-mat`,this.scene);
     material.diffuseColor=Color3.FromHexString('#ffefa8');material.emissiveColor=new Color3(1,.85,.3);
     material.specularColor=Color3.Black();material.disableLighting=true;material.disableDepthWrite=true;material.alpha=.92;
     flash.material=material;flash.isPickable=false;flash.parent=socket;
-    flash.position.set(0,0,.045);flash.scaling.set(.7,.7,1.6);flash.setEnabled(false);
+    if(name.startsWith('fp-'))flash.renderingGroupId=1;
+    flash.position.set(0,0,.045);flash.scaling.set(.7,.7,1.45);flash.setEnabled(false);
     return flash;
   }
   private muzzlePosition(root:TransformNode|undefined):Vector3|undefined {
@@ -2246,7 +2584,7 @@ export class FpsLiveViewer {
       if(view.borrowed){
         o.root.setEnabled(false);o.root.position.setAll(0);o.root.rotation.setAll(0);
         o.spine.position.set(0,1.05,0);o.headPivot.position.set(0,1.54,0);
-        o.leftArmPivot.position.set(-.192,1.29,0);o.rightArmPivot.position.set(.192,1.29,0);
+        o.leftArmPivot.position.set(-SHOULDER_X,1.29,0);o.rightArmPivot.position.set(SHOULDER_X,1.29,0);
         o.leftLegPivot.position.set(-.105,.74,0);o.rightLegPivot.position.set(.105,.74,0);
         for(const [joint,parent,y] of [[o.leftElbowPivot,o.leftArmPivot,-.25],[o.rightElbowPivot,o.rightArmPivot,-.25],[o.leftKneePivot,o.leftLegPivot,-.36],[o.rightKneePivot,o.rightLegPivot,-.36]] as const){joint.parent=parent;joint.position.set(0,y,0);}
         for(const pivot of [o.spine,o.headPivot,o.leftArmPivot,o.rightArmPivot,o.leftElbowPivot,o.rightElbowPivot,o.leftLegPivot,o.rightLegPivot,o.leftKneePivot,o.rightKneePivot])pivot.rotation.setAll(0);
@@ -2259,13 +2597,20 @@ export class FpsLiveViewer {
       if(!view){const existing=this.actors.get(corpse.playerId)?.operative;
         const variantHint=existing?.variantIndex??playerVariants.get(corpse.playerId);
         const operative=existing??createTacticalOperativeMesh(corpse.attacking?'t':'ct',`body-${corpse.id}`,this.scene,hex=>this.material(hex),variantHint);
+        // Start the fall from the pose the player died in (borrowed live rig) instead of a rest pose.
+        const pose=existing&&existing.root.isEnabled()?captureOperativeRagdollPose(existing):undefined;
         operative.root.position.setAll(0);operative.root.rotation.setAll(0);operative.root.setEnabled(true);
         for(const pivot of [operative.leftElbowPivot,operative.rightElbowPivot,operative.leftKneePivot,operative.rightKneePivot])pivot.parent=operative.root;
-        operative.magazine.setEnabled(false);view={operative,rag:createLiveRagdoll(corpse,this.mapRuntime),borrowed:!!existing};this.corpseViews.set(corpse.id,view);
+        operative.magazine.setEnabled(false);view={operative,rag:createLiveRagdoll(corpse,this.mapRuntime,pose),borrowed:!!existing};this.corpseViews.set(corpse.id,view);
       }
       if(view.rag.age>4)continue;
       stepLiveRagdoll(view.rag,delta);const p=view.rag.points,o=view.operative;
-      const bone=(pivot:TransformNode,a:RagJoint,b:RagJoint)=>{const start=p[a],end=p[b],dx=end.x-start.x,dy=end.y-start.y,dz=end.z-start.z,len=Math.hypot(dx,dy,dz)||1;pivot.position.set(start.x,start.y,start.z);pivot.rotation.set(0,Math.atan2(-dz,dx),Math.acos(Math.max(-1,Math.min(1,-dy/len))));};
+      // Every bone shares the torso's facing as its twist reference, so the face, kit and feet stay oriented
+      // with the body instead of spinning around near-vertical bones.
+      const v=RAGDOLL_SCRATCH,at=(j:RagJoint,out:Vector3)=>out.set(p[j].x,p[j].y,p[j].z);
+      at('rs',v.a).subtractInPlace(at('ls',v.b));at('chest',v.c).subtractInPlace(at('pelvis',v.d));
+      Vector3.CrossToRef(v.a,v.c,v.forward);if(v.forward.lengthSquared()<1e-8)v.forward.set(0,0,1);
+      const bone=(pivot:TransformNode,a:RagJoint,b:RagJoint)=>orientOperativeBone(pivot,at(a,v.a),at(b,v.b),v.forward,v.axes);
       bone(o.spine,'chest','pelvis');o.spine.position.set((p.chest.x+p.pelvis.x)/2,(p.chest.y+p.pelvis.y)/2,(p.chest.z+p.pelvis.z)/2);
       bone(o.headPivot,'head','chest');
       bone(o.leftArmPivot,'ls','le');bone(o.leftElbowPivot,'le','lh');bone(o.rightArmPivot,'rs','re');bone(o.rightElbowPivot,'re','rh');bone(o.leftLegPivot,'lhp','lk');bone(o.leftKneePivot,'lk','lf');bone(o.rightLegPivot,'rhp','rk');bone(o.rightKneePivot,'rk','rf');
@@ -2363,14 +2708,15 @@ export class FpsLiveViewer {
 
       if (alivePlayer) {
         applyOperativeAnimation(view, player, renderTime, elapsed);
-      }
+      } else updateOperativeUtilityCarry(view.operative, player);
     }
     for(const [id,mesh] of this.utilityDrops)if(!current.droppedUtility?.some(w=>w.id===id)){mesh.dispose();this.utilityDrops.delete(id);}
     for(const item of current.droppedUtility??[]){
       let mesh=this.utilityDrops.get(item.id);
       if(!mesh){mesh=create3DWeaponMesh(item.kind,`utility-stock-${item.id}`,this.scene,hex=>this.material(hex),item.team===current.attackTeam);mesh.rotation.set(Math.PI/2,item.id*.7,0);this.utilityDrops.set(item.id,mesh);}
-      const t=item.airUntil?Math.max(0,Math.min(1,1-(item.airUntil-current.time)/.7)):1,from=item.from??item;
-      mesh.position.set(mix(from.x,item.x,t),mix(item.fromY??this.mapRuntime.terrain.groundHeight(from)+.14,this.mapRuntime.terrain.groundHeight(item)+.14,t)+Math.sin(t*Math.PI)*.4,mix(from.z,item.z,t));
+      const from=item.from??item,t=liveDropFlightProgress(item,renderTime),lob=liveDropLobHeight(from,item);
+      mesh.position.set(mix(from.x,item.x,t),mix(item.fromY??this.mapRuntime.terrain.groundHeight(from)+.14,this.mapRuntime.terrain.groundHeight(item)+.14,t)+Math.sin(t*Math.PI)*lob,mix(from.z,item.z,t));
+      mesh.setEnabled(renderTime>=(item.at??-Infinity)-.02);
     }
     // Roll lays the firearm on its side; yaw rotates it in the floor plane. Bounds keep every part above stone.
     for(const [id,item] of this.droppedMeshes)if(!current.droppedWeapons.some(w=>w.id===id)){item.root.dispose();item.ring.dispose();this.droppedMeshes.delete(id);}
@@ -2382,8 +2728,8 @@ export class FpsLiveViewer {
         const ring=MeshBuilder.CreateTorus(`drop-ring-${dropped.id}`,{diameter:.65,thickness:.012,tessellation:16},this.scene);ring.position.set(dropped.x,this.mapRuntime.terrain.groundHeight(dropped)+.024,dropped.z);ring.material=this.material('#93836b');ring.isPickable=false;ring.freezeWorldMatrix();
         item={root,ring,lift:Number.isFinite(minY)?.035-minY:.12};this.droppedMeshes.set(dropped.id,item);
       }
-      const t=dropped.airUntil?Math.max(0,Math.min(1,1-(dropped.airUntil-current.time)/.7)):1,from=dropped.from??dropped;
-      const x=mix(from.x,dropped.x,t),z=mix(from.z,dropped.z,t),y=mix(dropped.fromY??this.mapRuntime.terrain.groundHeight(from)+item.lift,this.mapRuntime.terrain.groundHeight(dropped)+item.lift,t)+Math.sin(t*Math.PI)*.45;
+      const from=dropped.from??dropped,t=liveDropFlightProgress(dropped,renderTime);
+      const x=mix(from.x,dropped.x,t),z=mix(from.z,dropped.z,t),y=mix(dropped.fromY??this.mapRuntime.terrain.groundHeight(from)+item.lift,this.mapRuntime.terrain.groundHeight(dropped)+item.lift,t)+Math.sin(t*Math.PI)*liveDropLobHeight(from,dropped);
       item.root.position.set(x,y,z);item.ring.setEnabled(t>=1);
     }
     for(const [id,cloud] of this.smokes)if(!current.smokes.some(s=>s.id===id)){cloud.root.dispose(false,false);cloud.material.dispose(false,false);this.smokes.delete(id);}
@@ -2509,7 +2855,10 @@ export class FpsLiveViewer {
       this.explosionMaterials[0].alpha=.9*life;this.explosionMaterials[1].alpha=.88*life;
     }
     const sniper=followed.equipped==='sniper'||followed.equipped==='scout';
-    const zoom=effectiveMode==='first'&&!this.overviewEnabled&&followed.hp>0?(sniper&&followed.scopeState==='scoped'?(followed.scopeLevel===2?.16:.28):false):false;
+    // Hold the magnification through the shot frame so the kill is seen through the optic.
+    const throughOptic=followed.scopeState==='scoped'||(followed.scopeState==='cycling'&&current.time-followed.lastShot<.16);
+    if(followed.scopeState==='scoped')this.lastScopeZoom=followed.scopeLevel===2?.16:.28;
+    const zoom=effectiveMode==='first'&&!this.overviewEnabled&&followed.hp>0?(sniper&&throughOptic?(followed.scopeState==='scoped'?(followed.scopeLevel===2?.16:.28):this.lastScopeZoom):false):false;
     const activeView=this.overviewEnabled&&effectiveMode!=='free'?'overview':effectiveMode;
     const cameraKey=`${this.mapRuntime.id}:${activeView}:${activeView==='cinematic'?`film-${current.round}`:activeView==='tactical'||activeView==='overview'?'wide':followed.id}`,cut=cameraKey!==this.previousCamera||this.previousRound!==current.round;
     if(cut)this.fpMoveBlend=0;
@@ -2681,9 +3030,19 @@ export class FpsLiveViewer {
           reloadParts.magazine.setEnabled(false);
         }
       }
-      const sinceShot=renderTime-followed.lastShot,pulse=sinceShot>=0?Math.exp(-sinceShot*24):0;
-      const kick=Object.hasOwn(LIVE_WEAPONS,followed.equipped)?.045*pulse:0;
-      const kickPitch=Object.hasOwn(LIVE_WEAPONS,followed.equipped)?.035*pulse:0;
+      // Viewmodel kick follows the recoil the shooter failed to cancel (snapshot recoilPitch/recoilYaw, the
+      // spray-pattern residual) plus a per-shot impulse/torque/chatter sized from the weapon's class.
+      const sinceShot=renderTime-followed.lastShot;
+      const firearm=Object.hasOwn(LIVE_WEAPONS,followed.equipped),shotKick=firearm?liveViewmodelKick(followed.equipped):undefined;
+      const pulse=shotKick&&sinceShot>=0?Math.sin(Math.min(1,sinceShot/.035)*Math.PI*.5)*Math.exp(-Math.max(0,sinceShot-.02)*shotKick.decay):0;
+      const sprayPulse=shotKick&&sinceShot>=0&&sinceShot<.22?Math.exp(-sinceShot*16):0;
+      const burstSign=(Math.round(followed.lastShot*17)&1)?1:-1;
+      const residualPitch=Math.max(0,followed.recoilPitch??0),residualYaw=followed.recoilYaw??0;
+      const kick=shotKick?shotKick.push*pulse+Math.min(.03,residualPitch*.35):0;
+      const kickPitch=shotKick?shotKick.pitch*pulse+residualPitch*.6:0;
+      const kickYaw=shotKick?shotKick.yawKick*pulse*burstSign+Math.sin(renderTime*48)*shotKick.chatter*sprayPulse*.6:0;
+      const kickRoll=shotKick?shotKick.roll*pulse*burstSign+Math.cos(renderTime*42)*shotKick.chatter*sprayPulse:0;
+      const kickRise=shotKick?kickPitch*.12+Math.sin(renderTime*55)*shotKick.chatter*sprayPulse*.18:0;
       const fpBolt=(followed.equipped==='sniper'||followed.equipped==='scout')&&(followed.scopeState==='cycling'||(sinceShot>=.16&&sinceShot<.92))
         ?(followed.scopeState==='cycling'?.65:Math.sin(((sinceShot-.16)/.76)*Math.PI)):0;
       const fpPump=(followed.equipped==='nova'||followed.equipped==='mag7')&&sinceShot>=.14&&sinceShot<.62
@@ -2700,16 +3059,22 @@ export class FpsLiveViewer {
       this.fpMoveBlend=mix(this.fpMoveBlend,targetFpMove,1-Math.exp(-fpDt*8));
       const fpPullBack=this.fpMoveBlend*.016;
       const fpDrop=this.fpMoveBlend*.005;
+      const fpBobPhase=renderTime*9.2;
+      const fpWalkSwayX=Math.cos(fpBobPhase*.5)*.0032*this.fpMoveBlend;
+      const fpWalkBobY=Math.abs(Math.sin(fpBobPhase*.5))*.0026*this.fpMoveBlend+Math.sin(renderTime*2.1)*.0008*(1-this.fpMoveBlend);
       const vp=this.camera.position
-        .add(right.scale(.22-swing*.2-(fpMedium?throwLift*.08-throwRelease*.12:0)))
-        .subtract(up.scale(.18+fpDrop+draw*.25+reload*.13+fpReloadLift+underhandOffset-overhandLift+fpPump*.03))
+        .add(right.scale(.22+fpWalkSwayX-swing*.2-(fpMedium?throwLift*.08-throwRelease*.12:0)))
+        .subtract(up.scale(.18+fpDrop+fpWalkBobY+draw*.25+reload*.13+fpReloadLift+underhandOffset-overhandLift+fpPump*.03-kickRise))
         .add(fwd.scale(.42-fpPullBack-kick+swing*.18-fpReloadPull-fpPump*.05));
 
       this.fpGunRoot.position.copyFrom(vp);
-      this.fpGunRoot.rotation.y=followed.yaw+(followed.recoilYaw??0)*.35-(fpMedium?throwLift*.25-throwRelease*.4:0);
+      // The camera already carries the full residual (bullets go where the view points); the weapon follows
+      // it fully and leads it slightly so a spray visibly climbs and swings with the pattern.
+      this.fpGunRoot.rotation.y=followed.yaw+residualYaw*1.25+kickYaw-(fpMedium?throwLift*.25-throwRelease*.4:0);
       const throwPitchOffset=fpUnderhand?(pin*.22+throwLift*.36-throwRelease*.64):fpMedium?(pin*.06-throwRelease*.35):(-pin*.16-throwLift*.34+throwRelease*.74);
-      this.fpGunRoot.rotation.x=-(followed.pitch??0)-kickPitch-(followed.recoilPitch??0)*.4+draw*.5+fpReloadPitch+fpSlap*.08+plant*.3+throwPitchOffset;
-      this.fpGunRoot.rotation.z=swing*1.1+fpReloadRoll+fpBolt*.48+(fpUnderhand?(throwLift*.14-throwRelease*.24):(-throwLift*.22+throwRelease*.36));
+      this.fpGunRoot.rotation.x=-(followed.pitch??0)-(followed.recoilPitch??0)-kickPitch+draw*.5+fpReloadPitch+fpSlap*.08+plant*.3+throwPitchOffset;
+      this.fpGunRoot.rotation.z=swing*1.1+fpReloadRoll+fpBolt*.48-residualYaw*.8+kickRoll+fpWalkSwayX*1.8+(fpUnderhand?(throwLift*.14-throwRelease*.24):(-throwLift*.22+throwRelease*.36));
+      if(shotKick)applyWeaponRecoilMechanics(this.fpGunRoot,shotKick,sinceShot);
 
       const muzzle=(this.fpGunRoot.metadata as WeaponViewMetadata|undefined)?.muzzle;
       if(!this.fpMuzzleFlash&&muzzle)this.fpMuzzleFlash=this.createMuzzleFlash('fp-muzzle-flash',muzzle);
@@ -2773,9 +3138,9 @@ export class FpsLiveViewer {
     const clampedX=Math.max(b.clampMinX,Math.min(b.clampMaxX,player.x));
     const clampedZ=Math.max(b.clampMinZ,Math.min(b.clampMaxZ,player.z));
     if(first){
-      const eyeY=player.crouch?1.08:1.6;
-      this.currentEyeY=eyeY;
-      const eyeWorld=jumpOffset+eyeY;
+      const targetEyeY=player.crouch?1.08:1.6;
+      this.currentEyeY=blend>=1?targetEyeY:mix(this.currentEyeY,targetEyeY,Math.min(1,blend*1.65));
+      const eyeWorld=jumpOffset+this.currentEyeY;
       this.camera.fov=zoom?zoom:1.12;
       this.camera.position.set(clampedX,eyeWorld,clampedZ);
       const pitch=(player.pitch??0)+(player.recoilPitch??0),yaw=player.yaw+(player.recoilYaw??0),horizontal=Math.cos(pitch)*20;
@@ -2835,7 +3200,7 @@ export class FpsLiveViewer {
     for(const item of this.droppedMeshes.values()){item.root.dispose();item.ring.dispose();}
     this.droppedMeshes.clear();
     for(const view of this.corpseViews.values())if(!view.borrowed)view.operative.root.dispose();this.corpseViews.clear();
-    for(const mesh of this.utilityDrops.values())mesh.dispose();this.utilityDrops.clear();this.deviceClock?.dispose();
+    for(const mesh of this.utilityDrops.values())mesh.dispose();this.utilityDrops.clear();this.deviceClock?.dispose();this.microNormal?.dispose();
     for(const mesh of this.grenades.values())mesh.dispose();this.grenades.clear();
     this.clearGrenadeLineups();
     for(const view of this.bloodMeshes.values())for(const splat of view.splats)splat.dispose();

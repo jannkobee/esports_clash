@@ -1,9 +1,10 @@
-import {observeFpsBehavior,emptyFpsObservedBehavior,type FpsBehaviorMetric} from './fpsPlayerArchitecture.ts';
+import {observeFpsBehavior,emptyFpsObservedBehavior,fpsBehaviorPreferences,type FpsBehaviorMetric} from './fpsPlayerArchitecture.ts';
 import type { FpsMap, FpsMatchEvent, FpsMatchSettings, FpsPlayerState, FpsRoundEndReason, FpsSide, FpsWeaponId, SetPieceCall } from './fpsTypes.ts';
 import type { SetPieceResolution } from './fpsSetPieceRules.ts';
 import { getWeaponDef } from './fpsWeapons.ts';
 import { shouldSaveFpsRetake } from './fpsPersonality.ts';
 import { evaluatePlayerAction, type PersonalityTrigger } from './fpsIdentity.ts';
+import { deriveFpsTendencies, effectiveTendency, evaluateCallResponse, type FpsTendencyValues } from './fpsPlayerTendencies.ts';
 import {observedPersonalityTriggers} from './fpsIdentityMatch.ts';
 
 /** Shortest legal route on the authored map. No movement can cross a missing edge. */
@@ -41,6 +42,15 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
   const enteredZoneAt = new Map(players.map(p=>[p.playerId,0]));
   const lastSniperShot = new Map<string,number>();
   const contactDecisions = new Map<string, {until:number; advance:boolean;action?:string;waypoint?:string}>();
+  // Natural tendencies are fixed for the match (lab overrides included); expression is contextual, as in the 3D path.
+  const naturalTendencies = new Map<string, FpsTendencyValues>();
+  const tendencyOf = (playerId:string, side:'blue'|'red', key:string, pressure=0):number => {
+    const identity=settings.identityExperiment?.players[playerId],team=settings.identityExperiment?.teams[side];
+    if(!identity)return .5;
+    let natural=naturalTendencies.get(playerId);
+    if(!natural){natural=deriveFpsTendencies(identity.personality,identity.dna,identity.tendencyOverrides);naturalTendencies.set(playerId,natural);}
+    return effectiveTendency(natural,key,{coach:team?.coach,plan:team?.plan,chemistry:team?.chemistry,familiarity:identity.familiarity,pressure,pressureSensitivity:fpsBehaviorPreferences(identity.personality).pressureSensitivity});
+  };
   const lastContact=new Map<string,number>();
   const rotations=new Map<string,{time:number;from:string;to:string;observedBy:Set<string>}>();
   const vacated=new Map<string,{time:number;observedBy:Set<string>}>();
@@ -173,12 +183,13 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
       if (p.side === 'attackers') {
         let target = devicePlanted ? (siteZones.includes(p.currentZone) ? p.currentZone : site) : droppedZone ??
           (call.strategy === 'fake_execute' && t < setupTime ? otherSite : t < setupTime ? call.entryChokeZone : site);
+        let observedRotationZone:string|undefined;
         if(settings.identityExperiment && !devicePlanted && !droppedZone) {
           const knownRotation=p.tactics?.role==='lurker'
             ?[...rotations.values()].find(item=>t-item.time<=5&&item.observedBy.has(p.team))
             :undefined;
           if(siteZones.includes(p.currentZone))target=p.currentZone;
-          else if(knownRotation&&!p.loadout.hasBomb)target=knownRotation.to;
+          else if(knownRotation&&!p.loadout.hasBomb){target=knownRotation.to;observedRotationZone=knownRotation.to;}
           else if(!p.loadout.hasBomb && siteZones.length>1) {
             const preferred=siteZones[attackers.indexOf(p)%siteZones.length];
             target=siteZones.map((zone,index)=>({
@@ -201,18 +212,32 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
               const triggers=observedPersonalityTriggers({round:roundNumber,elapsed:t,quietSeconds:t-(lastContact.get(p.playerId)??0),allies:living(attackers).length,enemies:visibleEnemies.length,winStreak:p.psychology?.winStreak??0,lossStreak:p.psychology?.lossStreak??0,earlyDeath:p.lastRoundEarlyDeath,advantage:visibleEnemies.some(e=>(blind.get(e.playerId)??0)>t),disrupted:visibleEnemies.some(e=>(blind.get(e.playerId)??0)>t),prepared:t>=setupTime,planCompromised:compromised,callerAlive:living(attackers).some(ally=>ally.tactics?.isCaller),allyContact:supported&&contact});
               const urgent=p.loadout.hasBomb && roundLimit-t<20;
               const freedom=identity.instruction==='initiative'?1:environment.plan.freedom;
+              const callerPlayer=living(attackers).find(ally=>ally.tactics?.isCaller&&ally!==p);
+              const pressure=Math.min(1,(living(attackers).length===1?.5:0)+Math.max(0,visibleEnemies.length-living(attackers).length)*.15+(urgent?.4:0));
+              // Tactical freedom blends the gameplan/instruction with the IGL's own autonomy grant (3D parity).
+              const iglAutonomy=callerPlayer?tendencyOf(callerPlayer.playerId,callerPlayer.team,'playerAutonomy'):freedom;
+              const callResponse=evaluateCallResponse({
+                playDiscipline:tendencyOf(p.playerId,p.team,'playDiscipline',pressure)*100,
+                trustInIgl:environment.chemistry.leadershipAcceptance*100,
+                tacticalFreedom:(identity.instruction==='initiative'?1:(freedom+iglAutonomy)/2)*100,
+                independentOpportunity:tendencyOf(p.playerId,p.team,'opportunityExploitation',pressure)*100,
+                callSuitability:compromised?45:72,
+                immediateDanger:contact?65:15,
+              },random).action;
               const decision=evaluatePlayerAction(identity,{triggers,teamIdentity:environment.culture,confidence:(p.psychology?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,[
                 {action:'pressure',legal:true,tacticalValue:urgent?2:supported ? .65 : .35,instruction:environment.plan.aggression*2-1},
-                {action:'coordinate',legal:!urgent,tacticalValue:supported ? .5 : .4,instruction:identity.instruction==='support'?1:environment.plan.structure*2-1},
-                {action:'react',legal:!urgent&&contact,tacticalValue:.45,instruction:identity.instruction==='hold'?1:1-environment.plan.tempo*2},
-                {action:'prepare',legal:!urgent,tacticalValue:.25,instruction:environment.plan.preparation*2-1},
+                {action:'coordinate',legal:!urgent,tacticalValue:(supported ? .5 : .4)+(callResponse==='follow'?.2:callResponse==='follow_adjusted'?.1:0),instruction:identity.instruction==='support'?1:environment.plan.structure*2-1},
+                {action:'react',legal:!urgent&&contact,tacticalValue:.45+(callResponse==='delay_or_report'?.2:0),instruction:identity.instruction==='hold'?1:1-environment.plan.tempo*2},
+                {action:'prepare',legal:!urgent,tacticalValue:.25+(callResponse==='delay_or_report'?.15:0),instruction:environment.plan.preparation*2-1},
                 {action:'probe',legal:!contact,tacticalValue:.6+(p.card.stats.positioning/100)*.3,instruction:1-environment.plan.tempo*2},
-                {action:'improvise',legal:!p.loadout.hasBomb && compromised && map.zones[p.currentZone].connectedZones.length>=2,tacticalValue:.5,instruction:freedom*2-1},
+                {action:'improvise',legal:!p.loadout.hasBomb && compromised && map.zones[p.currentZone].connectedZones.length>=2,tacticalValue:.5+(callResponse==='pursue_independent'?.25:0),instruction:freedom*2-1},
               ],random);
               if(contact)observe(p,'engagement',['pressure','react'].includes(decision.action));
               if(supported)observe(p,'coordination',decision.action==='coordinate');
               if(compromised)observe(p,'failedExecuteAdjustment',decision.action==='improvise');
-              observe(p,'improvisation',decision.action==='improvise');
+              if(observedRotationZone)observe(p,'opponentAdjustment',target===observedRotationZone);
+              observe(p,'strategyCompliance',decision.action==='coordinate'||decision.action==='prepare'||callResponse==='follow');
+              observe(p,'improvisation',decision.action==='improvise'||callResponse==='pursue_independent');
               const direct=findFpsRoute(map,p.currentZone,target)[1];
               choice={until:t+4,advance:!contact||['pressure','probe','improvise'].includes(decision.action),action:decision.action,waypoint:decision.action==='improvise'?map.zones[p.currentZone].connectedZones.filter(zone=>zone!==direct && findFpsRoute(map,zone,target).length>0).sort()[0]:undefined}; contactDecisions.set(p.playerId,choice);
               emit('tactical_decision',`${p.name} chose ${decision.action}${decision.triggers.length?' with '+identity.personality.name+' active':''}.`,{actorId:p.playerId,actorName:p.name,zone:p.currentZone,decision});
@@ -236,6 +261,7 @@ export function simulateFpsRound(call: SetPieceCall, attackers: FpsPlayerState[]
             const triggers=observedPersonalityTriggers({round:roundNumber,elapsed:t,quietSeconds:t-(lastContact.get(p.playerId)??0),allies:def.length,enemies:atk.length,winStreak:p.psychology?.winStreak??0,lossStreak:p.psychology?.lossStreak??0,earlyDeath:p.lastRoundEarlyDeath,planCompromised:true,callerAlive:def.some(ally=>ally.tactics?.isCaller),poorRetake:eligibleRetake(def,atk),prepared:false});
             const decision=evaluatePlayerAction(identity,{triggers,confidence:(p.psychology?.confidence??50)/100,fatigue:0,teamIdentity:environment.culture},environment.coach,environment.plan,environment.chemistry,[{action:'coordinate',legal:true,tacticalValue:.8,instruction:environment.plan.structure},{action:'react',legal:!urgent,tacticalValue:.3,instruction:1-environment.plan.tempo},{action:'pressure',legal:true,tacticalValue:.6,instruction:environment.plan.aggression}],random);
             observe(p,'rotation',decision.action!=='react');
+            observe(p,'opponentAdjustment',decision.action!=='react');
             choice={until:t+4,advance:decision.action!=='react',action:decision.action};contactDecisions.set(p.playerId,choice);
             emit('tactical_decision',`${p.name} chose ${decision.action} during the rotation.`,{actorId:p.playerId,actorName:p.name,zone:p.currentZone,decision});
           }

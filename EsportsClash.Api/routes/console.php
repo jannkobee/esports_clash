@@ -119,7 +119,7 @@ Artisan::command('online:install-catalog {--original-roster}', function () {
 
 Artisan::command('online:recover', function () {
     foreach (\App\Models\OnlineMatch::whereIn('status', ['allocated', 'running'])->cursor() as $match) {
-        if (! $match->isBeforeKickoff()) \App\Jobs\PollOnlineMatch::dispatch($match->id);
+        if (! $match->isBeforeComputeWindow()) \App\Jobs\PollOnlineMatch::dispatch($match->id);
     }
     \Illuminate\Support\Facades\DB::table('online_stream_grants')->where('expires_at', '<', now()->subDay())->delete();
 })->purpose('Recover interrupted match polls and expire old stream grants');
@@ -137,7 +137,7 @@ Artisan::command('fixtures:schedule {home} {away} {kickoff : ISO 8601 date with 
         'competition' => ['required', 'string', 'max:100'],
     ])->validate();
     $kickoff = \Illuminate\Support\Carbon::parse($data['kickoff'])->utc();
-    $deadline = $kickoff->copy()->subMinutes(15);
+    $deadline = \App\Models\ClubFixture::ordersCloseAt($kickoff);
     if ($deadline->lte(now())) {
         $this->error('The order deadline must be in the future.');
         return 1;
@@ -146,6 +146,7 @@ Artisan::command('fixtures:schedule {home} {away} {kickoff : ISO 8601 date with 
     $fixture = \Illuminate\Support\Facades\DB::transaction(function () use ($ids, $data, $kickoff, $deadline) {
         \App\Models\OnlineClub::whereKey($ids)->orderBy('id')->lockForUpdate()->get();
         if (\App\Models\ClubFixture::conflicts($ids, $kickoff)) return null;
+        abort_if(\App\Models\ClubFixture::hourFull($kickoff), 409, 'That kickoff hour is fully booked.');
         return \App\Models\ClubFixture::create(['home_club_id' => $ids[0], 'away_club_id' => $ids[1],
             'competition' => $data['competition'], 'kickoff_at' => $kickoff, 'orders_close_at' => $deadline]);
     }, 3);
@@ -483,3 +484,58 @@ Artisan::command('world:records {--enrich : Add missing fictional biographies an
 \Illuminate\Support\Facades\Schedule::command('world:records')->everyFifteenMinutes()->withoutOverlapping(10);
 Artisan::command('world:laurels',function(\App\Services\AnnualLaurels $awards){$year=now('Asia/Manila')->year;$awards->refresh($year);if($year>2026)$awards->refresh($year-1);$this->info('Refreshed eligible annual nominations and due January ceremonies; no simulated awards.');});
 \Illuminate\Support\Facades\Schedule::command('world:laurels')->hourly()->withoutOverlapping(10);
+
+// Email reaches managers who are not signed in: refresh each human club's inbox (results, order deadlines,
+// invitations), which emails every new event of an emailing kind once. Bounded to human clubs.
+Artisan::command('manager:notify', function () {
+    if (! \Illuminate\Support\Facades\Schema::hasTable('manager_emails')) return;
+    $count = 0;
+    \App\Models\OnlineClub::where('is_bot', false)->orderBy('id')->chunkById(100, function ($clubs) use (&$count) {
+        foreach ($clubs as $club) {
+            try { app(\App\Services\ClubOffice::class)->sync($club); $count++; }
+            catch (\Throwable $e) { report($e); }
+        }
+    });
+    $this->info("Refreshed $count manager inboxes.");
+})->purpose('Refresh human managers\' inboxes and send due emails');
+\Illuminate\Support\Facades\Schedule::command('manager:notify')->everyTenMinutes()->withoutOverlapping(9);
+
+// Every club competition with open places invites every eligible club automatically (inbox + email).
+Artisan::command('competitions:auto-invite', function () {
+    if (! \Illuminate\Support\Facades\Schema::hasTable('club_inbox')) return;
+    $this->info('Sent '.app(\App\Services\CompetitionAutoInvites::class)->tick().' new entry invitations.');
+})->purpose('Invite eligible clubs to open competitions');
+\Illuminate\Support\Facades\Schedule::command('competitions:auto-invite')->everyFifteenMinutes()->withoutOverlapping(14);
+
+// Club economy: sponsor seasons (top-up and proactive offers) and the daily debt review, which warns
+// managers in debt and dismisses only managers who are both deep in debt and inactive after a final warning.
+Artisan::command('clubs:economy', function () {
+    if (! \Illuminate\Support\Facades\Schema::hasTable('manager_dismissals')) return;
+    $economy = app(\App\Services\ClubEconomy::class);
+    $added = $economy->refillSponsors();
+    $offered = $economy->offerSponsors();
+    $debt = $economy->reviewDebt();
+    $this->info("Sponsor top-up $added; offers $offered; debt ".json_encode($debt));
+})->purpose('Sponsor seasons and the debt review');
+\Illuminate\Support\Facades\Schedule::command('clubs:economy')->dailyAt('03:30')->timezone('Asia/Manila')->withoutOverlapping(30);
+
+// Scouting assignments: finished searches become shortlists (inbox + email); unanswered shortlists expire.
+Artisan::command('scouting:due', function () {
+    if (! \Illuminate\Support\Facades\Schema::hasTable('scouting_assignments')) return;
+    $this->info('Updated '.app(\App\Services\ScoutingAssignments::class)->refresh().' scouting assignments.');
+})->purpose('Deliver scouting shortlists');
+\Illuminate\Support\Facades\Schedule::command('scouting:due')->everyFifteenMinutes()->withoutOverlapping(14);
+
+// Season-end tier review: relegate as many clubs from each regional tier as Division Trials promoted into it.
+Artisan::command('world:tier-review', function () {
+    if (! \Illuminate\Support\Facades\Schema::hasTable('tier_review_runs')) return;
+    $this->info(json_encode(app(\App\Services\TierReview::class)->run()));
+})->purpose('Season-end promotion and relegation review');
+\Illuminate\Support\Facades\Schedule::command('world:tier-review')->dailyAt('04:00')->timezone('Asia/Manila')->withoutOverlapping(30);
+
+// Supporter billing: renew due memberships, end cancelled ones, and remind before trials or memberships end.
+Artisan::command('billing:tick', function () {
+    if (! \Illuminate\Support\Facades\Schema::hasTable('supporter_subscriptions')) return;
+    $this->info(json_encode(app(\App\Services\SupporterBilling::class)->tick()));
+})->purpose('Supporter renewals and reminders');
+\Illuminate\Support\Facades\Schedule::command('billing:tick')->hourly()->withoutOverlapping(30);

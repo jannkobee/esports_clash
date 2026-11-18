@@ -5,8 +5,11 @@ import hmac
 import json
 import os
 import re
+import shutil
 import subprocess
 import threading
+import time
+from collections import deque
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -21,8 +24,22 @@ LOCK = threading.Lock()
 PROCESSES = {}
 FRAME_CACHE = {}
 FRAME_CACHE_LOCK = threading.Lock()
+# Matches simulated at once (one Node process each); defaults to the machine's cores.
+MAX_MATCHES = max(1, int(os.environ.get('ONLINE_MAX_MATCHES', os.cpu_count() or 1)))
+LIVE_MAPS = ('fontessa', 'spillway')
+# Heap cap per match process: V8 otherwise keeps ~400 MB resident; ~250 MB with the cap, same result.
+MATCH_HEAP_MB = max(96, int(os.environ.get('ONLINE_MATCH_HEAP_MB', '192')))
+# Accepted allocations waiting for a free slot (started in order by the dispatcher thread).
+PENDING = deque()
 RUN_ID = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
 MANIFEST = json.loads(Path('/online/manifest.json').read_text())
+# Replay retention (official version-5 replays on this worker's disk; see replay_retention.py).
+# 30 days keeps a month of matchdays watchable (about 5.4 MB per match); 0 keeps replays forever.
+REPLAY_RETENTION_DAYS = float(os.environ.get('ONLINE_REPLAY_RETENTION_DAYS', '30'))
+REPLAY_SWEEP_MINUTES = max(1.0, float(os.environ.get('ONLINE_REPLAY_SWEEP_MINUTES', '60')))
+# Low-disk guard: below this much free space, the oldest aired replays go first (0 disables it).
+REPLAY_MIN_FREE_GB = max(0.0, float(os.environ.get('ONLINE_REPLAY_MIN_FREE_GB', '2')))
+REPLAY_STATS = {}
 
 
 def latest_stream_snapshot(folder):
@@ -55,6 +72,71 @@ def write_json(path, value):
     temporary.replace(path)
 
 
+def running_matches():
+    return sum(1 for process in PROCESSES.values() if process.poll() is None)
+
+
+def start_worker(match_id, folder, plan):
+    """Start one match process (caller holds LOCK)."""
+    for key in [key for key, process in PROCESSES.items() if process.poll() is not None]:
+        del PROCESSES[key]
+    if match_id in PENDING:
+        PENDING.remove(match_id)
+    bundle = Path('/online/engine/fps-engine.mjs')
+    with open(folder / 'worker.log', 'ab') as log:
+        heap = f'--max-old-space-size={MATCH_HEAP_MB}'
+        worker = ((['node', heap, '/online/fps-match-worker.mjs', str(folder)] if bundle.exists()
+                   else ['node', heap, '--experimental-strip-types', '/online/fps-match-worker.mjs', str(folder)])
+            if plan.get('game_mode') == 'fps_mr15_v1'
+            else ['node', '/online/browser-worker.mjs', str(folder)])
+        PROCESSES[match_id] = subprocess.Popen(worker,
+            cwd='/workspace/EsportsClash.Web', stdout=log, stderr=subprocess.STDOUT)
+
+
+def sweep_replays():
+    """Remove expired replays at startup, then every REPLAY_SWEEP_MINUTES (sooner checks when disk is low)."""
+    from replay_retention import scan, sweep
+    last_sweep = 0.0
+    while True:
+        now = time.time()
+        try:
+            low = REPLAY_MIN_FREE_GB > 0 and shutil.disk_usage(ROOT).free < REPLAY_MIN_FREE_GB * 1024 ** 3
+            if low or now - last_sweep >= REPLAY_SWEEP_MINUTES * 60:
+                with LOCK:
+                    active = frozenset([key for key, process in PROCESSES.items() if process.poll() is None] + list(PENDING))
+                REPLAY_STATS.update(sweep(ROOT, now, REPLAY_RETENTION_DAYS * 86400, active,
+                                          int(REPLAY_MIN_FREE_GB * 1024 ** 3)))
+                last_sweep = now
+            else:
+                # Between sweeps, refresh the disk figures /health reports (one pass over the replay folders).
+                records = scan(ROOT)
+                REPLAY_STATS.update(replays_retained=len(records), replay_bytes=sum(r['bytes'] for r in records))
+        except Exception as error:  # never take the worker down over housekeeping
+            print(json.dumps({'replay_sweep_failed': str(error)}), flush=True)
+            last_sweep = now
+        time.sleep(300)
+
+
+def dispatch_pending():
+    """Start queued allocations as slots free, oldest first."""
+    while True:
+        time.sleep(1)
+        with LOCK:
+            while PENDING and running_matches() < MAX_MATCHES:
+                match_id = PENDING[0]
+                folder = ROOT / match_id
+                try:
+                    state = json.loads((folder / 'state.json').read_text())
+                    plan = json.loads((folder / 'allocation.json').read_text())['plan']
+                except (OSError, ValueError, KeyError):
+                    PENDING.popleft()
+                    continue
+                if state['status'] in ('completed', 'failed', 'interrupted'):
+                    PENDING.popleft()
+                    continue
+                start_worker(match_id, folder, plan)
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         print(fmt % args, flush=True)
@@ -72,7 +154,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(401, {'error': 'Private worker authentication required'})
         path = urlparse(self.path)
         parts = path.path.split('/')
-        if len(parts) not in (3, 4) or parts[1] != 'matches' or not RUN_ID.fullmatch(parts[2]):
+        if len(parts) not in (3, 4, 5) or parts[1] != 'matches' or not RUN_ID.fullmatch(parts[2]):
             return self.reply(404, {'error': 'Unknown match'})
         folder = ROOT / parts[2]
         with LOCK:
@@ -94,15 +176,17 @@ class Handler(BaseHTTPRequestHandler):
                     if game_mode == 'fps_mr15_v1':
                         assert plan['fps']['format'] == 'MR15_TACTICAL_FPS'
                         assert plan['fps']['rules_version'] == 1
-                        assert plan['fps']['map_id'] in ('breakwater', 'foundry', 'old-quarter', 'red-mesa', 'northpoint')
+                        assert plan['fps'].get('simulation_version') in (4, 5)
+                        assert plan['fps']['map_id'] in (LIVE_MAPS if plan['fps']['simulation_version'] == 5
+                            else ('breakwater', 'foundry', 'old-quarter', 'red-mesa', 'northpoint'))
                     assert plan.get('player_profile_schema', 0) in (0, 1)
                     if plan.get('player_profile_schema') == 1:
                         profiles = plan.get('player_profiles', {})
                         ids = [slot['instance_id'] for side in ('blue', 'red') for slot in plan[side]]
                         assert len(set(ids)) == 10 and set(profiles) == set(ids)
-                        attributes = {'lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'}
+                        attributes = {'rifling', 'sniping', 'entry', 'utility', 'positioning', 'shotcalling'}
                         for profile in profiles.values():
-                            assert set(profile['stats']) == attributes
+                            assert set(profile['stats']) == attributes or set(profile['stats']) == {'lan', 'tf', 'iq', 'ldr', 'clu', 'sta', 'flx'}
                             assert all(type(value) in (int, float) and 1 <= value <= 99 for value in profile['stats'].values())
                             assert type(profile['ovr']) is int and 1 <= profile['ovr'] <= 99
                             assert 1 <= len(profile['name']) <= 100 and profile['nationality']['code']
@@ -119,18 +203,35 @@ class Handler(BaseHTTPRequestHandler):
                 state = json.loads((folder / 'state.json').read_text())
                 if state['status'] in ('completed', 'failed', 'interrupted'):
                     return self.reply(200, state)
-                if any(process.poll() is None for key, process in PROCESSES.items() if key != parts[2]):
-                    return self.reply(409, {'error': 'Worker busy; allocation remains queued'})
-                if parts[2] not in PROCESSES or PROCESSES[parts[2]].poll() is not None:
-                    with open(folder / 'worker.log', 'ab') as log:
-                        worker = (['node', '--experimental-strip-types', '/online/fps-match-worker.mjs', str(folder)]
-                            if plan.get('game_mode') == 'fps_mr15_v1'
-                            else ['node', '/online/browser-worker.mjs', str(folder)])
-                        PROCESSES[parts[2]] = subprocess.Popen(worker,
-                            cwd='/workspace/EsportsClash.Web', stdout=log, stderr=subprocess.STDOUT)
+                if parts[2] in PROCESSES and PROCESSES[parts[2]].poll() is None:
+                    return self.reply(202, state)
+                # Full: keep the allocation queued here and start it when a slot frees (no retry storm).
+                if running_matches() >= MAX_MATCHES:
+                    if parts[2] not in PENDING:
+                        PENDING.append(parts[2])
+                    return self.reply(202, {**state, 'status': 'queued', 'queue_position': list(PENDING).index(parts[2]) + 1})
+                start_worker(parts[2], folder, plan)
                 return self.reply(202, state)
             if not (folder / 'state.json').exists():
                 return self.reply(404, {'error': 'Match has not started'})
+            if len(parts) == 5 and parts[3] == 'replay3d':
+                # Live 3D replay files, served to the API (which decides what a viewer may see yet).
+                name = 'header.json' if parts[4] == 'header' else (parts[4].zfill(5) + '.json.gz' if parts[4].isdigit() and len(parts[4]) <= 5 else None)
+                target = folder / 'replay' / name if name else None
+                if not target or not target.exists():
+                    if (folder / 'replay-expired.json').exists():
+                        # Removed by the retention sweep: the result and report are kept, the replay is not.
+                        return self.reply(410, {'error': 'Replay expired', 'expired': True})
+                    return self.reply(404, {'error': 'Replay part not available'})
+                data = target.read_bytes()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                if name.endswith('.gz'):
+                    self.send_header('Content-Encoding', 'gzip')
+                self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
             if len(parts) == 4 and parts[3] == 'replay':
                 try:
                     query = parse_qs(path.query)
@@ -149,7 +250,10 @@ class Handler(BaseHTTPRequestHandler):
             from history_handler import handle
             return handle(self,'GET',TOKEN,ROOT,PROCESSES,LOCK)
         if self.path == '/health':
-            return self.reply(200, {'status': 'ok', 'content_catalog_schema': 1, 'player_profile_schema': 1, 'launch_history_schema': 1, 'rules_version': MANIFEST['rules_version']})
+            return self.reply(200, {'status': 'ok', 'content_catalog_schema': 1, 'player_profile_schema': 1, 'launch_history_schema': 1, 'rules_version': MANIFEST['rules_version'],
+                'fps_simulation_versions': [4, 5], 'max_matches': MAX_MATCHES, 'running': running_matches(), 'queued': len(PENDING),
+                'replays': {**REPLAY_STATS, 'retention_days': REPLAY_RETENTION_DAYS, 'min_free_gb': REPLAY_MIN_FREE_GB,
+                    'disk_free_bytes': shutil.disk_usage(ROOT).free}})
         self.handle_match('GET')
 
     def do_POST(self):
@@ -200,6 +304,8 @@ async def main():
     vite = subprocess.Popen(['node', 'node_modules/vite/bin/vite.js', '--host=127.0.0.1', '--port=5174', '--strictPort'], cwd='/workspace/EsportsClash.Web')
     http = ThreadingHTTPServer(('0.0.0.0', 8092), Handler)
     threading.Thread(target=http.serve_forever, daemon=True).start()
+    threading.Thread(target=dispatch_pending, daemon=True).start()
+    threading.Thread(target=sweep_replays, daemon=True).start()
     try:
         async with serve(stream, '0.0.0.0', 8091, max_size=8192, max_queue=4, write_limit=65536,
                          origins=['http://localhost:8088', 'http://127.0.0.1:8088', 'http://web', None]):

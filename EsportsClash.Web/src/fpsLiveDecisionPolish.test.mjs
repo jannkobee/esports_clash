@@ -1,5 +1,6 @@
 import {FPS_T_POSITIONS,FPS_CT_POSITIONS} from './fps/fpsPlayerArchitecture.ts';
 import test from 'node:test';
+import {distance} from './fps/fpsLiveMap.ts';
 import assert from 'node:assert/strict';
 import {FpsLiveSimulation} from './fps/fpsLiveSimulation.ts';
 import {LIVE_TACTICAL,LIVE_MID,liveWalkable,liveSightline} from './fps/fpsLiveMap.ts';
@@ -15,6 +16,8 @@ const cards=Array.from({length:10},(_,i)=>({id:`polish-${i}`,name:`Player ${i}`,
 const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[(i)%5],ct:FPS_CT_POSITIONS[(i)%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 function game(){
   const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity);
+  // Coordination fixture: a fixed team smoke plan (the authored examples) instead of this round's calculated one.
+  sim.roundSmokes=sim.map.authoredSmokeLineups.map(l=>({...l}));
   Object.assign(sim,{phase:'live',time:20,roundLiveAt:0,liveElapsed:5,remaining:90,site:'A',defenseSetup:'standard',tacticArchetype:'default_pick'});
   sim.pendingBuys.clear();
   for(const p of sim.actors)Object.assign(p,{hp:0,bomb:false,target:undefined,contact:undefined,contactAt:-100,intelManaged:false,
@@ -169,14 +172,16 @@ function executeUtilityScenario(site){
   const lineup=LIVE_AUTHORED_SMOKE_LINEUPS.find(l=>l.phase==='execute'&&l.site===site);
   sim.updateExecute();
   assert.equal(thrower.smokeLineupId,lineup.id,`${site}: choose the called site's authored lineup`);
-  assert.deepEqual(thrower.smokeLineupGoal,lineup.position);
-  assert.notDeepEqual(thrower.smokeLineupGoal,{x:thrower.x,z:thrower.z},'The thrower must reach an authored origin instead of throwing from arbitrary current coordinates');
+  // The thrower heads to the suggested spot or one the utility brain learned works better (within 8m).
+  assert.ok(distance(thrower.smokeLineupGoal,lineup.position)<=8.5,`${site}: launch spot stays near the smoke target's suggested spot`);
+  assert.notDeepEqual(thrower.smokeLineupGoal,{x:thrower.x,z:thrower.z},'The thrower must walk to a launch spot instead of throwing from arbitrary current coordinates');
+  const spot=thrower.smokeLineupGoal;
   assert.equal(entry.smokeLineupId,undefined);assert.equal(carrier.smokeLineupId,undefined);
   assert.equal(order.smokesSent,0);assert.equal(sim.grenades.length,0);
   // Controlled arrival at the real launch point keeps the ordinary equip/pin,
   // inventory and physical release code authoritative in this integration test.
-  Object.assign(thrower,{...lineup.position,jumpY:liveGroundHeight(lineup.position),speed:0,vx:0,vz:0,
-    yaw:Math.atan2(lineup.target.x-lineup.position.x,lineup.target.z-lineup.position.z)});
+  Object.assign(thrower,{...spot,jumpY:liveGroundHeight(spot),speed:0,vx:0,vz:0,
+    yaw:Math.atan2(lineup.target.x-spot.x,lineup.target.z-spot.z)});
   sim.time+=.25;sim.updateExecute();
   assert.equal(thrower.utilityPreparation?.lineupId,lineup.id,`${site}: equip and pin the assigned smoke`);
   assert.equal(thrower.smoke,1);assert.equal(order.smokesSent,0);assert.equal(sim.grenades.length,0);

@@ -1,5 +1,9 @@
 import {FPS_POSITION_LABELS} from '../fps/fpsPlayerArchitecture';
-import type {fetchApprovedLearning} from '../fps/fpsApprovedLearning';
+import {FPS_ROUND_DUTY_TAGS} from '../fps/fpsRoundResponsibilities';
+import type {FpsLiveReplaySource} from '../fps/fpsLiveReplay';
+import type {fetchApprovedLearning,FpsTeamLearning} from '../fps/fpsApprovedLearning';
+import {buildFpsMatchExperience,submitFpsMatchExperience} from '../fps/fpsLineageExperience';
+import type {FpsPlaybookUpdate} from '../fps/fpsLiveSimulation';
 import { canBuyLiveWeapon, LIVE_KNIFE, type LiveEquippedWeapon, type LiveWeapon } from '../fps/fpsLiveWeapons.ts';
 import { LIVE_UTILITY_COST, type LiveUtilityItem } from '../fps/fpsLiveEconomy';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,6 +20,7 @@ import type {FpsAudioCue} from '../fps/fpsBroadcastAudio';
 import { FpsBroadcastAudio } from '../fps/fpsBroadcastAudio';
 import { readFpsLearning, saveFpsLearningRound } from '../fps/fpsLiveLearningStorage';
 import { readFpsMechanicsLearning, saveFpsMechanicsRound } from '../fps/fpsLiveMechanicsLearningStorage';
+import { readFpsUtilityBrain, saveFpsUtilityBrain, seedFpsUtilityBrain } from '../fps/fpsUtilityBrainStorage';
 import { readFpsMovementLearning, saveFpsMovementRound } from '../fps/fpsLiveMovementLearningStorage';
 import { domRectToBabylonViewport } from '../fps/fpsBroadcastDirector';
 import type { BombPlantPipState, LiveCameraMode } from '../fps/fpsLiveViewer';
@@ -57,8 +62,16 @@ interface Props {
   skillProfiles?: Record<string, FpsSkillProfile>;
   learningEnabled?:boolean;
   approvedModel?:Awaited<ReturnType<typeof fetchApprovedLearning>>;
+  /** Each team's own lineage (fetched once at match start and pinned); used when local learning is off. */
+  teamModels?:Partial<Record<'blue'|'red',FpsTeamLearning>>;
+  /** Club lineages this match contributes to when it finishes (signed-in manager's own club only). */
+  contributeTo?:Partial<Record<'blue'|'red',string>>;
+  /** Official match: play a recorded server broadcast instead of simulating in the browser. */
+  replay?: FpsLiveReplaySource;
   onExit: () => void;
 }
+/** A live simulation, or a recorded official broadcast with the same frame surface. */
+type LiveFrameSource = Pick<FpsLiveSimulation,'step'|'snapshot'|'drainAudioCues'>&{learningDiagnostics():ReturnType<FpsLiveSimulation['learningDiagnostics']>|undefined};
 
 const clock = (seconds: number) => `${Math.floor(Math.ceil(seconds) / 60)}:${String(Math.ceil(seconds) % 60).padStart(2, '0')}`;
 const cameraModes:LiveCameraMode[]=['director','first','third','tactical','cinematic','free'];
@@ -420,6 +433,13 @@ function BroadcastArmoryModal({
   );
 }
 
+const CALL_RESPONSE_LABELS: Record<NonNullable<LivePlayer['callResponse']>, string> = {
+  follow: 'Following call',
+  follow_adjusted: 'Adjusting call',
+  pursue_independent: 'Own timing',
+  delay_or_report: 'Delaying · reporting',
+};
+
 function BroadcastCenterFocusCard({
   observed,
   mode,
@@ -438,7 +458,10 @@ function BroadcastCenterFocusCard({
         <div className="broadcast-focus-card__profile">
           <span className="broadcast-focus-card__obs-tag"><span className="broadcast-rec-dot" />{isCT?'CT':'T'} / OBSERVING</span>
           <h3 className="broadcast-focus-card__name">{observed.name}</h3>
-          <span className="broadcast-focus-card__role">[{({caller:'IGL',sniper:'AWPER',entry:'ENTRY',support:'SUPPORT',lurker:'LURKER',anchor:'ANCHOR',trade:'RIFLER / ROTATOR'} as const)[observed.role]}]</span>
+          <span className="broadcast-focus-card__role" title={[observed.position ? FPS_POSITION_LABELS[observed.position] : '', observed.dutyReason ? `This round: ${observed.dutyReason}` : '', observed.naturalIdentity, observed.iglIdentity ? `IGL: ${observed.iglIdentity.label}` : '', ...(observed.topTendencies ?? []).map(t => `${t.label} ${t.value}`)].filter(Boolean).join(' · ')}>
+            {observed.role === 'caller' ? 'IGL' : ''}{observed.role === 'caller' && observed.duty ? ' · ' : ''}
+            {observed.duty ? FPS_ROUND_DUTY_TAGS[observed.duty] : observed.role === 'caller' ? '' : ({sniper:'AWP',entry:'ENTRY',support:'SUPPORT',lurker:'LURK',anchor:'ANCHOR',trade:'RIFLER'} as const)[observed.role]}
+          </span>
         </div>
         <div className="broadcast-focus-card__ammo-box">
           {observed.equipped === 'knife' ? (
@@ -463,12 +486,19 @@ function BroadcastCenterFocusCard({
         </span>
         {observed.enemyRemaining!==undefined&&<span className="broadcast-focus-card__forces" title="Confirmed opponents remaining">{observed.enemyRemaining} left</span>}
       </div>
-      {observed.radioMessage && observed.hp > 0 && (
+      {observed.radioMessage && observed.hp > 0 ? (
         <div className="broadcast-focus-card__radio" title={fpsBroadcastText(observed.radioMessage, mapId)}>
           <span className="broadcast-focus-card__radio-tag">COMMS</span>
           <span>{fpsBroadcastText(observed.radioMessage, mapId)}</span>
         </div>
-      )}
+      ) : (observed.iglIdentity || (observed.callResponse && observed.hp > 0) || observed.naturalIdentity) ? (
+        <div className="broadcast-focus-card__tendencies" title={[observed.iglIdentity?.summary, ...(observed.topTendencies ?? []).map(t => `${t.label} ${t.value}`)].filter(Boolean).join(' · ')}>
+          {observed.iglIdentity ? <span>{observed.iglIdentity.label}</span> : observed.naturalIdentity ? <span>{observed.naturalIdentity}</span> : null}
+          {observed.callResponse && observed.hp > 0 && (
+            <span className="broadcast-focus-card__call" data-response={observed.callResponse} title="Response to the current team call">{CALL_RESPONSE_LABELS[observed.callResponse]}</span>
+          )}
+        </div>
+      ) : null}
       <div className="broadcast-focus-card__cams" role="group" aria-label="Spectator cameras">
         {(['first', 'third', 'director', 'tactical', 'cinematic', 'free'] as const).map(cm => (
           <button
@@ -613,19 +643,52 @@ function loadHudOptions(): BroadcastHudOptions {
   }
 }
 
-export function FpsLiveBroadcast({ mapId = 'fontessa', blue, red, seed, identity, skillProfiles, learningEnabled=false, approvedModel, onExit }: Props) {
+/** Per-team frozen models and playbooks from lineages; contributing teams also report each round. */
+function buildTeamLearning(mapId:LiveMapId,teamModels:Props['teamModels'],contributeTo:Props['contributeTo'],report:(team:'blue'|'red',update:FpsPlaybookUpdate)=>void){
+  return Object.fromEntries((['blue','red'] as const).flatMap(team=>{
+    const models=teamModels?.[team]?.models,other=team==='blue'?'red':'blue',opponent=teamModels?.[other]?.lineage??contributeTo?.[other];
+    const contributes=!!contributeTo?.[team];
+    if(!models&&!contributes)return [];
+    return [[team,{
+      ...(models?{learning:{mode:'frozen' as const,model:models.navigation},mechanicsLearning:{mode:'frozen' as const,model:models.combat},
+        movementLearning:{mode:'frozen' as const,model:models.movement},utilityLearning:{mode:'frozen' as const,model:models.utility??seedFpsUtilityBrain()}}:{}),
+      // The team's own playbook for this map (frozen); the opponent is identified by its lineage.
+      ...(models?.playbooks?.[mapId]||contributes?{playbook:{mode:'frozen' as const,model:models?.playbooks?.[mapId],opponents:models?.opponents,
+        ...(opponent?{opponent}:{}),...(contributes?{onRound:(update:FpsPlaybookUpdate)=>report(team,update)}:{})}}:{}),
+    }]];
+  }));
+}
+
+export function FpsLiveBroadcast({ mapId = 'fontessa', blue, red, seed, identity, skillProfiles, learningEnabled=false, approvedModel, teamModels, contributeTo, replay, onExit }: Props) {
   const [attempt, setAttempt] = useState(0);
-  const { simulation, activeSeed } = useMemo(
+  // Round results per contributing team, sent once to its club lineage when the match finishes.
+  const contributions = useRef<Record<'blue'|'red',FpsPlaybookUpdate[]>>({blue:[],red:[]});
+  const { simulation, activeSeed } = useMemo<{simulation:LiveFrameSource;activeSeed:number}>(
     () => {
+      if (replay) return { activeSeed: replay.header.seed, simulation: replay };
       const activeSeed = freshFpsExhibitionSeed(seed);
       return { activeSeed, simulation: new FpsLiveSimulation(blue, red, activeSeed, identity, { mapId, skillProfiles,
         learning:learningEnabled?{mode:'learn',model:readFpsLearning(),onRound:round=>{saveFpsLearningRound(round);}}:{mode:'frozen',model:approvedModel?.navigation},
         mechanicsLearning:learningEnabled?{model:readFpsMechanicsLearning(),onRound:round=>{saveFpsMechanicsRound(round);}}:{mode:'frozen',model:approvedModel?.combat},
-        movementLearning:learningEnabled?{model:readFpsMovementLearning(),onRound:round=>{saveFpsMovementRound(round);}}:{mode:'frozen',model:approvedModel?.movement} }) };
+        movementLearning:learningEnabled?{model:readFpsMovementLearning(),onRound:round=>{saveFpsMovementRound(round);}}:{mode:'frozen',model:approvedModel?.movement},
+        // Bots remember how their smokes landed; in learn mode each round's corrections are saved to this browser.
+        utilityLearning:learningEnabled?{mode:'learn',model:readFpsUtilityBrain(),onRound:saveFpsUtilityBrain}:{mode:'frozen',model:approvedModel?.utility??seedFpsUtilityBrain()},
+        // Team lineages: each side plays with its own pinned, frozen learned models (and playbook).
+        ...(!learningEnabled&&(teamModels||contributeTo)?{teamLearning:buildTeamLearning(mapId,teamModels,contributeTo,(team,update)=>contributions.current[team].push(update))}:{}) }) };
     },
-    [mapId, blue, red, seed, identity, skillProfiles, learningEnabled, approvedModel, attempt]
+    [mapId, blue, red, seed, identity, skillProfiles, learningEnabled, approvedModel, teamModels, contributeTo, attempt, replay]
   );
   const [frame, setFrame] = useState(() => simulation.snapshot());
+  useEffect(()=>{contributions.current={blue:[],red:[]};},[simulation]);
+  const submitted = useRef<LiveFrameSource|null>(null);
+  useEffect(()=>{
+    if(frame.phase!=='finished'||!contributeTo||submitted.current===simulation)return;
+    submitted.current=simulation;
+    for(const team of ['blue','red'] as const){
+      const lineage=contributeTo[team];
+      if(lineage)void submitFpsMatchExperience(lineage,buildFpsMatchExperience(`live-${activeSeed}-${team}`,frame.mapId??mapId,contributions.current[team]));
+    }
+  },[frame.phase,contributeTo,simulation,activeSeed,frame.mapId,mapId]);
   const activeMapId: LiveMapId = frame.mapId ?? mapId;
   const mapRuntime = useMemo(() => getLiveMapRuntime(activeMapId), [activeMapId]);
   const [paused, setPaused] = useState(false);
@@ -1075,7 +1138,9 @@ export function FpsLiveBroadcast({ mapId = 'fontessa', blue, red, seed, identity
   };
 
   const observed = frame.players.find(p => p.id === followed) ?? frame.players[0];
-  const scopeKind = effectiveCamera==='first'&&observed.hp>0&&observed.scopeState==='scoped'
+  // The shot itself is seen through the optic: the bolt cycle unscopes only after the muzzle flash.
+  const scopeKind = effectiveCamera==='first'&&observed.hp>0
+    &&(observed.scopeState==='scoped'||(observed.scopeState==='cycling'&&frame.time-observed.lastShot<.16))
     &&(observed.equipped==='sniper'||observed.equipped==='scout')?observed.equipped:undefined;
   const ctTeam=frame.attackTeam==='red'?'blue':'red',tTeam=frame.attackTeam;
   const forceScore={blue:frame.score[ctTeam],red:frame.score[tTeam]};
@@ -1360,7 +1425,7 @@ export function FpsLiveBroadcast({ mapId = 'fontessa', blue, red, seed, identity
 
         {overviewCam && mode !== 'free' && <div className="broadcast-coverage-label">OVERVIEW · {mapRuntime.definition.broadcast.displayName.toUpperCase()}</div>}
         {!overviewCam && effectiveCamera==='tactical'&&<div className="broadcast-coverage-label">MULTIPLE ENGAGEMENTS</div>}
-        {mode==='free'&&<div className="broadcast-coverage-label" style={{pointerEvents:'none'}}>FREE CAM · Click map · WASD move · Q/E down/up · Drag to look · Shift faster · Space pause</div>}
+        {mode==='free'&&<div className={`broadcast-coverage-label${paused?' is-below-pause':''}`} style={{pointerEvents:'none'}}>FREE CAM · Click map · WASD move · Q/E down/up · Drag to look · Shift faster · Space pause</div>}
         {paused && ready && !error && frame.phase !== 'finished' && (
           <div className="broadcast-pause-banner" role="status" aria-live="polite">
             <span className="broadcast-pause-banner__dot">⏸</span>

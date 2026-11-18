@@ -41,17 +41,25 @@ test('team models remain separate when completed rounds settle',async()=>{
  b.choose('synthetic-0','synthetic-5','blue','far:steady:loaded',()=>.99);r.choose('synthetic-5','synthetic-0','red','far:steady:loaded',()=>0);
  sim.finishRound('blue','test');assert.equal(b.checkpoint().updates,1);assert.equal(r.checkpoint().updates,0);assert.deepEqual(red.combat,r.checkpoint());
 });
-test('store resets untouched baseline on engine hash change but rejects trained mismatch',()=>{
+test('engine code edits never reset learning; an incompatible learner is archived and forked, others kept',()=>{
  const directory=mkdtempSync(tmpdir()+'/fps-upgrade-');let store;
  try{
   store=new Store(directory);
-  const stale={...baseline(),engine:'0'.repeat(64)};
-  store.set('model',stale);store.close();
+  const edited={...baseline(),engine:'0'.repeat(64)};edited.combat.updates=3;
+  store.set('model',edited);store.close();
   store=new Store(directory);
-  assert.equal(store.get('model').engine,baseline().engine);
-  const trained={...baseline(),engine:'0'.repeat(64)};trained.combat.updates=1;
-  store.set('model',trained);store.close();
-  assert.throws(()=>new Store(directory),/Incompatible or invalid learning bundle/);
+  assert.equal(store.get('model').combat.updates,3,'a simulation code edit keeps the trained model');
+  const broken=structuredClone(store.get('model'));broken.navigation.updates=7;broken.combat={garbage:true};
+  store.set('model',broken);store.close();
+  store=new Store(directory);
+  const migrated=store.get('model');
+  assert.equal(migrated.navigation.updates,7,'validating learners are kept');
+  assert.equal(migrated.combat.updates,0,'the invalid learner forks from its prior');
+  const history=store.versions('worker:main'),archived=history.find(v=>v.reason==='archived-before-migration');
+  assert.ok(archived);assert.deepEqual(store.versionPayload(archived.sha),broken,'the exact incompatible bundle is archived');
+  const fork=history.find(v=>v.reason==='migrated');assert.equal(fork.parent,archived.sha);assert.deepEqual(fork.detail.forked,['combat']);
+  assert.throws(()=>store.db.prepare('DELETE FROM model_versions').run(),/append-only/);
+  assert.throws(()=>store.db.prepare("UPDATE model_versions SET reason='x'").run(),/append-only/);
  }finally{try{store?.close();}catch{}rmSync(directory,{recursive:true,force:true});}
 });
 test('export pushes reports and passing candidates directly to main branch',()=>{
@@ -88,11 +96,41 @@ test('export pushes reports and passing candidates directly to main branch',()=>
     env:{...process.env,LEARNING_DATA:dataDir,LEARNING_GIT_REMOTE:bare},stdio:'pipe'
   });
   const verifyDir=dir+'/verify';
-  execFileSync('git',['clone','-b','main',bare,verifyDir],{stdio:'pipe'});
+  // Disable checkout conversion so the published blob bytes (LF) are compared exactly.
+  execFileSync('git',['-c','core.autocrlf=false','clone','-b','main',bare,verifyDir],{stdio:'pipe'});
+  assert.equal(execFileSync('git',['--git-dir',bare,'show','main:EsportsClash.Api/AutomaticLearning/reports/2026-11-15T10.json'],{encoding:'utf8'}),'{"version":1}\n');
   assert.equal(readFileSync(verifyDir+'/EsportsClash.Api/AutomaticLearning/reports/2026-11-15T10.json','utf8'),'{"version":1}\n');
   assert.equal(readFileSync(verifyDir+'/EsportsClash.Api/AutomaticLearning/reports/2026-11-15T11.json','utf8'),'{"version":1}\n');
   assert.equal(readFileSync(verifyDir+'/EsportsClash.Api/AutomaticLearning/reports/candidates/cand-pass.json','utf8'),'{"report":{"passed":true}}\n');
   assert.throws(()=>readFileSync(verifyDir+'/EsportsClash.Api/AutomaticLearning/reports/candidates/cand-fail.json'));
   assert.equal(readFileSync(verifyDir+'/OTHER.md','utf8'),'concurrent\n');
  }finally{rmSync(dir,{recursive:true,force:true});}
+});
+test('utility brain learns through worker records and stays optional in bundles',async()=>{
+ const {validateBundle,upgradeTrainingBundle,isUntrainedBundle}=await import('../../infrastructure/automatic-learning/model.mjs');
+ const {seedFpsUtilityBrain}=await import('./fps/fpsUtilityBrainStorage.ts');
+ const old=baseline();delete old.utility;
+ assert.equal(validateBundle(old).utility,undefined,'bundles approved before the utility brain stay valid');
+ assert.deepEqual(upgradeTrainingBundle(old).utility,seedFpsUtilityBrain(),'training state starts utility learning from the seed');
+ assert.ok(isUntrainedBundle(baseline()));
+ assert.throws(()=>validateBundle({...baseline(),utility:{...seedFpsUtilityBrain(),successes:1e7}}),/Incompatible or invalid learning bundle/);
+ const directory=mkdtempSync(tmpdir()+'/fps-utility-');let store;
+ try{
+  store=new Store(directory);const model=store.get('model'),records=[];
+  const result=await runMatch({id:'utility-run',seed:7,group:1,blue:model,red:model,mode:'learn',maxSimulatedSeconds:120,maxMatchWallSeconds:120},r=>records.push(r));
+  const utility=records.filter(r=>r.kind==='utility');
+  assert.ok(result.utility.throws>0&&utility.length>0,'a learning match scores utility throws');
+  for(const record of records)store.append(record,true,new Date('2026-01-01T01:00Z'));
+  const learned=store.get('model').utility,emitted=utility.reduce((n,r)=>n+r.payload.throws,0),hits=utility.reduce((n,r)=>n+r.payload.successes,0);
+  // Only completed rounds emit experience; throws in a round cut off by the time limit are scored but not learned.
+  assert.ok(emitted>0&&emitted<=result.utility.throws);
+  assert.equal(learned.throws-model.utility.throws,emitted);assert.equal(learned.successes-model.utility.successes,hits);
+  assert.ok(utility.every(r=>JSON.stringify(r).length<20000),'records carry per-round deltas, not whole brains');
+  assert.ok(!isUntrainedBundle(store.get('model')));
+  assert.throws(()=>store.append({id:'bad-utility',kind:'utility',payload:{...utility[0].payload,id:'bad-utility',successes:utility[0].payload.throws+1}},true));
+  assert.deepEqual(store.get('model').utility,learned);
+  await store.archive(new Date('2026-01-01T02:00Z'));
+  const manifest=JSON.parse(readFileSync(directory+'/reports/2026-01-01T01.json','utf8'));
+  assert.equal(manifest.learningSamples.utility,emitted);assert.equal(manifest.utility.successes,hits);
+ }finally{store?.close();rmSync(directory,{recursive:true,force:true});}
 });

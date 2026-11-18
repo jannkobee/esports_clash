@@ -34,7 +34,9 @@ class AvatarpediaController extends Controller
     public function search(Request $request, AvatarpediaService $pedia)
     {
         $data = $request->validate(['q' => ['required', 'string', 'min:2', 'max:100']]);
-        return response()->json(['data' => $pedia->search($data['q'])])->header('Cache-Control', 'public, max-age=3, stale-while-revalidate=5');
+        // One search fans out to every directory; cache it like the directories (keyed by the world revision).
+        $key = 'pedia.search.v1:'.Cache::get('world.public.cache-revision', 'initial').':'.hash('sha256', mb_strtolower(trim($data['q'])));
+        return response()->json(['data' => Cache::remember($key, 10, fn () => $pedia->search($data['q']))])->header('Cache-Control', 'public, max-age=3, stale-while-revalidate=5');
     }
 
     public function article(string $kind, string $id, AvatarpediaService $pedia)

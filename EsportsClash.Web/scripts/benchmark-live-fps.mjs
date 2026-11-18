@@ -10,7 +10,7 @@ import {FPS_IDENTITY_PERSONALITIES,generatePlayerDNA} from '../src/fps/fpsIdenti
 import {generateFpsSkillProfile} from '../src/fps/fpsSkillProfile.ts';
 
 const arg=(key,fallback)=>process.argv.find(v=>v.startsWith(`--${key}=`))?.split('=')[1]??fallback;
-const steps=Number(arg('steps','3600')),seeds=arg('seeds','1337,9127').split(',').map(Number);
+const steps=Number(arg('steps','3600')),seeds=arg('seeds','1337,9127').split(',').map(Number),mapId=arg('map','fontessa');
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
 const chemistry={trust:.6,communication:.6,understanding:.6,leadershipAcceptance:.6,roleCompetition:.3};
@@ -20,7 +20,7 @@ const results=[],audit=arg('audit','false')==='true';
 for(const seed of seeds){
   const profiles=Object.fromEntries(cards.map(p=>[p.id,generateFpsSkillProfile(p.id,seed,'2026-11-14T00:00:00.000Z')]));
   const start=performance.now();
-  const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),seed,identity,{skillProfiles:profiles});
+  const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),seed,identity,{mapId,skillProfiles:profiles});
   const traceOver=Number(arg('trace-over','Infinity'));
   if(Number.isFinite(traceOver))for(const method of ['decide','objective','postPlantAssignment']){
     const original=sim[method];sim[method]=function(p,...args){const at=performance.now(),result=original.call(this,p,...args),ms=performance.now()-at;if(ms>=traceOver)console.error(JSON.stringify({method,ms,time:this.time,actor:p.id,x:p.x,z:p.z,y:p.jumpY,goal:p.goal,channel:p.channel,bomb:p.bomb,action:p.action}));return result;};
@@ -42,7 +42,7 @@ for(const seed of seeds){
   }
   const stats=values=>{const a=[...values].sort((x,y)=>x-y),q=p=>a[Math.min(a.length-1,Math.floor(a.length*p))]??0;return {count:a.length,totalMs:values.reduce((n,v)=>n+v,0),p50:q(.5),p95:q(.95),p99:q(.99),max:q(1),over16ms:values.filter(v=>v>16.667).length,over33ms:values.filter(v=>v>33.333).length};};
   const frame=sim.snapshot();
-  const result={seed,steps,audited:audit,startupMs,all:stats(samples),live:stats(live),worst:slow.sort((a,b)=>b.ms-a.ms).slice(0,8),round:frame.round,score:frame.score,events:frame.events.length,shots:frame.players.reduce((n,p)=>n+p.impact.shots,0)};
+  const result={map:mapId,seed,steps,audited:audit,startupMs,all:stats(samples),live:stats(live),worst:slow.sort((a,b)=>b.ms-a.ms).slice(0,8),round:frame.round,score:frame.score,events:frame.events.length,shots:frame.players.reduce((n,p)=>n+p.impact.shots,0)};
   results.push(result);console.log(JSON.stringify(result));
 }
 const output=arg('output','');if(output)writeFileSync(output,JSON.stringify({node:process.version,results},null,2));

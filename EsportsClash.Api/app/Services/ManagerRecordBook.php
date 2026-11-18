@@ -9,7 +9,7 @@ class ManagerRecordBook {
    $receipt=DB::table('competition_results')->where('id',$resultId)->lockForUpdate()->first();if(!$receipt)return 0;
    $match=OnlineMatch::find($receipt->match_id);$event=ClubTournament::find($receipt->tournament_id);$fixture=ClubFixture::find($receipt->fixture_id);
    if(!$match||!$event||!$fixture||$match->status!=='completed'||$event->participant_type!=='club'||$event->provenance!=='verified'||CommunityCups::isFun($event)||!hash_equals($receipt->result_hash,$match->result_hash??''))return 0;
-   $winner=$match->result['winner']??null;if(!in_array($winner,['blue','red'],true)||($match->result['terminal_nexus'][$winner==='blue'?'red':'blue']??false)!==true)return 0;
+   $winner=$match->verifiedWinner();if($winner===null)return 0;
    $events=DB::table('competition_rating_events')->where('result_id',$resultId)->where('system','HGR')->get()->keyBy('participant_id');$count=0;
    foreach(['blue','red'] as $side){
     $clubId=$side==='blue'?$fixture->home_club_id:$fixture->away_club_id;$managerId=$side==='blue'?$match->blue_user_id:$match->red_user_id;$rating=$events[$clubId]??null;

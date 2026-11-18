@@ -52,7 +52,10 @@ class BotPopulationService
         $profiles = app(WorldPlayerProfiles::class);
         $catalog = app(OnlineService::class)->activeCatalog();
         $templates = collect($catalog->payload['cards'])->keyBy('id');
+        // A manager never re-adopts a club whose board dismissed them, and nobody starts with a club in debt.
+        if (\Illuminate\Support\Facades\Schema::hasTable('manager_dismissals')) $q->whereNotIn('id', DB::table('manager_dismissals')->where('user_id', $user->id)->select('club_id'));
         foreach ($q->orderBy('id')->limit(20)->lockForUpdate()->get() as $candidate) {
+            if (app(ClubMarketService::class)->balance($candidate->id) < 0) continue;
             if ($profiles->enabled()) {
                 $players = OwnedPlayerCard::where('user_id', $candidate->user_id)->get();
                 if (count(array_intersect($players->pluck('id')->all(), array_column($candidate->starters ?? $candidate->lineup, 'instance_id'))) !== 5) {

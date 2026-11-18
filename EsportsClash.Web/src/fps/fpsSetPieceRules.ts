@@ -11,7 +11,7 @@ import { getWeaponDef } from './fpsWeapons.ts';
 import { simulateFpsRound } from './fpsRoundSimulation.ts';
 import type { FpsMatchSettings, FpsRoundEndReason, FpsSide } from './fpsTypes.ts';
 import { getFpsPreferences, rankFpsPlayers, shouldSaveFpsRetake } from './fpsPersonality.ts';
-import { evaluatePlayerAction, type PersonalityTrigger, type ScoredTacticalAction } from './fpsIdentity.ts';
+import { evaluatePlayerAction, deriveFpsTendencies, describeIglLeadershipIdentity, type PersonalityTrigger, type ScoredTacticalAction } from './fpsIdentity.ts';
 import type { FpsIdentityExperiment } from './fpsTypes.ts';
 
 export interface SetPieceResolution {
@@ -87,22 +87,24 @@ export function generateSetPieceCall(
     if ((mood?.winStreak ?? 0) >= 3) triggers.add('winningStreak');
     if ((mood?.lossStreak ?? 0) >= 2) { triggers.add('losingStreak'); triggers.add('setback'); }
     if ((mood?.confidence ?? 50) < 35) triggers.add('pressure');
+    const iglTendencies=deriveFpsTendencies(identity.personality,identity.dna,identity.tendencyOverrides);
+    const iglProfile=describeIglLeadershipIdentity(iglTendencies);
     const actions: ScoredTacticalAction[] = [
-      {action:'pressure',legal:true,tacticalValue:totalSmokes===0 ? .55 : .35,instruction:environment.plan.tempo*2-1},
-      {action:'prepare',legal:true,tacticalValue:totalSmokes+totalFlashes>=2 ? .65 : .25,instruction:environment.plan.preparation*2-1},
-      {action:'probe',legal:true,tacticalValue:.45,instruction:1-environment.plan.tempo*2},
-      {action:'coordinate',legal:totalSmokes+totalFlashes>=4,tacticalValue:.55,instruction:environment.plan.structure*2-1},
+      {action:'pressure',legal:true,tacticalValue:(totalSmokes===0 ? .55 : .35)+(iglTendencies.rushCalling-50)/220,instruction:environment.plan.tempo*2-1},
+      {action:'prepare',legal:true,tacticalValue:(totalSmokes+totalFlashes>=2 ? .65 : .25)+(iglTendencies.structuredCalling-50)/220,instruction:environment.plan.preparation*2-1},
+      {action:'probe',legal:true,tacticalValue:.45+(iglTendencies.defaultPreference-50)/220,instruction:1-environment.plan.tempo*2},
+      {action:'coordinate',legal:totalSmokes+totalFlashes>=4,tacticalValue:.55+(iglTendencies.utilityHeavyCalling-50)/220,instruction:environment.plan.structure*2-1},
     ];
     const decision=evaluatePlayerAction(identity,{triggers,teamIdentity:environment.culture,confidence:(mood?.confidence ?? 50)/100,fatigue:0},environment.coach,environment.plan,environment.chemistry,actions,random);
-    strategy='default_probe';
-    identityReason=` ${identity.personality.name}: ${decision.triggers.length ? 'situational tendency considered' : 'no personality trigger'}; the opening stays adaptive while each player responds to observed information (${decision.action}).`;
+    strategy=decision.action==='pressure'&&totalSmokes<2?'fast_rush':decision.action==='coordinate'&&iglTendencies.fakeCalling>=62&&random()<.4?'fake_execute':decision.action==='coordinate'?'set_piece_execute':'default_probe';
+    identityReason=` ${identity.personality.name} (${iglProfile.label}): ${decision.triggers.length ? 'situational tendency considered' : 'no personality trigger'}; the opening stays adaptive while each player responds to observed information (${decision.action}).`;
   }
 
-  const entryFragger = (identityExperiment ? livingAttackers.find(p=>p.tactics?.role==='entry') : undefined) ?? rankFpsPlayers(livingAttackers, 'entry')[0];
+  const entryFragger = (identityExperiment ? livingAttackers.find(p=>p.tactics?.duty==='entry')??livingAttackers.find(p=>p.tactics?.role==='entry') : undefined) ?? rankFpsPlayers(livingAttackers, 'entry')[0];
 
   // Pick trade fraggers (highest TF)
   const otherAttackers = livingAttackers.filter(p => p.playerId !== entryFragger.playerId);
-  const sortedByTf = identityExperiment ? [...otherAttackers].sort((a,b)=>Number(b.tactics?.role==='trade')-Number(a.tactics?.role==='trade') || a.playerId.localeCompare(b.playerId)) : rankFpsPlayers(otherAttackers, 'trade');
+  const sortedByTf = identityExperiment ? [...otherAttackers].sort((a,b)=>Number(b.tactics?.duty==='trade')-Number(a.tactics?.duty==='trade') || Number(b.tactics?.role==='trade')-Number(a.tactics?.role==='trade') || a.playerId.localeCompare(b.playerId)) : rankFpsPlayers(otherAttackers, 'trade');
   const tradeFraggerIds = sortedByTf.slice(0, 2).map(p => p.playerId);
   const supportFraggerIds = sortedByTf.slice(2).map(p => p.playerId);
 

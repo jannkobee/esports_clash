@@ -1,5 +1,7 @@
-import {generatePlayerDNA,type FpsPlayer} from './fpsIdentity.ts';
-import {validateFpsPersonality,generateFpsPersonality,defaultFpsAssignments,validateFpsLineup,fpsExecutionRole,naturalFpsIdentity,emptyFpsObservedBehavior} from './fpsPlayerArchitecture.ts';
+import {generatePlayerDNA,deriveFpsTendencies,effectiveTendency,type FpsPlayer} from './fpsIdentity.ts';
+import {assignFpsRoundDuties,type FpsDutyCandidate,type FpsDutyPhase} from './fpsRoundResponsibilities.ts';
+import {FPS_WEAPONS} from './fpsWeapons.ts';
+import {validateFpsPersonality,generateFpsPersonality,defaultFpsAssignments,validateFpsLineup,fpsExecutionRole,naturalFpsIdentity,emptyFpsObservedBehavior,fpsBehaviorPreferences} from './fpsPlayerArchitecture.ts';
 import {initialFpsPsychology,getFpsPreferences} from './fpsPersonality.ts';
 import type {FpsIdentityExperiment,FpsPlayerState} from './fpsTypes.ts';
 import type {PersonalityTrigger} from './fpsIdentity.ts';
@@ -25,6 +27,9 @@ export function hydrateFpsIdentityContext(input:FpsIdentityExperiment,ids:string
   if(player.id!==id||!dnaKeys.every(key=>Number.isFinite(player.dna?.[key])&&player.dna[key]>=0&&player.dna[key]<=100))throw Error('Invalid pinned player identity');
   for(const value of [player.familiarity,player.roleSuitability,...Object.values(player.roleFamiliarity??{})])if(!Number.isFinite(value)||value<0||value>1)throw Error('Invalid identity development');
   if(player.instruction&&!['balanced','hold','initiative','support'].includes(player.instruction))throw Error('Invalid individual instruction');
+  if(player.tendencyOverrides){
+    for(const value of Object.values(player.tendencyOverrides))if(!Number.isFinite(value)||value<0||value>100)throw Error('Invalid tendency override');
+  }
  }
  for(const group of [ids.slice(0,5),ids.slice(5)])validateFpsLineup(group.map(id=>({id,assignments:result.players[id].assignments!})));
  for(const side of ['blue','red'] as const){const team=result.teams[side];if(!team?.coach||!team.plan||!team.chemistry)throw Error('Missing pinned tactical system');
@@ -38,6 +43,34 @@ export function assignContextualRoles(players:FpsPlayerState[],context:FpsIdenti
  for(const player of players){const identity=context.players[player.playerId],position=identity.assignments![player.side==='attackers'?'t':'ct'],role=fpsExecutionRole(position),mood=player.psychology??initialFpsPsychology();
   player.tactics={role,position,isCaller:position.endsWith('IGL'),traits:[],mood:{...mood},preferences:getFpsPreferences({...player.card,fpsIdentity:{...player.card.fpsIdentity,personality:identity.personality} as any},mood),reason:'Match-locked '+position+' responsibility; movement remains contextual',identity:{personality:identity.personality.name,dimensions:{...identity.personality},natural:naturalFpsIdentity(identity.personality,position)}};
  }
+}
+/**
+ * The recorded (2D) engine elects the same round jobs as the live 3D simulation from the same
+ * pure allocator, so a roster's entry, support, lurk and carrier choices agree between the two.
+ * Zone-based positions have no metric travel, so spawn proximity is left out here.
+ */
+export function assignRecordedRoundDuties(players:FpsPlayerState[],context:FpsIdentityExperiment,phase:FpsDutyPhase='opening'):void {
+ const living=players.filter(p=>p.isAlive&&p.tactics?.position);
+ if(!living.length)return;
+ const team=context.teams[living[0].team];
+ const tendencyOf=(p:FpsPlayerState)=>{const id=context.players[p.playerId],natural=deriveFpsTendencies(id.personality,id.dna,id.tendencyOverrides);
+  return (key:string)=>effectiveTendency(natural,key,{coach:team.coach,plan:team.plan,chemistry:team.chemistry,familiarity:id.familiarity,isIgl:!!p.tactics?.isCaller});};
+ const leader=living.find(p=>p.tactics?.isCaller);
+ const candidates:FpsDutyCandidate[]=living.map(p=>{
+  const weaponId=p.loadout.primaryWeapon??p.loadout.secondaryWeapon,category=FPS_WEAPONS[weaponId]?.category;
+  const utilities=p.loadout.utilities,count=(id:string)=>utilities.filter(u=>u===id).length,stats=p.card.stats as unknown as Record<string,number>;
+  const unit=(key:string)=>Math.max(0,Math.min(1,(stats?.[key]??50)/100));
+  return {id:p.playerId,slot:players.indexOf(p),position:p.tactics!.position!,isIgl:!!p.tactics!.isCaller,hp:p.hp,
+   weapon:category==='sniper'?'sniper':category==='smg'?'smg':category==='rifle'?'rifle':'pistol',bomb:p.loadout.hasBomb,
+   smoke:count('utility_smoke'),flash:count('utility_flash'),incendiary:count('utility_molotov'),he:count('utility_he'),
+   home:p.tactics!.position==='CT_ANCHOR_A'?'A':p.tactics!.position==='CT_ANCHOR_B'?'B':undefined,
+   attributes:{rifling:unit('rifling'),sniping:unit('sniping'),entry:unit('entry'),utility:unit('utility'),positioning:unit('positioning'),shotcalling:unit('shotcalling')},
+   tendency:tendencyOf(p),preferences:fpsBehaviorPreferences(context.players[p.playerId].personality),instruction:context.players[p.playerId].instruction,current:p.tactics!.duty};
+ });
+ const side=living[0].side==='attackers'?'t':'ct';
+ const result=assignFpsRoundDuties(candidates,{side,phase,leader:leader?tendencyOf(leader):undefined,leaderIsIgl:!!leader,
+  structure:(team.plan.structure+team.coach.rigidity)/2,freedom:(team.plan.freedom+team.coach.freedom)/2});
+ for(const r of result){const p=living.find(x=>x.playerId===r.id)!;p.tactics!.duty=r.duty;p.tactics!.dutyReason=r.reason;}
 }
 export interface FpsObservedContext {
   round:number; elapsed:number; quietSeconds:number; allies:number; enemies:number; winStreak:number; lossStreak:number;

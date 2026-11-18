@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class ClubManagementFlowsTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, \Tests\Support\AssignsManagerRoles;
 
     private function agreeTransfer(\App\Models\OnlineClub $club, OwnedPlayerCard $player): void
     {
@@ -26,6 +26,7 @@ class ClubManagementFlowsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->assignManagerRolesOnSave();
         Queue::fake();
         $this->artisan('online:install-catalog')->assertSuccessful();
     }

@@ -535,3 +535,5 @@
     padding: 20px 16px;
   }
 }
+
+.auth-card .auth-success { margin: 0 0 14px; padding: 10px 12px; border-left: 3px solid var(--hx-positive, #2f9e6b); background: color-mix(in srgb, var(--hx-positive, #2f9e6b) 10%, transparent); font-size: 14px; }

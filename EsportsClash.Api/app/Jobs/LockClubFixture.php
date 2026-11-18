@@ -40,7 +40,7 @@ class LockClubFixture implements ShouldQueue, ShouldBeUniqueUntilProcessing
                         'participant_type'=>'national','clubs'=>['blue'=>['id'=>$home->id,'name'=>$home->name],'red'=>['id'=>$away->id,'name'=>$away->name]],
                     ]);
                     $fixture->update(['match_id'=>$match->id]);
-                    PollOnlineMatch::dispatch($match->id)->delay($fixture->kickoff_at)->afterCommit();
+                    PollOnlineMatch::dispatch($match->id)->delay(self::computeAt($match,$fixture->kickoff_at))->afterCommit();
                 } catch (ValidationException|\Symfony\Component\HttpKernel\Exception\HttpException $error) {
                     $fixture->update(['hold_reason'=>$error->getMessage()]);
                 }
@@ -69,7 +69,7 @@ class LockClubFixture implements ShouldQueue, ShouldBeUniqueUntilProcessing
                     'clubs' => ['blue' => $this->identity($home), 'red' => $this->identity($away)],
                 ]);
             $fixture->update(['match_id' => $match->id]);
-            PollOnlineMatch::dispatch($match->id)->delay($fixture->kickoff_at)->afterCommit();
+            PollOnlineMatch::dispatch($match->id)->delay(self::computeAt($match,$fixture->kickoff_at))->afterCommit();
         }, 3);
     }
 
@@ -90,5 +90,13 @@ class LockClubFixture implements ShouldQueue, ShouldBeUniqueUntilProcessing
         return ['id' => $club->id, 'name' => $club->name, 'tag' => $club->tag,
             'logo'=>$club->identity['assets']['logo']??null, 'crest' => $club->identity['crest'] ?? null, 'colors' => $club->identity['colors'] ?? null,
             'home_jersey' => $club->identity['home_jersey'] ?? null, 'away_jersey' => $club->identity['away_jersey'] ?? null];
+    }
+
+    /** Live 3D matches start simulating before kickoff (bounded by now); recorded matches at kickoff. */
+    private static function computeAt(\App\Models\OnlineMatch $match, \DateTimeInterface $kickoff): \DateTimeInterface
+    {
+        if (! $match->usesLiveEngine()) return $kickoff;
+        $opens = \Carbon\CarbonImmutable::instance($kickoff)->subMinutes(max(0, (int) config('online.precompute_minutes', 90)));
+        return $opens->isPast() ? now() : $opens;
     }
 }

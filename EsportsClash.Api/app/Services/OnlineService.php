@@ -11,6 +11,10 @@ use Illuminate\Validation\ValidationException;
 
 class OnlineService
 {
+    /** Live 3D maps for official matches (mirrors officialLiveMapForSeed in the web engine). */
+    public const FPS_LIVE_MAPS = ['fontessa', 'spillway'];
+    public const FPS_MAP_NAMES = ['fontessa' => 'Fontessa', 'spillway' => 'Spillway'];
+
     public function activeCatalog(): OnlineCatalog
     {
         return OnlineCatalog::where('active', true)->firstOrFail();
@@ -301,8 +305,14 @@ class OnlineService
             }
             if ($fixture !== null) $plan['fixture'] = $fixture;
             if (app(FpsIdentityEngine::class)->enabled()) {
-                $plan['fps']['simulation_version']=4;
-                $plan['fps_identity']=app(FpsIdentityEngine::class)->pin($blue,$red,$blueUser,$redUser,collect($catalog->payload['cards'])->keyBy('id')->all());
+                // Official matches run on the live 3D engine (v5) unless configured back to the recorded engine.
+                $version=(int)config('online.fps_simulation_version',5);
+                $plan['fps']['simulation_version']=$version===5?5:4;
+                $fixtureRow=isset($fixture['id'])?ClubFixture::find($fixture['id']):null;
+                // The fixture's announced map (drawn when it was published) is the map played; the seed stays random.
+                if($version===5)$plan['fps']['map_id']=in_array($fixtureRow?->map_id,self::FPS_LIVE_MAPS,true)?$fixtureRow->map_id:self::FPS_LIVE_MAPS[$seed%count(self::FPS_LIVE_MAPS)];
+                $plans=$fixtureRow?['blue'=>$fixtureRow->home_plan,'red'=>$fixtureRow->away_plan]:[];
+                $plan['fps_identity']=app(FpsIdentityEngine::class)->pin($blue,$red,$blueUser,$redUser,collect($catalog->payload['cards'])->keyBy('id')->all(),$plans);
             }
             return OnlineMatch::create(['id' => $id, 'blue_user_id' => $blueUser, 'red_user_id' => $redUser,
                 'plan' => $plan, 'plan_hash' => hash('sha256', json_encode($plan, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))]);
@@ -396,14 +406,24 @@ class OnlineService
                     $baseXp = (int) ceil($result['report']['durationSeconds'] / 60);
                     $xp = $baseXp + (int) round($baseXp * $bonus / 100);
                     foreach ($match->plan[$side] as $slot) {
-                        $trainingSessions[] = ['match_id' => $match->id, 'card_id' => $slot['instance_id'], 'xp' => $xp];
+                        $trainingSessions[] = ['match_id' => $match->id, 'card_id' => $slot['instance_id'], 'xp' => $xp, 'kind' => 'match'];
+                    }
+                    // Scrimmages also give the club's reserves practice XP (a share set by the performance coach).
+                    $user = $side === 'blue' ? $match->blue_user_id : $match->red_user_id;
+                    if ($user !== null && in_array($match->plan['fixture']['competition'] ?? null, ['Scrimmage', 'Club Friendly'], true)) {
+                        $practice = (int) floor($baseXp * ClubStaffService::reserveShare($match->plan['staff'][$side] ?? null));
+                        $starters = array_column($match->plan[$side], 'instance_id');
+                        if ($practice > 0) foreach (OwnedPlayerCard::where('user_id', $user)->whereNotIn('id', $starters)->pluck('id') as $reserve)
+                            $trainingSessions[] = ['match_id' => $match->id, 'card_id' => $reserve, 'xp' => $practice, 'kind' => 'practice'];
                     }
                 }
                 if ($progression['training'] ?? true) DB::table('club_training_sessions')->insert($trainingSessions);
-                if (($fixture = ClubFixture::where('match_id', $match->id)->first()) && $fixture->home_club_id) {
+                $fixture = ClubFixture::where('match_id', $match->id)->first();
+                $fixture?->recordOutcome($match);
+                if ($fixture && $fixture->home_club_id) {
                     $winner = OnlineClub::findOrFail($result['winner'] === 'blue' ? $fixture->home_club_id : $fixture->away_club_id);
                     app(WorldActivityService::class)->record('match:'.$match->id.':completed', 'result', $winner,
-                        ($match->plan['clubs'][$result['winner']] ?? $winner->name).' won a scheduled '.($fps ? 'FPS match.' : 'Arena match.'),
+                        ($match->plan['clubs'][$result['winner']] ?? $winner->name).' won a scheduled '.($fps ? 'match'.(($score = $match->finalScore()) ? ' '.max($score).'–'.min($score) : '').'.' : 'Arena match.'),
                         ['match_id' => $match->canSpectate() ? $match->id : null, 'team_id' => $winner->id, 'tournament_id' => $fixture->tournament_id]);
                 }
                 if ($fixture?->stage_id) \App\Jobs\ProcessCompetitionEdition::dispatch($fixture->tournament_id)->afterCommit();
@@ -486,6 +506,21 @@ class OnlineService
         return $performance;
     }
 
+    /** The live engine's per-player decision counts: allocated players, known metrics, bounded integers. */
+    private function validateLiveBehaviorSummary(array $report, OnlineMatch $match): void
+    {
+        $metrics=['engagement','firstContact','coordination','rotation','improvisation','failedExecuteAdjustment','opponentAdjustment','sacrifice','retake','utilitySupport','lurkTiming','risk','strategyCompliance'];
+        $summary=$report['behaviorSummary']??null;
+        if(!is_array($summary)||($report['engine']??null)!=='live-3d')$this->invalid('A live FPS report needs its behaviour summary.');
+        foreach($summary as $playerId=>$counts){
+            if(!isset($match->plan['fps_identity']['players'][$playerId])||!is_array($counts))$this->invalid('Invalid behaviour summary player.');
+            foreach($counts as $metric=>$item){
+                $o=$item['opportunities']??null;$a=$item['attempts']??null;
+                if(!in_array($metric,$metrics,true)||!is_int($o)||!is_int($a)||$o<1||$o>100000||$a<0||$a>$o)$this->invalid('Invalid behaviour summary entry.');
+            }
+        }
+    }
+
     private function validateFpsReport(array $result, OnlineMatch $match): void
     {
         $report = $result['report'];
@@ -508,6 +543,7 @@ class OnlineService
             $this->invalid('FPS report does not match its pinned MR15 allocation.');
         }
         $rounds = $report['roundResults'];
+        if (($fps['simulation_version']??0)===5) $this->validateLiveBehaviorSummary($report, $match);
         if (($fps['simulation_version']??0)>=3) {
             foreach (['identityExperiment','identityDevelopment','fps_identity','dna'] as $key) if(array_key_exists($key,$report))$this->invalid('Private identity state is forbidden in a public report.');
             $checkPrivate=function(array $value)use(&$checkPrivate):void {foreach($value as $key=>$item){if($key==='dna')$this->invalid('Private DNA is forbidden in a public report.');if(is_array($item))$checkPrivate($item);}};

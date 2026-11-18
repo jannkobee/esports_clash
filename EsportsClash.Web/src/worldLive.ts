@@ -12,3 +12,15 @@ function visibility(){if(document.hidden){clearTimeout(retry);clearInterval(fall
 export function startWorldLive(){users++;if(users===1){document.addEventListener('visibilitychange',visibility);connect();}return()=>{users--;if(!users){document.removeEventListener('visibilitychange',visibility);clearTimeout(retry);clearInterval(fallback);fallback=0;socket?.close();socket=null;}};}
 
 export function onWorldUpdate(topics:string[],refresh:()=>void){const listener=(event:Event)=>{const changed=(event as CustomEvent<{topics?:string[]}>).detail?.topics;if(!changed||topics.some(t=>changed.includes(t)))refresh();};window.addEventListener(WORLD_UPDATED,listener);return()=>window.removeEventListener(WORLD_UPDATED,listener);}
+/**
+ * Background refresh that pauses while the tab is hidden and catches up once when it is shown again.
+ * The world-live socket already pushes changes; fixed timers are only a safety net, so a hidden tab
+ * (often most of a manager's open tabs) costs the server nothing.
+ */
+export function visibleInterval(refresh:()=>void,ms:number):()=>void{
+ let missed=false;
+ const timer=window.setInterval(()=>{if(document.hidden){missed=true;return;}refresh();},ms);
+ const shown=()=>{if(!document.hidden&&missed){missed=false;refresh();}};
+ document.addEventListener('visibilitychange',shown);
+ return()=>{window.clearInterval(timer);document.removeEventListener('visibilitychange',shown);};
+}

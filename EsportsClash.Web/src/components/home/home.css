@@ -1,0 +1,104 @@
+/* Club home, ordered by priority: attention → next match → standing → office → squad/results → world. */
+
+.home { display: grid; gap: 22px; }
+
+.home-club { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.home-club .reference-mark { width: 44px; height: 44px; }
+.home-club__text { flex: 1 1 auto; min-width: 0; }
+.home-club__text h2 { margin: 0; font-size: 20px; font-weight: 800; line-height: 1.2; }
+.home-club__text h2 a { color: var(--cm-text); text-decoration: none; }
+.home-club__text h2 a:hover { text-decoration: underline; }
+.home-club__text p { margin: 2px 0 0; font-size: 12px; color: var(--cm-text-muted); }
+
+.home-section { display: grid; gap: 10px; min-width: 0; }
+.home-section__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.home-section__head h2 { margin: 0; font-size: 15px; font-weight: 700; color: var(--cm-text); }
+.home-section.is-quiet .home-section__head h2 { font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--cm-text-muted); }
+.home-link {
+  display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; cursor: pointer;
+  font-size: 12px; font-weight: 600; color: var(--hx-link); text-decoration: none;
+}
+.home-link:hover { text-decoration: underline; }
+.home-quiet { margin: 0; font-size: 12px; color: var(--cm-text-subtle); }
+
+.home-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 18px; align-items: start; }
+.home-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+
+/* ---- Needs your attention -------------------------------------------------------- */
+.home-attention__list { display: grid; margin: 0; padding: 0; list-style: none; border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel); overflow: hidden; }
+.home-attention__item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 4px 12px; padding: 12px 14px; border-left: 3px solid transparent; }
+.home-attention__item + .home-attention__item { border-top: 1px solid var(--cm-border); }
+.home-attention__item > svg { align-self: start; margin-top: 2px; }
+.home-attention__item strong { display: block; font-size: 13px; color: var(--cm-text); }
+.home-attention__item p { margin: 2px 0 0; font-size: 12px; color: var(--cm-text-muted); }
+.home-attention__item.is-live { border-left-color: var(--hx-red-bright); }
+.home-attention__item.is-live > svg { color: var(--hx-red-bright); }
+.home-attention__item.is-urgent { border-left-color: var(--hx-warning); }
+.home-attention__item.is-urgent > svg { color: var(--hx-warning); }
+.home-attention__item.is-warn { border-left-color: var(--hx-negative); }
+.home-attention__item.is-warn > svg { color: var(--hx-negative); }
+.home-clear {
+  display: flex; gap: 10px; padding: 14px; border: 1px solid color-mix(in srgb, var(--hx-positive) 35%, var(--cm-border));
+  border-radius: var(--hx-radius-md); background: var(--cm-bg-panel);
+}
+.home-clear > svg { flex-shrink: 0; color: var(--hx-positive); }
+.home-clear strong { font-size: 13px; }
+.home-clear p { margin: 2px 0 0; font-size: 12px; color: var(--cm-text-muted); }
+
+/* ---- Club at a glance --------------------------------------------------------- */
+.home-glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0; margin: 0; border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel); overflow: hidden; }
+.home-glance > div { display: grid; gap: 2px; padding: 12px 16px; border-left: 1px solid var(--cm-border); }
+.home-glance > div:first-child { border-left: 0; }
+.home-glance dt { font-size: 11px; font-weight: 700; letter-spacing: 0.03em; color: var(--cm-text-subtle); }
+.home-glance dd { margin: 0; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.home-glance dd a { color: var(--cm-text); text-decoration: none; }
+.home-glance dd a:hover { text-decoration: underline; }
+.home-glance small { font-size: 11px; color: var(--cm-text-muted); }
+
+/* ---- Starting five & results ----------------------------------------------------- */
+.home-five, .home-results { display: grid; margin: 0; padding: 0; list-style: none; border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel); overflow: hidden; }
+.home-five li, .home-results li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+.home-five li + li, .home-results li + li { border-top: 1px solid var(--cm-border); }
+.home-five__n { width: 18px; font-size: 11px; font-weight: 700; color: var(--cm-text-subtle); text-align: center; }
+.home-five__who { display: grid; flex: 1; min-width: 0; }
+.home-five__who a { font-size: 13px; font-weight: 600; color: var(--cm-text); text-decoration: none; }
+.home-five__who a:hover { text-decoration: underline; }
+.home-five__who small { font-size: 11px; color: var(--cm-text-muted); }
+.home-five b { font-size: 14px; font-variant-numeric: tabular-nums; }
+.home-five b small { font-size: 10px; color: var(--cm-text-subtle); font-weight: 400; }
+.home-results li > div { display: grid; flex: 1; min-width: 0; }
+.home-results strong { font-size: 13px; }
+.home-results small { font-size: 11px; color: var(--cm-text-muted); }
+
+.home-world { display: grid; gap: 16px; }
+
+@media (max-width: 980px) {
+  .home-top, .home-two { grid-template-columns: minmax(0, 1fr); }
+  .home-glance > div { border-left: 0; border-top: 1px solid var(--cm-border); }
+  .home-glance > div:first-child { border-top: 0; }
+}
+@media (max-width: 560px) {
+  .home-attention__item { grid-template-columns: auto minmax(0, 1fr); }
+  .home-attention__item > .cm-btn { grid-column: 2; justify-self: start; }
+}
+
+/* This week */
+.week { display: grid; gap: 10px; }
+.week-invites { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.week-invites li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--cm-border); border-radius: 6px; background: var(--cm-bg-panel); }
+.week-invites small { display: block; color: var(--cm-text-muted); font-size: 12px; }
+.week-invites__actions { display: inline-flex; gap: 6px; }
+.week-entered { margin: 0; font-size: 13px; }
+.week-beats { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; color: var(--cm-text); }
+.week-beats li { display: flex; align-items: center; gap: 6px; }
+.week-beats li.is-past { color: var(--cm-text-muted); text-decoration: line-through; }
+.week-beats time { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* First week checklist */
+.first-week .home-section__head small { font-weight: 400; color: var(--cm-text-muted); margin-left: 8px; font-size: 12px; }
+.first-week__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.first-week__steps li { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: start; padding: 8px 10px; border: 1px solid var(--cm-border); border-radius: 6px; }
+.first-week__steps li p { margin: 2px 0 0; font-size: 12px; color: var(--cm-text-muted); }
+.first-week__steps li.is-done { color: var(--cm-text-muted); }
+.first-week__steps li.is-done svg { color: var(--hx-positive); }
+@media (max-width: 640px) { .first-week__steps li { grid-template-columns: 18px 1fr; } .first-week__steps li > .cm-btn { grid-column: 2; justify-self: start; } }

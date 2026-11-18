@@ -29,13 +29,14 @@ export function advanceLiveJump(state: LiveJumpState, dt: number): LiveJumpState
   }
   return { ...support, jump: true, jumpY: y, jumpVy: vy };
 }
-export function advanceLiveVelocity(current:LiveVelocity,wish:FpsPoint,dt:number,mechanics:number,airborne=false):LiveVelocity {
+/** `counterStrafe`: stopping in a fight by tapping the opposite key, much faster than letting go of the keys. */
+export function advanceLiveVelocity(current:LiveVelocity,wish:FpsPoint,dt:number,mechanics:number,airborne=false,counterStrafe=false):LiveVelocity {
   const dx=wish.x-current.vx,dz=wish.z-current.vz,d=Math.hypot(dx,dz);
   const braking=Math.hypot(wish.x,wish.z)<.01;
   // Air steering is deliberately weaker than ground acceleration. It lets a jump
   // retain launch momentum while still allowing bounded direction correction.
   const control=Math.max(0,Math.min(1,mechanics));
-  const acceleration=airborne?(braking?2+control*2:5+control*5):braking?16+control*20:24;
+  const acceleration=airborne?(braking?2+control*2:5+control*5):braking?(counterStrafe?26+control*34:16+control*20):24;
   const step=Math.min(d,acceleration*dt);
   return d<1e-8?{vx:wish.x,vz:wish.z}:{vx:current.vx+dx/d*step,vz:current.vz+dz/d*step};
 }
@@ -47,7 +48,7 @@ export function liveShotSpeedLimit(weapon:string,mechanics:number):number {
   return category==='sniper'?.28+(1-Math.max(0,Math.min(1,mechanics)))*.35:.3+(1-Math.max(0,Math.min(1,mechanics)))*.8;
 }
 
-export const liveAccuracySettleTime=(crouch:boolean):number=>crouch?.14:.22;
+export const liveAccuracySettleTime=(crouch:boolean):number=>crouch?.08:.12;
 
 /** Use the same stationary recovery window as ballistic spread before a precision shot. */
 export function liveAccurateShotReady(weapon:LiveWeapon,speed:number,airborne:boolean,stillFor:number,crouch:boolean,range:number):boolean {

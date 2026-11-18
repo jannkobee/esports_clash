@@ -6,7 +6,7 @@ export interface FpsPreferences {aggression:number;coordination:number;patience:
 export type FpsTacticalRole=import('./fpsIdentity.ts').FpsPrimaryRole;
 export const FPS_ROLE_LABELS:Record<FpsTacticalRole,string>={entry:'Entry Rifler',trade:'Flex / Rotator',support:'Support Rifler',anchor:'Site Anchor',caller:'In-Game Leader',sniper:'Flex / AWPer',lurker:'Lurker'};
 export interface FpsPsychology {confidence:number;composure:number;frustration:number;winStreak:number;lossStreak:number;lastRound:number}
-export interface FpsRoundTactics {role:FpsTacticalRole;position?:FpsPosition;isCaller:boolean;traits:string[];mood:FpsPsychology;preferences:FpsPreferences;reason:string;identity?:{personality:string;dimensions?:import('./fpsPlayerArchitecture.ts').FpsPersonality;natural?:string}}
+export interface FpsRoundTactics {role:FpsTacticalRole;position?:FpsPosition;isCaller:boolean;/** This round's job (shared allocator with the live engine); `role` stays the roster bridge. */duty?:import('./fpsRoundResponsibilities.ts').FpsRoundDuty;dutyReason?:string;traits:string[];mood:FpsPsychology;preferences:FpsPreferences;reason:string;identity?:{personality:string;dimensions?:import('./fpsPlayerArchitecture.ts').FpsPersonality;natural?:string}}
 export const initialFpsPsychology=():FpsPsychology=>({confidence:50,composure:70,frustration:10,winStreak:0,lossStreak:0,lastRound:0});
 export function getFpsPreferences(card:PlayerCard,mood=initialFpsPsychology()):FpsPreferences {
  const p=fpsBehaviorPreferences(card.fpsIdentity?.personality??generateFpsPersonality(card.id)),momentum=(mood.confidence-50)/100*p.pressureSensitivity;

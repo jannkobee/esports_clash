@@ -19,6 +19,8 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing" force="true"/>
+        <!-- Existing suites cover the recorded engine (v4); live 3D (v5) has its own tests. -->
+        <env name="FPS_SIMULATION_VERSION" value="4"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>

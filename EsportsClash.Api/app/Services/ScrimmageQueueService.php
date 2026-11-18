@@ -77,7 +77,8 @@ class ScrimmageQueueService
                 abs($candidate->rating - $ticket->rating),
                 $candidate->created_at->getTimestamp(),
             ]);
-        $kickoff = now()->addMinutes(30);
+        // Worker capacity guard: a fully booked hour moves the scrimmage to the next hour with room.
+        $kickoff = ClubFixture::nextOpenKickoff(now()->addMinutes(30));
 
         foreach ($opponents as $opponent) {
             $ids = [$club->id, $opponent->club_id];
@@ -95,6 +96,7 @@ class ScrimmageQueueService
                 'away_club_id' => $club->id,
                 'competition' => 'Scrimmage',
                 'kickoff_at' => $kickoff,
+                // Quick-play: both lineups come from the queue tickets, so the short 15-minute lock is kept.
                 'orders_close_at' => $kickoff->copy()->subMinutes(15),
                 'home_orders' => array_map(fn (array $slot) => ['instance_id' => $slot['instance_id']], $otherLineup),
                 'away_orders' => $ticket->lineup,

@@ -4,7 +4,7 @@ import { LIVE_FPS_MAP, type LiveSolid } from './fpsLiveMap.ts';
 import { liveVillageAsset } from './fpsVillageDesign.ts';
 import {buildVillageMarket} from './fpsVillageMarket.ts';
 import {buildVillageFurnishings} from './fpsVillageFurnishings.ts';
-import type { LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
+import { LIVE_SURFACE_METRES, type LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
 
 export interface VillageBuilder {
   box:(name:string,x:number,y:number,z:number,w:number,h:number,d:number,color:string)=>Mesh;
@@ -35,8 +35,27 @@ function buildingStyle(id:string):BuildingStyle {
 }
 
 /** Architecture and furnishings are attached to admitted cover; lanes contain no loose crate filler. */
+/** Repeat a surface texture every `metres` across a large ground instead of stretching it once. */
+function tileGround(mesh:Mesh,width:number,depth:number,metres:number):void {
+  const u=width/metres,v=depth/metres,uv=mesh.getVerticesData('uv');
+  if(!uv)return;
+  for(let i=0;i<uv.length;i+=2){uv[i]*=u;uv[i+1]*=v;}
+  mesh.setVerticesData('uv',uv);
+}
+const FACADE_NEIGHBOURS=LIVE_FPS_MAP.solids.filter(s=>!s.id.startsWith('mid-window-furniture-'));
+/**
+ * True when a facade feature's envelope would be buried in, or cut through, a neighbouring solid. Windows,
+ * doors and quoins on faces that abut another building are skipped, so shutters never poke through a
+ * neighbour's wall or roof and no hidden geometry is generated. Visual only: collision is not consulted for movement.
+ */
+export function liveFacadeBlocked(selfId:string,minX:number,maxX:number,minY:number,maxY:number,minZ:number,maxZ:number):boolean {
+  return FACADE_NEIGHBOURS.some(s=>s.id!==selfId&&s.minX<maxX-.02&&s.maxX>minX+.02&&(s.baseY??0)<maxY-.02&&s.height>minY+.02&&s.minZ<maxZ-.02&&s.maxZ>minZ+.02);
+}
 export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(hex:string)=>StandardMaterial,surfaces?:LiveSurfaceLibrary):void {
   const {box,detail}=b;
+  /** Feature envelope on a Z-facing face (x along the face) or X-facing face (z along the face). */
+  const blockedZ=(id:string,x:number,halfW:number,minY:number,maxY:number,fz:number,face:number,depth=.32)=>liveFacadeBlocked(id,x-halfW,x+halfW,minY,maxY,Math.min(fz,fz+face*depth),Math.max(fz,fz+face*depth));
+  const blockedX=(id:string,z:number,halfW:number,minY:number,maxY:number,fx:number,side:number,depth=.32)=>liveFacadeBlocked(id,Math.min(fx,fx+side*depth),Math.max(fx,fx+side*depth),minY,maxY,z-halfW,z+halfW);
   const triangularPrism=(name:string,positions:number[],color:string)=>{
     const mesh=detail(new Mesh(name,scene),color),data=new VertexData(),normals:number[]=[];
     data.positions=positions;
@@ -106,8 +125,9 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
       const cx=sx<0?wall.minX+.08:wall.maxX-.08,cz=sz<0?wall.minZ+.08:wall.maxZ-.08;
       let idx=0;
       for(let y=.56;y<wall.height-.25;y+=.48,idx++){
-        const big=idx%2===0;
-        box(`${wall.id}-quoin-${sx}-${sz}-${idx}`,cx+sx*.025,y,cz+sz*.025,big?.38:.26,.22,big?.26:.38,idx%3?'#d9ccb0':'#cdc0a2');
+        const big=idx%2===0,qw=big?.38:.26,qd=big?.26:.38,qx=cx+sx*.025,qz=cz+sz*.025;
+        if(liveFacadeBlocked(wall.id,qx-qw/2,qx+qw/2,y-.11,y+.11,qz-qd/2,qz+qd/2))continue;
+        box(`${wall.id}-quoin-${sx}-${sz}-${idx}`,qx,y,qz,qw,.22,qd,idx%3?'#d9ccb0':'#cdc0a2');
       }
     }
   };
@@ -225,7 +245,8 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
     if(wall.id==='b-coffins'){
       const fx=wall.maxX+.04;
       const awn=box('b-coffins-flower-awning',fx+.22,wall.height-.22,z,.55,.06,d-.2,'#4c7758');awn.rotation.z=.15;
-      for(let s=0;s<4;s++)box(`b-coffins-awning-stripe-${s}`,fx+.22,wall.height-.2,z-d*.3+s*d*.2,.54,.014,.28,'#ebe1c4');
+      // Stripes follow the awning's tilt so they lie on the canvas instead of hovering over its low edge.
+      for(let s=0;s<4;s++)box(`b-coffins-awning-stripe-${s}`,fx+.22,wall.height-.22+.037,z-d*.3+s*d*.2,.54,.014,.28,'#ebe1c4').rotation.z=.15;
       box('b-coffins-display-ledge',fx+.09,1.02,z,.24,.09,d-.35,'#8f6e49');
       const bloomPalette=['#cf5848','#e2b64d','#a85c88','#e88c5d'];
       for(let p=0;p<5;p++){
@@ -277,15 +298,16 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
       const skipDoor=(wall.id==='a-loggia-wall'&&face<0)||(wall.id==='b-canal-house'&&face>0)||(wall.id==='mid-backstop'&&face<0)||(wall.id==='a-screen'&&face<0);
       if(!skipDoor){
         const shopDir=face<0?'s':'n';
-        if(style.shopFaces?.includes(shopDir))shopBay(`${wall.id}-shop-${face}`,x,fz,true,face,w,!!style.rollingShop);
+        if(style.shopFaces?.includes(shopDir)){if(!blockedZ(wall.id,x,Math.min(2.35,w-.9)/2+.2,.1,2.9,fz,face))shopBay(`${wall.id}-shop-${face}`,x,fz,true,face,w,!!style.rollingShop);}
         else {
           const doorX=wall.id==='b-screen'&&face<0?18.1:x;
-          door(`${wall.id}-${face}`,doorX,fz,wall.height,w,0,face,style);
+          if(!blockedZ(wall.id,doorX,Math.min(1.28,w*.46)/2+.22,.1,2.6,fz,face))door(`${wall.id}-${face}`,doorX,fz,wall.height,w,0,face,style);
         }
       }
       for(let floor=3.5;floor<wall.height-.55;floor+=2.25)for(let at=wall.minX+1.25;at<wall.maxX-.7;at+=2.65){
         if(wall.id==='a-loggia-wall'&&face<0&&floor<5.7)continue;
         if(wall.id==='b-canal-house'&&face>0&&floor<4.2)continue;
+        if(blockedZ(wall.id,at,.95,floor-.75,floor+.75,fz,face))continue;
         shutterWindowZ(`${wall.id}-${face}-${floor}-${at.toFixed(1)}`,at,floor,fz,face,style,Math.round(at+floor));
       }
       if(wall.id==='b-canal-house'&&face>0){
@@ -299,7 +321,7 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
       const shopDir=side<0?'w':'e';
       if(style.shopFaces?.includes(shopDir)&&d>=4&&wall.id!=='b-apartments-back'){
         const shopZ=wall.id==='customs-warehouse-east'||wall.id==='freight-office-east'?z-2.5:z;
-        shopBay(`${wall.id}-side-shop-${side}`,fx,shopZ,false,side,Math.min(d,3.4),!!style.rollingShop);
+        if(!blockedX(wall.id,shopZ,Math.min(2.35,Math.min(d,3.4)-.9)/2+.2,.1,2.9,fx,side))shopBay(`${wall.id}-side-shop-${side}`,fx,shopZ,false,side,Math.min(d,3.4),!!style.rollingShop);
       }
       if(!(wall.id==='b-apartments-back'&&side<0)){
         const floors=[3.5,5.75].filter(y=>y<wall.height-.6);
@@ -307,12 +329,15 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
           if(wall.id==='market-residential-wing'&&side<0&&y<4.5&&promenadeDoors.some(dz=>Math.abs(at-dz)<1.55))continue;
           if(wall.id==='mid-west-lower'&&side>0&&y<4.2)continue;
           if(wall.id==='customs-warehouse-east'&&side<0&&y<4.2&&at>-14.8&&at<-10.2)continue;
+          if(blockedX(wall.id,at,.9,y-.8,y+.65,fx,side))continue;
           shutterWindowX(`${wall.id}-${side}-${y}-${at.toFixed(1)}`,at,y,fx,side,style,Math.round(at+y));
         }
       }
-      box(`${wall.id}-rain-pipe-${side}`,fx,wall.height/2,wall.minZ+.18,.07,wall.height-.15,.07,'#5a6860');
-      box(`${wall.id}-rain-hopper-${side}`,fx,wall.height-.25,wall.minZ+.18,.18,.16,.18,'#6c7a72');
-      if(side>0&&d>=4)utilityBox(`${wall.id}-util-${side}`,fx,1.3,wall.minZ+.9,false,side);
+      if(!blockedX(wall.id,wall.minZ+.18,.1,.2,wall.height-.1,fx,side,.2)){
+        box(`${wall.id}-rain-pipe-${side}`,fx,wall.height/2,wall.minZ+.18,.07,wall.height-.15,.07,'#5a6860');
+        box(`${wall.id}-rain-hopper-${side}`,fx,wall.height-.25,wall.minZ+.18,.18,.16,.18,'#6c7a72');
+      }
+      if(side>0&&d>=4&&!blockedX(wall.id,wall.minZ+.9,.16,1.1,1.5,fx,side,.1))utilityBox(`${wall.id}-util-${side}`,fx,1.3,wall.minZ+.9,false,side);
     }
     if(design.kind==='shop'&&wall.id.startsWith('b-')){
       const fz=wall.minZ-.11;
@@ -323,7 +348,7 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
       }
       const awning=box(`${wall.id}-shop-awning`,x,wall.height>4?2.85:wall.height-.18,fz-.18,w-.12,.06,.55,'#758b66');
       awning.rotation.x=-.13;
-      for(let stripe=0;stripe<5;stripe++)box(`${wall.id}-awning-stripe-${stripe}`,x-w*.4+stripe*w*.2,(wall.height>4?2.875:wall.height-.155),fz-.18,w*.09,.012,.54,'#ded0aa');
+      for(let stripe=0;stripe<5;stripe++)box(`${wall.id}-awning-stripe-${stripe}`,x-w*.4+stripe*w*.2,(wall.height>4?2.85:wall.height-.18)+.036,fz-.18,w*.09,.012,.54,'#ded0aa').rotation.x=-.13;
     }
     if(wall.id==='mid-backstop'||wall.id==='a-screen'){
       const fz=wall.minZ-.055;
@@ -357,7 +382,7 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
       }
     }else if(design.kind==='timber'){
       for(let row=0;row<4;row++)for(let col=0;col<4;col++){
-        const log=detail(MeshBuilder.CreateCylinder(`${wall.id}-fuel-log-${row}-${col}`,{height:d-.12,diameter:.35,tessellation:10},scene),'#8f714c');
+        const log=detail(MeshBuilder.CreateCylinder(`${wall.id}-fuel-log-${row}-${col}`,{height:d+.05,diameter:.35,tessellation:10},scene),'#8f714c');
         log.position.set(x-w*.36+col*w*.24,.24+row*.4,z);log.rotation.x=Math.PI/2;
       }
       box(`${wall.id}-rain-cover`,x,wall.height+.015,z,w,.045,d,'#6b7961');
@@ -377,7 +402,9 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
     const mid=(a+bX)/2,half=(bX-a)/2-.12;
     for(let i=0;i<11;i++){
       const t=(i+.5)/11*Math.PI,vx=mid-Math.cos(t)*half,vy=3.05+Math.sin(t)*.66;
-      const stone=box(`a-loggia-arch-ring-${idx}-${i}`,vx,vy,25.95,.28,.16,.38,i%2?'#d6c8aa':'#c6b797');
+      // Voussoir width follows the local arc length so the flatter crown has no gaps between stones.
+      const arc=Math.PI/11*Math.hypot(half*Math.sin(t),.66*Math.cos(t));
+      const stone=box(`a-loggia-arch-ring-${idx}-${i}`,vx,vy,25.95,Math.max(.28,arc+.02),.16,.38,i%2?'#d6c8aa':'#c6b797');
       stone.rotation.z=Math.atan2(Math.cos(t)*.66,Math.sin(t)*half);
     }
     const rod=detail(MeshBuilder.CreateCylinder(`a-loggia-tie-rod-${idx}`,{height:bX-a-.24,diameter:.035,tessellation:6},scene),'#464d47');
@@ -391,13 +418,15 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
   for(const side of [-1,1]){
     box(`civic-main-door-${side}`,-23+side*.6,1.5,26.28,1.16,3,.05,'#4b645e');
     box(`civic-door-glazing-${side}`,-23+side*.6,2.15,26.24,.8,.95,.03,'#324c50');
-    box(`civic-door-pull-${side}`,-23+side*.18,1.25,26.19,.045,.38,.04,'#b99e60');
+    box(`civic-door-pull-${side}`,-23+side*.18,1.25,26.235,.045,.38,.04,'#b99e60');
     box(`civic-flag-pole-${side}`,-23+side*3.3,5.8,26.12,.055,2.4,.055,'#a9aa99');
+    // Wall brackets tie each pole back to the palazzo facade (it previously stood free above the eave).
+    for(const y of [4.8,6.85])box(`civic-flag-bracket-${side}-${y}`,-23+side*3.3,y,26.26,.05,.05,.3,'#5b605a');
     box(`civic-flag-${side}`,-23+side*3.3+.42,6.35,26.12,.82,.58,.035,side<0?'#527e77':'#b79e60');
   }
   const crest=detail(MeshBuilder.CreateDisc('civic-courtyard-seal',{radius:.43,tessellation:24},scene),'#b29b5c');
-  crest.position.set(-23,4.55,24.79);
-  box('civic-seal-center',-23,4.55,24.77,.5,.65,.03,'#466f68');
+  crest.position.set(-23,4.55,24.825);
+  box('civic-seal-center',-23,4.55,24.81,.5,.65,.03,'#466f68');
   const civicRing=detail(MeshBuilder.CreateTorus('civic-courtyard-paving-seal',{diameter:5,thickness:.055,tessellation:48},scene),'#a58b58');
   civicRing.position.set(-23,.038,21);civicRing.metadata={castShadow:false};
   for(let i=0;i<12;i++){
@@ -428,31 +457,49 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
 
   // Surrounding village backdrop, olive groves, and distant hills.
   for(const [i,r] of liveCutPavingRect({minX:-115,maxX:115,minZ:-125,maxZ:125}).entries()){
-    const outsideGround=detail(MeshBuilder.CreateGround(`village-outside-terrain-${i}`,{width:r.maxX-r.minX,height:r.maxZ-r.minZ},scene),'#71806a');
+    const gw=r.maxX-r.minX,gd=r.maxZ-r.minZ;
+    const outsideGround=detail(MeshBuilder.CreateGround(`village-outside-terrain-${i}`,{width:gw,height:gd},scene),'#71806a');
     outsideGround.position.set((r.minX+r.maxX)/2,-.12,(r.minZ+r.maxZ)/2);outsideGround.metadata={castShadow:false};
+    if(surfaces){outsideGround.material=surfaces.material('grass','#71806a');tileGround(outsideGround,gw,gd,LIVE_SURFACE_METRES.grass*2.5);}
   }
   for(const [x,z,w,d] of [[-39,0,5,114],[46,0,5,114],[0,-48,104,5],[0,48,104,5]] as number[][]){
     for(const [i,r] of liveCutPavingRect({minX:x-w/2,maxX:x+w/2,minZ:z-d/2,maxZ:z+d/2}).entries()){
-      const road=detail(MeshBuilder.CreateGround(`village-outside-road-${x}-${z}-${i}`,{width:r.maxX-r.minX,height:r.maxZ-r.minZ},scene),'#aaa58a');road.position.set((r.minX+r.maxX)/2,-.09,(r.minZ+r.maxZ)/2);
+      const rw=r.maxX-r.minX,rd=r.maxZ-r.minZ;
+      const road=detail(MeshBuilder.CreateGround(`village-outside-road-${x}-${z}-${i}`,{width:rw,height:rd},scene),'#aaa58a');road.position.set((r.minX+r.maxX)/2,-.09,(r.minZ+r.maxZ)/2);
+      if(surfaces){road.material=surfaces.material('paving','#aaa58a');tileGround(road,rw,rd,LIVE_SURFACE_METRES.paving);}
     }
   }
   const outsidePalette=['#d29b79','#d8bc82','#b95a49','#dcd3be'];
+  const outsideStyles:BuildingStyle[]=[
+    {shutter:'#4f7257',door:'#66523e',frame:'#e2d5b7',quoins:true},{shutter:'#6c523b',door:'#475e56',frame:'#dfd2b4',quoins:true},
+    {shutter:'#486268',door:'#5b4938',frame:'#e0d2b0',quoins:true},{shutter:'#8f4239',door:'#e0d5be',frame:'#e2d5b7',quoins:true},
+  ];
   for(const [idx,[x,z,w,d,h]] of [[-50.5,-26,12,13,8],[-50.5,13,13,15,10],[-50.5,33,12,14,8],[56,-25,13,14,9],[56,13,12,15,8],[56,34,13,13,10],[-22,-57,14,12,8],[2,-64,15,12,9],[24,-57,14,12,7]].entries()){
-    box(`village-outside-house-${x}-${z}`,x,h/2,z,w,h,d,outsidePalette[idx%outsidePalette.length]);
-    roof(`village-outside-house-${x}-${z}`,x,z,w,d,h,'#a96548',false);
-    box(`village-outside-house-door-${x}-${z}`,x,1.5,z+(z>0?-d/2:d/2),2.1,3,.08,'#5b6c61');
-    const facingZ=z>0?-1:1;
-    for(let dx=-w/2+2.2;dx<=w/2-2.2;dx+=3.4){
-      const wz=z+(facingZ<0?-d/2-.03:d/2+.03);
-      box(`village-outside-window-${x}-${z}-${dx}`,x+dx,h*.66,wz,1.1,1.4,.055,'#4a6b61');
-      box(`village-outside-window-frame-${x}-${z}-${dx}`,x+dx,h*.66,wz+facingZ*.01,1.28,1.58,.03,'#e2d5b7');
+    const id=`village-outside-house-${x}-${z}`,style=outsideStyles[idx%outsideStyles.length];
+    box(id,x,h/2,z,w,h,d,outsidePalette[idx%outsidePalette.length]);
+    roof(id,x,z,w,d,h,'#a96548',h>=8);
+    const wall={id,minX:x-w/2,maxX:x+w/2,minZ:z-d/2,maxZ:z+d/2,height:h} as LiveSolid;
+    quoins(wall);
+    box(`${id}-stringcourse`,x,2.76,z,w+.12,.12,d+.12,'#d9ccb0');
+    box(`${id}-eave-cornice`,x,h-.11,z,w+.15,.16,d+.15,'#dfd2b5');
+    box(`${id}-footing`,x,.195,z,w+.06,.38,d+.06,'#a69a80');
+    // Faces turned toward the playable village get doors and shuttered windows; the far side stays plain.
+    const inwardX=Math.abs(x)>45?(x<0?1:-1):0,inwardZ=Math.abs(x)>45?0:(z<0?1:-1);
+    for(const face of [-1,1]){
+      if(inwardX===0&&face!==inwardZ)continue;
+      const fz=face<0?z-d/2-.028:z+d/2+.028;
+      if(inwardX===0)door(`${id}-${face}`,x,fz,h,w,0,face,style);
+      for(let floor=3.5;floor<h-.55;floor+=2.4)for(let at=x-w/2+1.6;at<x+w/2-1;at+=3.1)
+        shutterWindowZ(`${id}-${face}-${floor}-${at.toFixed(1)}`,at,floor,fz,face,style,Math.round(at+floor+idx));
     }
-    if(Math.abs(x)>45){
-      const facingX=x<0?1:-1,wx=x+facingX*(w/2+.03);
-      for(let wy of [h*.36,h*.68])for(let dz=-d/2+2.6;dz<=d/2-2.6;dz+=3.8){
-        box(`village-outside-side-frame-${x}-${z}-${wy}-${dz}`,wx,wy,z+dz,.035,1.55,1.25,'#e2d5b7');
-        box(`village-outside-side-win-${x}-${z}-${wy}-${dz}`,wx+facingX*.015,wy,z+dz,.05,1.35,1.05,'#4a6b61');
+    if(inwardX!==0){
+      const fx=inwardX<0?x-w/2-.028:x+w/2+.028;
+      door(`${id}-side`,fx,z,h,d,inwardX,0,style);
+      for(const y of [3.5,5.9,8.3].filter(y=>y<h-.6))for(let at=z-d/2+1.6;at<z+d/2-1;at+=3.2){
+        if(y<4.2&&Math.abs(at-z)<1.6)continue;
+        shutterWindowX(`${id}-side-${y}-${at.toFixed(1)}`,at,y,fx,inwardX,style,Math.round(at+y+idx));
       }
+      box(`${id}-rain-pipe`,fx,h/2,z-d/2+.18,.07,h-.15,.07,'#5a6860');
     }
   }
   const olives=[[-43,-42],[-43.2,23.2],[43,-42],[44,22],[-12,-51],

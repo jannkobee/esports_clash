@@ -1,5 +1,5 @@
 import {apiRecords} from '../apiCollections';
-import {onWorldUpdate} from '../worldLive';
+import {onWorldUpdate,visibleInterval} from '../worldLive';
 import { useEffect, useState } from 'react';
 import { Activity, Gavel, UserPlus, Trophy, Radio, ArrowRightLeft } from 'lucide-react';
 import { request, isCloudPersistenceConfigured } from '../cloudPersistence';
@@ -24,8 +24,8 @@ export function WorldActivity({onWatch}: {onWatch?:(id:string)=>void}) {
     const load=()=>void request<{data:Feed}>('/avatarpedia/world',null,{signal:controller.signal})
       .then(response=>{setFeed({...response.data,events:apiRecords(response.data.events)});setError('');})
       .catch(()=>{if(!controller.signal.aborted)setError('World updates are temporarily unavailable.');});
-    load();const stopLive=onWorldUpdate(['activity','clubs','market','fixtures'],load);const timer=window.setInterval(load,60000);
-    return()=>{controller.abort();window.clearInterval(timer);stopLive();};
+    load();const stopLive=onWorldUpdate(['activity','clubs','market','fixtures'],load);const stopTimer=visibleInterval(load,60000);
+    return()=>{controller.abort();stopTimer();stopLive();};
   },[]);
   const events=feed?.events.filter(event=>filter==='all'||filter==='market'&&['auction','bid','transfer'].includes(event.kind)||filter==='clubs'&&['club','recruitment'].includes(event.kind)||filter==='competition'&&['competition','result'].includes(event.kind))??[];
   return <section className="world-activity cm-panel" aria-label="Hexatrick world activity">

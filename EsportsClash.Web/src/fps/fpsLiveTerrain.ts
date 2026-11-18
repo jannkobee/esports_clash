@@ -8,7 +8,9 @@ export const LIVE_B_APARTMENTS = Object.freeze({
 /** The CT lookout is entered from the rear stairs, never through a painted wall. */
 export const LIVE_MID_WINDOW = Object.freeze({
   minX: -4.5, maxX: 4.5, minZ: 17, maxZ: 26.5, height: 1.8,
-  frontZ: 17, openingHalfWidth: 2.1, sillY: 2.82, lintelY: 4.65, roofY: 5.4,
+  frontZ: 17, openingHalfWidth: 1.3, sillY: 2.82, lintelY: 4.32, roofY: 5.4,
+  /** Window opening between these x values (normal size); the street door into the stair hall. */
+  windowMinX: -.7, windowMaxX: 1.9, doorMinX: -3.75, doorMaxX: -2.45, doorTopY: 2.25,
   stairMinX: -4.4, stairMaxX: -1.8, stairStart: 18, stairEnd: 22.4, steps: 12,
   hold: { x: 0, z: 18.6 }, watch: { x: 0, z: 6 }, rearApproach: { x: 2.8, z: 29 },
   sideDoor: { x: -4.5, z: 24 }, sideLanding: { x: -5.8, z: 24 }, sideApproach: { x: -16.2, z: 24 }, tApproach: { x: -3.1, z: 15.8 },
@@ -232,13 +234,13 @@ export function createLiveTerrainRuntime(spec: LiveTerrainSpec): LiveTerrainRunt
     if (upperFootprint.length > 0 && upperArea(point)) {
       const upperPatches = patchesAt(point).filter(p => p.layer === 'upper' && contains(p, point));
       if (upperPatches.length > 0) {
-        const upperH = groundHeight({ ...point, level: 'upper' });
+        const upperH = groundHeight({ x: point.x, z: point.z, level: 'upper' });
         if (y >= upperH - .15) return upperH;
       }
     }
-    const upper = groundHeight({ ...point, level: undefined });
+    const upper = groundHeight({ x: point.x, z: point.z, level: undefined });
     return canalFootprint.length > 0 && canalArea(point) && y < upper - .05
-      ? groundHeight({ ...point, level: 'canal' })
+      ? groundHeight({ x: point.x, z: point.z, level: 'canal' })
       : upper;
   };
 

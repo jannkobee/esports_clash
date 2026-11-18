@@ -26,12 +26,14 @@ try{
     try{git('rebase','--abort');}catch{}
     git('remote','set-url','origin',remote);
   }
+  // Publish report bytes exactly as written, independent of the host's core.autocrlf.
+  git('config','core.autocrlf','false');
   git('fetch','origin');
   try{git('checkout','-B',branch,'origin/'+branch);}catch{git('checkout','-B',branch,'origin/HEAD');}
   git('config','user.name','FPS Learning');git('config','user.email','fps-learning@users.noreply.github.com');
   const target=checkout+'/EsportsClash.Api/AutomaticLearning/reports';mkdirSync(target,{recursive:true});
   if(existsSync(directory+'/reports'))cpSync(directory+'/reports',target,{recursive:true});
-  // Include passing candidate evaluation bundles in reports/candidates on the target branch; active.json remains owner-gated.
+  // Include passing candidate evaluation bundles in reports/candidates. Promotions themselves travel through models/registry.json (append-only; owner pause/rollback via registry.mjs).
   if(existsSync(directory+'/candidates')){
     const candidates=target+'/candidates';
     for(const name of readdirSync(directory+'/candidates').filter(n=>n.endsWith('.json'))){
@@ -40,8 +42,14 @@ try{
       cpSync(directory+'/candidates/'+name,candidates+'/'+name);
     }
   }
+  // Automatic promotions: the append-only registry and the content-addressed bundles it names.
+  if(existsSync(directory+'/models/registry.json')){
+    const models=checkout+'/EsportsClash.Api/AutomaticLearning/models';mkdirSync(models,{recursive:true});
+    for(const name of readdirSync(directory+'/models').filter(n=>n==='registry.json'||/^[a-f0-9]{64}\.json$/.test(n)))cpSync(directory+'/models/'+name,models+'/'+name);
+    git('add','EsportsClash.Api/AutomaticLearning/models');
+  }
   git('add','EsportsClash.Api/AutomaticLearning/reports');
-  if(git('status','--porcelain','--','EsportsClash.Api/AutomaticLearning/reports').length){
+  if(git('status','--porcelain','--','EsportsClash.Api/AutomaticLearning/reports','EsportsClash.Api/AutomaticLearning/models').length){
     git('commit','-m','Record automatic FPS learning reports');
     try{
       git('push','origin','HEAD:refs/heads/'+branch);

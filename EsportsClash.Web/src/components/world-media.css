@@ -271,3 +271,21 @@
     min-width: 0;
   }
 }
+
+/* Match report (debrief). */
+.report-headline { font-size: 15px; margin: 4px 0 10px; }
+.report-headline b { font-variant-numeric: tabular-nums; }
+.report-rounds { list-style: none; margin: 6px 0 4px; padding: 0; display: flex; flex-wrap: wrap; gap: 3px; }
+.report-round { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 3px; font-size: 10px; font-weight: 700; color: #fff; background: var(--cm-border-strong); }
+.report-round.is-blue { background: #2f6fb0; }
+.report-round.is-red { background: #b0442f; }
+.report-round.is-pistol { outline: 2px solid var(--cm-text); outline-offset: 1px; }
+.report-round.is-half { margin-left: 10px; }
+.report-legend .report-round { width: 12px; height: 12px; vertical-align: middle; margin: 0 4px 0 10px; }
+.report-legend .report-round:first-child { margin-left: 0; }
+.report-plan { margin-top: 14px; border-top: 1px solid var(--cm-border); padding-top: 10px; }
+.report-gameplan { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px 16px; margin: 6px 0 10px; }
+.report-gameplan dt { font-size: 11px; font-weight: 700; color: var(--cm-text-subtle); }
+.report-gameplan dd { margin: 0; font-size: 14px; }
+.report-gameplan dd small { color: var(--cm-text-muted); font-size: 12px; }
+.report-observed { list-style: none; margin: 0; padding: 0; font-size: 12px; display: grid; gap: 2px; }

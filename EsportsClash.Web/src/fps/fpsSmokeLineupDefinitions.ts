@@ -10,7 +10,7 @@ export const LIVE_AUTHORED_SMOKE_LINEUPS:readonly LiveSmokeLineup[]=[
   {id:'restaurant-civic',name:'Jade Lantern to civic entry',phase:'opening',attacking:true,site:'A',position:{x:-4.4,z:-27.6},target:{x:-19,z:7}},
   {id:'restaurant-market',name:'Jade Lantern to covered market entry',phase:'opening',attacking:true,site:'B',position:{x:4.4,z:-27.6},target:{x:20,z:8}},
   {id:'guard-civic',name:'Customs quay to civic entry',phase:'opening',attacking:false,site:'A',position:{x:-6,z:40},target:{x:-19,z:7}},
-  {id:'guard-market',name:'Customs quay to market exit',phase:'opening',attacking:false,site:'B',position:{x:8,z:39},target:{x:20,z:13.5}},
+  {id:'guard-market',name:'Customs quay to market exit',phase:'opening',attacking:false,site:'B',position:{x:9,z:39},target:{x:20,z:13.5}},
   {id:'a-arch',name:'A main to civic arch',phase:'execute',attacking:true,site:'A',position:{x:-19,z:8},target:{x:-16,z:24}},
   {id:'a-library',name:'A outer to rear civic passage',phase:'execute',attacking:true,site:'A',position:{x:-29,z:9},target:{x:-11,z:30}},
   {id:'b-speedway',name:'Low market passage to flower crossing',phase:'execute',attacking:true,site:'B',position:{x:20,z:8},target:{x:18,z:25}},

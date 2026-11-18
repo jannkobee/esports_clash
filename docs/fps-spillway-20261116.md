@@ -49,3 +49,25 @@
 
 - Headless Node unit tests, NullEngine scene checks, design integrity checks, and Vite/TypeScript production builds verify logic, geometry, contracts, and types; GPU frame rates and manual playtest capture remain unverified in a live WebGL browser window.
 - In `test:fps-baseline` on Windows, `src/fpsAutomaticLearning.test.mjs` lines 44 (`SQLite EBUSY` on thrown `Store` construction) and 57 (`\r\n` vs `\n` git CRLF normalization) fail due to pre-existing Windows test-environment behavior; `src/fpsTacticalEmergence.test.mjs` passes standalone (`7/7`, `2.627ms/tick`) when not contending with parallel 8-thread benchmarks.
+
+## 6. Overpass Level Design Reference Pass (`spillway-v2`)
+
+- **Files**: `EsportsClash.Web/src/fps/fpsSpillwayMap.ts`, `EsportsClash.Web/src/fps/fpsSpillwayTerrain.ts`, `EsportsClash.Web/src/fps/fpsSpillwayScenery.ts`, `EsportsClash.Web/src/fps/fpsSpillwayDesign.ts`, `EsportsClash.Web/src/fps/fpsLiveViewer.ts`, `EsportsClash.Web/src/fps/fpsLiveSimulation.ts`, `EsportsClash.Web/src/fps/fpsReference.ts`, `EsportsClash.Web/src/fpsSpillway.test.mjs`.
+- **Upper / Lower Tunnel & Squeaky Service Loop**: Carved `upper-tunnel-floor` (`x=4.5..11.0, z=-35..-21, y=2.8m`), `lower-tunnel-stair` (`0.0m -> 2.8m`), `squeaky-service-stair` (`2.8m -> 5.6m`), and `squeaky-corridor-floor` (`y=5.6m`) with `mid-east-frame-s1`/`s2` doorways into Mid Courtyard (`z=-6` Squeaky door and `z=0` Connector mouth) and overhead `cutawayGroup: 'ceiling'` roofs.
+- **Playground, Party Terrace, Traversable Parkhouse (Toilets) & Promenade Long Landmarks**:
+  - Raised `gardens-playground-deck` (`3.2m`) with climbing fort scenery (`gardens-playground-frame`) and `party-plaza-planter` / `party-table-west` / `party-arch-pillar` with floating balloons.
+  - Replaced solid `parkhouse-north` with a 4-doorway hollow `Parkhouse (Toilets)` interior (`parkhouse-west-s/n`, `parkhouse-east-s/n`, `parkhouse-south-w/e`, `parkhouse-north-w/e`, `parkhouse-sink-divider`, cutaway `parkhouse-roof`).
+  - Added `long-boulder-rock`, `long-picnic-table`, `long-boost-crate`, `a-headshot-planter`, and `a-flowers-sign`.
+- **Hydrology Bank, Bins & A Under Stairs**:
+  - Opened `a-north-hq-wall` (`a-hq-wall-west`/`east`) into an enclosed `Hydrology Bank` (`a-bank-plaza-floor`, `a-bank-west/north/east-wall-n`, `a-bank-counter`, `a-bank-roof`, `a-bank-van`) and placed `a-bins-dumpster` along the CT-to-A roadway.
+  - Added `'upper'` layer `a-under-stair` + `a-under-deck-landing` (`5.6m -> 3.6m`) linking CT/A roadway directly onto `control-deck-balcony`.
+- **B Storm Pipe, Elevated Canal Bridge, Barrels & Jail**:
+  - Carved `Storm Pipe` (`x=25.6..30.0, z=1.5..15.5`, `b-pipe-roof` ceiling + Short Canal elbow exit at `z=12..15.5`) through `b-divider-west`/`east`, added overhead `b-site-bridge-beam` (`cutawayGroup: 'overpass'`), upgraded `canal-grate-catwalk` to an elevated `1.4m` `Canal Bridge` (`b-canal-bridge-deck` + west/east ramps), and added `b-barrels-cluster` and `b-jail-*` pockets.
+- **Terrain finish**: Added slim, non-pickable yellow tread bands to authored stairs; the marks are generated from `GroundPatch.stair`, batched with static scenery, and do not alter traversal or collision.
+- **Comms, Lineups & Death-Callout Rules**: Expanded `SPILLWAY_SMOKE_LINEUPS` (`18` lineups), `SMOKE_LINEUP_COMMS`, `COVER_DESCRIPTOR_RULES` (`behind rock`, `behind barrels`, `by bins`, `by sign`, `by bank`, `in jail`), `tactical.callouts`, `chokes`, `assaultExtras`, and `fpsSpillway.test.mjs`.
+- **Verification (post-edit)**:
+  - `node --experimental-strip-types --test src/fpsSpillway.test.mjs src/fpsReference.test.mjs`: `14/14` passed.
+  - `node scripts/validate-design.js`: passed.
+  - `npm run test:pro-regression`: `16/16` passed.
+  - `npm run build` (`tsc -b && vite build`): passed (`21.61s`).
+  - `node --experimental-strip-types scripts/benchmark-spillway.mjs --rounds=240`: `240` rounds (`14` matches, `671,698` ticks) — **CT `45.42% (109)` vs T `54.58% (131)`**, **163 plants (`67.9%`)** (`Site A 52.76%` | `Site B 47.24%`), **Elim `147` | Detonated `44` | Defused `34` | Time `15`**, `Control Deck upper: 36,773 samples`, **`NaN=0 | OOB=0 | LocomotionStalls=0 (0.000%)`**. Interactive browser GPU FPS remains unverified.

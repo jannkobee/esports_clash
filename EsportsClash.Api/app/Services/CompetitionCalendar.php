@@ -84,7 +84,7 @@ class CompetitionCalendar
     public function validateSlot(ClubTournament $event, CarbonImmutable $kickoff): void
     {
         $end=$kickoff->addHours($this->settings()['recovery_hours']);
-        abort_if($kickoff->lte(now()->addMinutes(15)) || $kickoff->lt($event->starts_at) || $end->gt($event->ends_at)
+        abort_if($kickoff->lte(now()->addMinutes(\App\Models\ClubFixture::ordersLeadMinutes())) || $kickoff->lt($event->starts_at) || $end->gt($event->ends_at)
             || $kickoff->year !== $event->year || $end->year !== $event->year,409,'No remaining legal slot in the published calendar.');
         $overlaps=DB::table('competition_windows')->where('starts_at','<',$end)->where('ends_at','>',$kickoff)->exists();
         abort_if($event->participant_type==='club' && $overlaps,409,'The proposed match overlaps a protected international window.');

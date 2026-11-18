@@ -1,7 +1,7 @@
 import { Color3, DynamicTexture, Mesh, MeshBuilder, PointLight, StandardMaterial, Texture, Vector3, type Scene } from '@babylonjs/core';
 import { liveBoxSurfaceUV, LIVE_SURFACE_METRES, type LiveSurface, type LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
 import { batchStaticLiveGeometry } from './fpsLiveRenderOptimization.ts';
-import { SPILLWAY_SHALLOW_WATERS } from './fpsSpillwayTerrain.ts';
+import { SPILLWAY_GROUND_PATCHES, SPILLWAY_SHALLOW_WATERS } from './fpsSpillwayTerrain.ts';
 
 export interface SpillwaySceneryBuildResult {
   meshes: Mesh[];
@@ -167,10 +167,18 @@ export function buildSpillwayScenery(
     register(water);
   }
 
-  // Steel grate ribs on the central canal crossing island (x: 20..27, z: -15..-9)
-  for (let gx = 20.4; gx <= 26.6; gx += .85) {
-    box(`sw-grate-bar-${gx.toFixed(1)}`, gx, .018, -12, .12, .035, 5.8, '#535e63', 'metal');
+  // Elevated Steel Canal Footbridge Deck Grate Ribs & Overhead Pipe Rings (x: 21..26.5, z: -14.5..-9.5, y: 1.4m)
+  for (let gx = 21.4; gx <= 26.2; gx += .8) {
+    box(`sw-bridge-grate-${gx.toFixed(1)}`, gx, 1.415, -12, .12, .03, 4.6, '#4b555a', 'metal');
   }
+
+  // Storm Pipe Culvert Ribbed Collar Rings & Intake Grate (x = 27.8, z = 1.5..15.5)
+  for (const pz of [2.4, 6.2, 10.0, 14.4]) {
+    const ring = detailMesh(MeshBuilder.CreateTorus(`sw-pipe-ring-${pz}`, { diameter: 4.1, thickness: .16, tessellation: 18 }, scene), '#4f687a', 'metal', true);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.set(27.8, 1.1, pz);
+  }
+  paintedSign('sw-pipe-sign', 'STORM CULVERT  //  SECTOR B', 27.8, 3.1, 1.45, 3.8, .48, '#20323e', '#d9e3e8');
 
   // Storm outfall pipes & blue sluice gates along east Drainage/Canal wall
   for (const [i, pz] of [-29, -18, -10].entries()) {
@@ -184,6 +192,22 @@ export function buildSpillwayScenery(
   // Drainage Utility Box (x: 38..40.2, z: -20.5..-18.5)
   box('sw-utility-dial-face', 39.1, .42, -18.47, 1.3, .45, .04, '#dde3df');
   box('sw-utility-led-strip', 39.1, .52, -18.44, .24, .08, .03, '#4fc97b');
+
+  // B Site Barrels (x: 34.4..36.6, z: 27.6..29.6) & East Maintenance Jail Cage
+  for (const [bi, [bx, bz, col]] of [
+    [35.0, 28.2, '#2f6b9a'],
+    [36.0, 28.3, '#b85c37'],
+    [35.4, 29.1, '#2f6b9a'],
+  ].entries()) {
+    const drum = detailMesh(MeshBuilder.CreateCylinder(`sw-b-barrel-${bi}`, { height: 1.38, diameter: .84, tessellation: 14 }, scene), col as string, 'metal');
+    drum.position.set(bx as number, .69, bz as number);
+    const rim = detailMesh(MeshBuilder.CreateTorus(`sw-b-barrel-rim-${bi}`, { diameter: .86, thickness: .05, tessellation: 14 }, scene), '#d7b239', 'metal');
+    rim.position.set(bx as number, 1.34, bz as number);
+  }
+  for (let jz = 19.2; jz <= 21.6; jz += .6) {
+    box(`sw-jail-post-${jz.toFixed(1)}`, 42.3, 1.25, jz, .06, 2.5, .06, '#485256', 'metal');
+  }
+  paintedSign('sw-jail-sign', 'VALVE CAGE', 44.3, 2.1, 21.95, 2.4, .4, '#363c3e', '#e7c152');
 
   // ===========================================================================
   // 2. Pumping Station (Bombsite B, y = 0.0) + Cantilevered Control Deck (y = 3.6)
@@ -259,24 +283,34 @@ export function buildSpillwayScenery(
   };
   addWarmFixture('sw-tun-lamp-1', 40, 3.28, 0, true);
   addWarmFixture('sw-tun-lamp-2', 40, 3.28, 10, false);
+  addWarmFixture('sw-pipe-lamp', 27.8, 2.26, 8, false);
+  addWarmFixture('sw-upper-tun-lamp', 7.5, 5.38, -28, true);
+  addWarmFixture('sw-squeaky-lamp', 7.5, 8.28, -6, false);
   addWarmFixture('sw-conn-lamp', 13.8, 7.6, 3.5, true);
   addWarmFixture('sw-b-hall-lamp', 29, 6.1, 29, true);
+  addWarmFixture('sw-parkhouse-lamp', -26.2, 8.65, 8, false);
+  addWarmFixture('sw-bank-lamp', -13, 8.85, 48.5, false);
+
+  // Squeaky Hazard Door Frame (x = 4.15, z = -6.25, y = 5.6..8.4)
+  box('sw-squeaky-lintel', 4.15, 8.2, -6.25, .45, .3, 3.6, '#d7b239', 'metal');
+  box('sw-squeaky-jamb-s', 4.15, 6.95, -7.9, .45, 2.5, .18, '#394044', 'metal');
+  box('sw-squeaky-jamb-n', 4.15, 6.95, -4.6, .45, 2.5, .18, '#394044', 'metal');
 
   // ===========================================================================
   // 3. Service Yard (Level 1, y = 2.8) & Landscaped Gardens
   // ===========================================================================
-  // T Service Flatbed Truck (-14..-8, -49.8..-46, y = 2.8..5.2)
-  box('sw-t-truck-chassis', -11.0, 3.38, -47.9, 5.7, .38, 2.75, '#434a4f', 'metal');
-  box('sw-t-truck-bed', -12.15, 3.92, -47.9, 3.35, .72, 2.7, '#c9853b', 'metal');
-  box('sw-t-truck-cab', -9.25, 4.24, -47.9, 2.1, 1.48, 2.66, '#d6903f', 'metal');
-  box('sw-t-truck-glass', -8.78, 4.48, -47.9, 1.12, .58, 2.38, '#283d46');
-  box('sw-t-truck-beacon', -9.25, 5.06, -47.9, .75, .14, .32, '#e9b035');
-  for (const wx of [-12.9, -9.2]) for (const wz of [-49.15, -46.65]) {
+  // Isolated T Service Flatbed Truck (3..9, -52.5..-49.5, y = 2.8..5.2)
+  box('sw-t-truck-chassis', 6.0, 3.38, -51.0, 5.7, .38, 2.75, '#434a4f', 'metal');
+  box('sw-t-truck-bed', 4.85, 3.92, -51.0, 3.35, .72, 2.7, '#c9853b', 'metal');
+  box('sw-t-truck-cab', 7.75, 4.24, -51.0, 2.1, 1.48, 2.66, '#d6903f', 'metal');
+  box('sw-t-truck-glass', 8.22, 4.48, -51.0, 1.12, .58, 2.38, '#283d46');
+  box('sw-t-truck-beacon', 7.75, 5.06, -51.0, .75, .14, .32, '#e9b035');
+  for (const wx of [4.1, 7.8]) for (const wz of [-52.25, -49.75]) {
     const tire = detailMesh(MeshBuilder.CreateCylinder(`sw-t-tire-${wx}-${wz}`, { height: .34, diameter: .92, tessellation: 14 }, scene), '#25282a');
     tire.rotation.x = Math.PI / 2;
     tire.position.set(wx, 3.26, wz);
   }
-  for (const [ci, [cx, cz]] of [[-15.2, -46.8], [-15.2, -48.6], [-7.2, -46.4]].entries()) {
+  for (const [ci, [cx, cz]] of [[1.8, -49.6], [1.8, -51.6], [9.8, -49.4]].entries()) {
     const cone = detailMesh(MeshBuilder.CreateCylinder(`sw-yard-cone-${ci}`, { height: .62, diameterTop: .08, diameterBottom: .36, tessellation: 10 }, scene), '#df6b35');
     cone.position.set(cx, 3.11, cz);
   }
@@ -296,20 +330,20 @@ export function buildSpillwayScenery(
 
   // Gardens Pergola Louvers (cutaway roof group so Overview + Cutaway reveals seating cleanly)
   for (let i = 0; i < 6; i++) {
-    box(`sw-pergola-slat-${i}`, -37.2 + i * 1.28, 5.65, -31.2, .18, .22, 5.8, '#7d5b3e', 'timber', true);
+    box(`sw-pergola-slat-${i}`, -35.2 + i * 1.28, 5.65, -31.2, .18, .22, 5.8, '#7d5b3e', 'timber', true);
   }
-  box('sw-pergola-bench-top', -34.0, 3.24, -31.2, 2.8, .08, .76, '#8f6944', 'timber');
-  box('sw-pergola-bench-leg-w', -35.0, 3.01, -31.2, .14, .42, .68, '#464d51', 'metal');
-  box('sw-pergola-bench-leg-e', -33.0, 3.01, -31.2, .14, .42, .68, '#464d51', 'metal');
+  box('sw-pergola-bench-top', -32.0, 3.24, -31.2, 2.8, .08, .76, '#8f6944', 'timber');
+  box('sw-pergola-bench-leg-w', -33.0, 3.01, -31.2, .14, .42, .68, '#464d51', 'metal');
+  box('sw-pergola-bench-leg-e', -31.0, 3.01, -31.2, .14, .42, .68, '#464d51', 'metal');
 
   // ===========================================================================
   // 4. Upper Urban Park, Promenade, Kiosk, HQ (Site A), CT Compound (y = 5.6)
   // ===========================================================================
   // Grass Turf Lawns across Riverside Park & Gardens borders
   for (const [gi, [x, z, w, d, y]] of [
-    [-33.5, -18.5, 13.5, 22, 5.612],
+    [-33.5, -18.5, 11.5, 22, 5.612],
     [-25.5, 4.5, 11.5, 18, 5.612],
-    [-33.5, 26.5, 10.5, 14, 5.612],
+    [-31.5, 26.5, 8.5, 14, 5.612],
     [-21.5, -38.5, 12.0, 11.5, 2.812],
   ].entries()) {
     const lawn = MeshBuilder.CreateGround(`sw-park-lawn-${gi}`, { width: w, height: d }, scene);
@@ -322,7 +356,7 @@ export function buildSpillwayScenery(
 
   // Brick Promenade Ribbon along West Walk & Fountain Plaza
   for (const [bi, [x, z, w, d, y]] of [
-    [-42.0, 2.0, 5.4, 52, 5.614],
+    [-37.0, 2.0, 4.8, 52, 5.614],
     [-11.0, -20.0, 12.0, 14, 5.614],
   ].entries()) {
     const brickWalk = MeshBuilder.CreateGround(`sw-brick-walk-${bi}`, { width: w, height: d }, scene);
@@ -333,10 +367,29 @@ export function buildSpillwayScenery(
     register(brickWalk);
   }
 
+  // Fine yellow tread bands make the many concrete tier changes readable without adding collision.
+  for (const [index, patch] of SPILLWAY_GROUND_PATCHES.filter(p => p.stair).entries()) {
+    const width = patch.maxX - patch.minX;
+    const depth = patch.maxZ - patch.minZ;
+    const acrossX = width >= depth;
+    const stripe = MeshBuilder.CreateGround(
+      `sw-stair-tread-band-${patch.id ?? index}`,
+      {
+        width: acrossX ? Math.max(.08, width - .16) : .055,
+        height: acrossX ? .055 : Math.max(.08, depth - .16),
+      },
+      scene,
+    );
+    stripe.position.set((patch.minX + patch.maxX) / 2, patch.height + .016, (patch.minZ + patch.maxZ) / 2);
+    stripe.material = material('#d7b239');
+    stripe.metadata = { castShadow: false };
+    register(stripe);
+  }
+
   // Rooted Park Trees (matching exact 0.72m collision trunk footprints; canopy >= 3.2m overhead!)
   for (const [idx, [tx, tz, baseY, tall]] of [
     [-24.6, -34.6, 2.8, 4.2],
-    [-43.8, -2.1, 5.6, 4.2],
+    [-38.8, 1.9, 5.6, 4.2],
     [-32.8, 34.4, 5.6, 4.2],
     [-5.1, 28.4, 5.6, 4.2],
   ].entries()) {
@@ -348,13 +401,51 @@ export function buildSpillwayScenery(
   }
 
   // Riverside Park Iron Street Lamps
-  for (const [li, [lx, lz]] of [[-44.5, -12], [-44.5, 4], [-44.5, 22], [-28, 12]].entries()) {
+  for (const [li, [lx, lz]] of [[-40.2, -12], [-40.2, 4], [-35.2, 22], [-28, 12]].entries()) {
     const post = detailMesh(MeshBuilder.CreateCylinder(`sw-lamp-post-${li}`, { height: 4.2, diameter: .16, tessellation: 8 }, scene), '#353e41', 'metal');
     post.position.set(lx, 7.7, lz);
     const globe = detailMesh(MeshBuilder.CreateSphere(`sw-lamp-globe-${li}`, { diameter: .42, segments: 8 }, scene), '#fae3a7');
     globe.position.set(lx + .22, 9.85, lz);
     globe.metadata = { castShadow: false };
   }
+
+  // Playground Climbing Fort & Sandpit Border (x: -33..-30.6, z: -40.2..-38.4, y: 3.2)
+  box('sw-play-deck', -31.8, 3.92, -39.3, 2.3, .14, 1.7, '#b47442', 'timber');
+  for (const [px, pz] of [[-32.8, -40.0], [-30.8, -40.0], [-32.8, -38.6], [-30.8, -38.6]]) {
+    box(`sw-play-post-${px}-${pz}`, px, 3.85, pz, .18, 1.3, .18, '#7a5436', 'timber');
+  }
+  box('sw-play-rail-top', -31.8, 4.44, -39.3, 2.2, .12, 1.6, '#cf5e3d', 'metal');
+
+  // Party Terrace Balloons & Bunting (-21..-16, -11.5..-9.2, y = 5.6+)
+  for (const [bi, [bx, by, bz, col]] of [
+    [-16.4, 8.25, -9.8, '#e35a4b'],
+    [-16.9, 8.52, -10.1, '#f2c144'],
+    [-16.2, 8.48, -10.4, '#4aa4df'],
+    [-19.6, 7.75, -10.5, '#e35a4b'],
+    [-20.1, 7.95, -10.3, '#58c488'],
+  ].entries()) {
+    const balloon = detailMesh(MeshBuilder.CreateSphere(`sw-party-balloon-${bi}`, { diameter: .48, segments: 8 }, scene), col as string);
+    balloon.position.set(bx as number, by as number, bz as number);
+    balloon.metadata = { castShadow: false };
+  }
+
+  // Promenade Granite Rock Boulder (-37.2..-34.6, -2.0..0.6, y = 5.6..7.35)
+  const rockMain = detailMesh(MeshBuilder.CreateCylinder('sw-long-rock-main', { height: 1.65, diameterTop: 1.5, diameterBottom: 2.55, tessellation: 7 }, scene), '#838784', 'stone');
+  rockMain.position.set(-35.9, 6.42, -.7);
+  const rockShoulder = detailMesh(MeshBuilder.CreateCylinder('sw-long-rock-side', { height: 1.15, diameterTop: 1.1, diameterBottom: 1.75, tessellation: 6 }, scene), '#767b78', 'stone');
+  rockShoulder.position.set(-35.1, 6.17, .1);
+
+  // Parkhouse (Toilets) Sign, Tiled Floor & Washroom Counter (-30..-22.5, 1.5..15.5, y = 5.6)
+  box('sw-parkhouse-tile-floor', -26.25, 5.616, 8.5, 6.8, .03, 12.8, '#d4cfc4', 'stone');
+  box('sw-parkhouse-basin', -26.2, 6.48, 11.7, 1.0, .14, 1.9, '#e7e8e3', 'stone');
+  paintedSign('sw-parkhouse-sign', 'PARK RESTROOMS  •  A LONG', -29.8, 8.15, 7.5, .04, 3.2, '#2d3f3d', '#efe4c8');
+
+  // A Short Flowers Sign & Planter Bed (-23.6..-21.0, 25.2..26.0, y = 5.6..7.8)
+  box('sw-flowers-bed', -22.3, 5.88, 25.6, 2.5, .56, .85, '#685947', 'stone');
+  box('sw-flowers-blooms', -22.3, 6.18, 25.6, 2.1, .16, .55, '#598249', 'grass');
+  box('sw-flowers-post-w', -23.3, 6.7, 25.6, .12, 2.2, .12, '#353e41', 'metal');
+  box('sw-flowers-post-e', -21.3, 6.7, 25.6, .12, 2.2, .12, '#353e41', 'metal');
+  paintedSign('sw-flowers-board', 'FLOOD HQ  ▲  LONG / KIOSK', -22.3, 7.25, 25.6, 2.4, .78, '#243542', '#f0e2bd');
 
   // Kiosk Café Details & Striped Awning (-18..-3.8, 14.5..23.9, y = 5.6)
   box('sw-kiosk-wood-floor', -10.9, 5.616, 19.2, 13.0, .03, 8.2, '#8b6a48', 'timber');
@@ -363,9 +454,21 @@ export function buildSpillwayScenery(
   paintedSign('sw-kiosk-sign', 'PARK KIOSK  •  INFO', -10.9, 8.15, 14.48, 4.6, .58, '#283634', '#eedcaa');
   box('sw-kiosk-menu', -10.6, 6.95, 19.1, .9, .55, .12, '#222b29');
 
-  // Flood Control HQ (Bombsite A, center -15, 29, y = 5.6)
+  // Flood Control HQ (Bombsite A, center -15, 29, y = 5.6) & Hydrology Bank
   sitePad('A', -15, 5.622, 29, 5.8, 'FLOOD CONTROL HQ', '#8a867c', '#d86643');
-  paintedSign('sw-hq-sign', 'HYDROLOGY HQ  //  SECTOR A', -17.0, 8.8, 43.76, 8.6, .74, '#243542', '#e8ecf0');
+  paintedSign('sw-hq-sign', 'HYDROLOGY HQ  //  SECTOR A', -21.0, 8.8, 43.76, 8.6, .74, '#243542', '#e8ecf0');
+  paintedSign('sw-bank-sign', 'HYDROLOGY BANK  •  RETAKE ACCESS', -12.5, 8.5, 45.25, 4.4, .56, '#23323d', '#ecd493');
+  box('sw-bank-floor', -13.0, 5.616, 48.5, 13.4, .03, 6.2, '#b6b8b3', 'stone');
+
+  // Hydrology Bank Van (-27.2..-22.6, 47.0..49.8, y = 5.6..7.9)
+  box('sw-bank-van-body', -24.9, 6.82, 48.4, 4.4, 1.62, 2.6, '#d0d3ce', 'metal');
+  box('sw-bank-van-stripe', -24.9, 6.72, 47.08, 4.2, .24, .04, '#2f6b9a');
+  box('sw-bank-van-glass', -23.1, 7.04, 47.07, 1.1, .52, .05, '#243843');
+  for (const vx of [-26.3, -23.5]) for (const vz of [47.15, 49.65]) {
+    const tire = detailMesh(MeshBuilder.CreateCylinder(`sw-bank-tire-${vx}-${vz}`, { height: .3, diameter: .84, tessellation: 12 }, scene), '#232729');
+    tire.rotation.x = Math.PI / 2;
+    tire.position.set(vx, 6.02, vz);
+  }
 
   // A Response Utility Van (-22.2..-17.6, 32.5..37.5, y = 5.6..8.0)
   box('sw-a-van-body', -19.9, 6.86, 35.0, 4.2, 1.72, 4.8, '#395569', 'metal');

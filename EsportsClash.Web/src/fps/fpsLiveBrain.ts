@@ -21,6 +21,7 @@ export function shouldCommitLivePlant(position:FpsPoint,threats:readonly LivePla
 export interface LiveApproach {key:string;point:FpsPoint;purpose:'entry'|'control'|'flank'|'clear'}
 export interface LiveApproachContext {
   behavior?:import('./fpsPlayerArchitecture.ts').FpsBehaviorPreferences;decision?:string;
+  tendencies?:import('./fpsPlayerTendencies.ts').FpsTendencyValues;
   position:FpsPoint;role:FpsPrimaryRole;remaining:number;judgment:number;
   allies:readonly FpsPoint[];beliefs:readonly LiveIntelBelief[];
   previous?:string;committed:boolean;visited:ReadonlySet<string>;execute:boolean;
@@ -30,6 +31,8 @@ export interface LiveApproachContext {
   phase?:'regroup'|'breach'|'retake';
   heatAt?:(point:FpsPoint)=>number;
   uncertaintyAt?:(point:FpsPoint)=>number;
+  entryAheadDist?:number;
+  sniperPriority?:number;
 }
 
 /** Map affordances, not a sequence: each actor evaluates the reachable options. */
@@ -71,8 +74,7 @@ export function chooseLiveApproach(candidates:readonly LiveApproach[],context:Li
   const direct=unvisited.filter(c=>c.purpose==='entry'||c.purpose==='clear');
   const choices=urgent&&direct.length?direct:unvisited;
   const feasible=choices.filter(c=>!context.routeTo||context.routeTo(c.point).seconds+(context.phase==='retake'?0:5)<context.remaining);
-  if(context.phase==='retake'&&!feasible.length)return undefined;
-  const pool=feasible.length?feasible:choices;
+  const pool=feasible.length?feasible:context.phase==='retake'?[...choices].sort((a,b)=>(context.routeTo?.(a.point).seconds??distance(context.position,a.point))-(context.routeTo?.(b.point).seconds??distance(context.position,b.point))).slice(0,2):choices;
   if(!pool.length)return undefined;
   const retained=pool.find(c=>c.key===context.previous);
   const dangerAt=(candidate:LiveApproach)=>context.beliefs.reduce((sum,b)=>sum+(distance(b,candidate.point)<b.radius+5?b.certainty:0),0)
@@ -85,25 +87,34 @@ export function chooseLiveApproach(candidates:readonly LiveApproach[],context:Li
     const detour=candidate.purpose==='control'||candidate.purpose==='flank';
     const roleValue=candidate.purpose==='flank'?(context.role==='lurker'?3:.1)
       :candidate.purpose==='control'?(['caller','sniper','support'].includes(context.role)?1.3:.1)
-      :candidate.purpose==='entry'?(['entry','trade'].includes(context.role)?1.8:.8):.4;
+      :candidate.purpose==='entry'?(context.role==='entry'?(context.execute?1.8:2.1):context.role==='trade'?(context.execute?1.8:1.1):(!context.execute&&['support','caller'].includes(context.role)?.55:.8)):.4;
     const crowd=context.allies.filter(a=>distance(a,candidate.point)<5).length;
     const reservations=context.alliedGoals?.filter(a=>distance(a,candidate.point)<5).length??0;
     const danger=dangerAt(candidate);
     const urgency=detour?(context.remaining<35?6:context.execute?.8:0):0;
-    const behavior=context.behavior;
+    const behavior=context.behavior,t=context.tendencies;
+    const tUnit=(k:string)=>((t?.[k]??50)-50)/100;
+    const tendencyBias=!t?0:candidate.purpose==='entry'?(tUnit('earlyAggression')+tUnit('spaceCreation')+tUnit('duelInitiative'))*.65
+      :candidate.purpose==='flank'?(tUnit('lurkFlank')+tUnit('deepControl')+tUnit('opportunityExploitation'))*.65
+      :candidate.purpose==='control'?(tUnit('mapControlInitiative')+tUnit('activeInformation'))*.65
+      :(tUnit('playDiscipline')+tUnit('angleIsolation'))*.4;
     const preference=!behavior?0:candidate.purpose==='entry'?(behavior.initiative-.5)*1.2+(context.decision==='pressure'?.8:0):candidate.purpose==='flank'?(1-behavior.coordination)*.5+(context.decision==='improvise'?.8:0):candidate.purpose==='control'?(.5-behavior.initiative)*.6:behavior.deliberation*.2;
     const health=context.health??100,initiative=behavior?.initiative??.5;
     const capability=candidate.purpose==='entry'?(context.entrySkill??.5)*.7
       :candidate.purpose==='control'?(context.utilitySkill??.5)*.6:context.judgment*.3;
     const progress=context.objective?distance(candidate.point,context.objective)*.08:0;
-    const risk=.5+context.judgment+(1-health/100)*1.4+(behavior?(1-initiative)*.7:0)+(1-(context.firepower??1))*.5;
+    const risk=.5+context.judgment+(1-health/100)*1.4+(behavior?(1-initiative)*.7:0)+(1-(context.firepower??1))*.5+(t?(tUnit('exposureMinimization')-tUnit('economicRisk'))*.4:0);
     const rangeFit=context.objective&&context.preferredRange!==undefined&&candidate.purpose==='clear'
       ?Math.abs(distance(candidate.point,context.objective)-context.preferredRange)*(.04+context.judgment*.04):0;
     const reconBonus=!context.execute&&context.remaining>28
-      ?(context.uncertaintyAt?.(candidate.point)??0)*(context.role==='lurker'||context.role==='support'||context.role==='caller'||context.role==='anchor'?1.8:.85)
+      ?(context.uncertaintyAt?.(candidate.point)??0)*(context.role==='lurker'||context.role==='support'||context.role==='caller'||context.role==='anchor'?1.8:.85)*(t?.75+(t.activeInformation??50)/200:1)
       :0;
-    return {candidate,score:roleValue+preference+capability-(context.routeTo?.(candidate.point).distance??distance(context.position,candidate.point))*.12-crowd*1.5-reservations*.8
-      -danger*risk-urgency-progress-rangeFit+reconBonus+(candidate.key===context.previous?.4:0)};
+    const entryPacingPenalty=!context.execute&&context.role!=='entry'&&context.role!=='lurker'&&context.entryAheadDist!==undefined&&context.objective&&candidate.purpose==='entry'&&distance(candidate.point,context.objective)<context.entryAheadDist-2.5
+      ?.85*(.4+(behavior?.coordination??.5)*.6):0;
+    const sniperPriorityBonus=context.role==='sniper'&&(context.sniperPriority??0)>.5&&(candidate.purpose==='control'||(candidate.purpose==='clear'&&(!context.objective||distance(candidate.point,context.objective)>=16)))
+      ?(context.sniperPriority!-.5)*.9:0;
+    return {candidate,score:roleValue+preference+tendencyBias+capability-(context.routeTo?.(candidate.point).distance??distance(context.position,candidate.point))*.12-crowd*1.5-reservations*.8
+      -danger*risk-urgency-progress-rangeFit+reconBonus-entryPacingPenalty+sniperPriorityBonus+(candidate.key===context.previous?.4:0)};
   });
   scored.sort((a,b)=>b.score-a.score||a.candidate.key.localeCompare(b.candidate.key));
   // Seeded weighted variation among sensible options. Deliberate players vary
@@ -122,8 +133,9 @@ export function canInvestigateLiveContact(from:FpsPoint,belief:LiveIntelBelief|u
   return travel<=(lurker?18:12)&&remaining>travel/1.65+20;
 }
 
-export function shouldFakeLiveDefuse(remaining:number,kit:boolean,covered:boolean,beliefs:readonly LiveIntelBelief[],position:FpsPoint):boolean {
-  return !covered&&remaining>(kit?5:10)+2.5+3
+export function shouldFakeLiveDefuse(remaining:number,kit:boolean,covered:boolean,beliefs:readonly LiveIntelBelief[],position:FpsPoint,fakeDefuseTendency=50):boolean {
+  const minSlack=fakeDefuseTendency>=65?2.0:fakeDefuseTendency<=30?4.5:3.0;
+  return !covered&&remaining>(kit?5:10)+2.5+minSlack
     &&beliefs.some(b=>b.age<3&&b.certainty>=.45&&distance(position,b)<20);
 }
 

@@ -7,7 +7,7 @@ import {TournamentLogo} from './TournamentLogo';
 import {OrganizerWorkbench} from './OrganizerWorkbench';
 import {LabelIcon} from './LabelIcon';
 import { useEffect, useState, type FormEvent } from 'react';
-import { Trophy, Globe, CalendarDays, ShieldCheck, Users, Building2, BookOpen } from 'lucide-react';
+import { Trophy, Globe, CalendarDays, Flag, ShieldCheck, Users, Building2, BookOpen } from 'lucide-react';
 import { useAccount } from '../AccountContext';
 import { request } from '../cloudPersistence';
 import { pediaHref, pediaTime, pediaStatus, pediaMoney } from '../hexapedia';
@@ -62,7 +62,7 @@ export function CompetitionHub({onWatch,initialEdition,initialNation}:{onWatch:(
   useEffect(()=>{if(initialEdition)void openEdition(initialEdition);if(initialNation)void openNation(initialNation);},[initialEdition,initialNation]);
   useEffect(()=>onWorldUpdate(['fixtures','competitions'],()=>{if(detail?.edition.id)void request<{data:Detail}>(`/competitions/editions/${detail.edition.id}`,session).then(r=>setDetail(r.data)).catch(()=>{});}),[detail?.edition.id,session]);
   const entryName=(id:number)=>detail?.entries.find(e=>e.id===id)?.club_name??detail?.entries.find(e=>e.id===id)?.national_name??String(id);
-  const modes=[['circuit','Championships',Trophy],['calendar','Calendar',CalendarDays],['rankings','Rankings',Globe],['nations','National teams',Users],['organizer','Organizers',Building2],...(mine?.admin?[['admin','Administration',ShieldCheck]]:[])] as const;
+  const modes=[['circuit','Championships',Trophy],['calendar','Calendar',CalendarDays],['rankings','Rankings',Globe],['nations','National teams',Flag],['organizer','Organizers',Building2],...(mine?.admin?[['admin','Administration',ShieldCheck]]:[])] as const;
   const geoOptions=geographies.map(g=>({value:String(g.id),label:`${g.name} (${g.kind})`}));
   return <div className="competition-hub space-y-3"><header className="competition-title"><Trophy size={24}/><div><h2>Hexatrick competitions</h2><p>Calendar-year seasons. Regional leagues open on the third Monday in January.</p></div><a className="cm-btn" href={pediaHref('tournaments')}><BookOpen size={14}/> Hexapedia</a></header>
     <div className="pyramid-path" aria-label="Path to the Championship Circuit">{[5,4,3,2,1].map(t=><span className="pedia-tier" key={t}>Tier {t}</span>)}<span>Regional qualification</span><span>Regional leagues</span><strong>Championship Circuit</strong></div><p className="club-help">Win a division trial to earn one tier of promotion. Tier 1 clubs compete for regional ranking invitations; regional champions feed the international circuit. Community cups stay separate from progression.</p>

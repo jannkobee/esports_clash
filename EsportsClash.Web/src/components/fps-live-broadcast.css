@@ -1772,7 +1772,6 @@
   }
   .broadcast-avatar,.broadcast-avatar-svg { width:20px;height:20px; }
   .broadcast-bottom-dock { grid-template-columns:minmax(0,1fr) 210px minmax(0,1fr); }
-  .broadcast-focus-card__role { display:none; }
   .live-fps__badge { display:none; }
   .live-fps__toolbar { padding:7px 8px;gap:7px; }
   .live-fps__controls { gap:4px; }
@@ -1819,10 +1818,11 @@
 .broadcast-stinger {top:auto;bottom:175px;left:24px;transform:none;width:min(510px,65%);padding:14px 20px;gap:5px;}
 .broadcast-stinger>strong {font-size:clamp(18px,2vw,27px);}
 .broadcast-finish-exit {position:absolute;left:24px;bottom:135px;z-index:9;}
-.fps-incoming {position:absolute;inset:0;pointer-events:none;z-index:5;}
-.fps-incoming--hit {background:radial-gradient(ellipse,transparent 60%,#cb453117);}
-.fps-incoming__arc {position:absolute;width:300px;height:300px;left:calc(50% - 150px);top:calc(50% - 150px);fill:none;stroke:#efb45a;stroke-width:5;filter:drop-shadow(0 1px 3px #000b);}
-.fps-incoming__arc--hit {stroke:#ee6958;stroke-width:7;}
+.fps-incoming {position:absolute;inset:0;pointer-events:none;z-index:5;background:radial-gradient(ellipse,transparent 64%,rgba(239,180,90,calc(var(--incoming-intensity,0) * 0.08)));transition:background 90ms ease-out;}
+.fps-incoming--hit {background:radial-gradient(ellipse,transparent 56%,rgba(203,69,49,calc(0.08 + var(--incoming-intensity,0) * 0.16)));}
+.fps-incoming--pinned .fps-incoming__label {color:#ff9e8e;letter-spacing:.22em;}
+.fps-incoming__arc {position:absolute;width:300px;height:300px;left:calc(50% - 150px);top:calc(50% - 150px);fill:none;stroke:#efb45a;stroke-width:5;filter:drop-shadow(0 1px 4px #000c);transition:transform 60ms linear,opacity 60ms linear;}
+.fps-incoming__arc--hit {stroke:#ee6958;stroke-width:7;filter:drop-shadow(0 0 6px rgba(238,105,88,.65));}
 .fps-incoming__label {position:absolute;top:calc(50% + 84px);left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;letter-spacing:.18em;color:#efc88a;text-shadow:0 1px 4px #000;}
 @media(max-width:700px){.broadcast-stinger{left:10px;bottom:155px;width:calc(100% - 20px);padding:10px 14px}.broadcast-weapon-icon{width:38px;min-width:30px;height:17px}}
 
@@ -2196,4 +2196,75 @@
 @media (max-width: 820px) {
   .broadcast-buy-modal__grid { grid-template-columns: 1fr; }
   .broadcast-buy-modal { padding: 12px; }
+}
+
+.broadcast-focus-card__tendencies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 9px;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+.broadcast-focus-card__tendencies span {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+.broadcast-focus-card__tendencies b {
+  color: #e2e8f0;
+}
+.broadcast-focus-card__tendencies .broadcast-focus-card__call {
+  color: #e2e8f0;
+  border-color: rgba(125, 211, 252, 0.45);
+  font-weight: 700;
+}
+.broadcast-focus-card__tendencies .broadcast-focus-card__call[data-response='pursue_independent'] {
+  border-color: rgba(250, 204, 21, 0.5);
+  color: #fde68a;
+}
+.broadcast-focus-card__tendencies .broadcast-focus-card__call[data-response='delay_or_report'] {
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fecaca;
+}
+
+/* HUD polish (2026-11-16): one-line rows that never spill out of the 88px observer card. */
+.broadcast-focus-card__profile { display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;row-gap:0;min-width:0;overflow:hidden; }
+.broadcast-focus-card__obs-tag { flex-basis:100%; }
+.broadcast-focus-card__name { max-width:13ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.broadcast-focus-card__role { padding:1px 5px;border-radius:3px;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.35);letter-spacing:.06em;cursor:help; }
+.broadcast-focus-card--red .broadcast-focus-card__role { color:#fca5a5;background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35); }
+/* The chip carries this round's job, so narrow layouts keep a compact version instead of hiding it. */
+@media (max-width: 768px) {
+  .broadcast-focus-card__role { display:inline-block;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;font-size:7px;line-height:10px;padding:0 3px;margin-left:3px;letter-spacing:.03em; }
+}
+.broadcast-focus-card__ammo-box { display:flex;flex-direction:column;align-items:flex-end;gap:1px;min-width:0;max-width:44%; }
+.broadcast-focus-card__weapon-name { max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#9fb0c2; }
+.broadcast-focus-card__action-line { overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.broadcast-focus-card__tendencies { flex-wrap:nowrap;overflow:hidden;white-space:nowrap;min-height:14px; }
+.broadcast-focus-card__tendencies span { overflow:hidden;text-overflow:ellipsis;flex:0 1 auto;min-width:0; }
+.broadcast-focus-card__radio { min-height:14px; }
+.broadcast-coverage-label.is-below-pause { top:136px; }
+@media(max-width:700px){.broadcast-coverage-label.is-below-pause{top:126px}}
+
+/* HUD layout pass (2026-11-17), checked with headless screenshots at 1920, 1280 and 390px.
+   Between 769 and 1500px the centred scoreboard and the top-right controls collide, so the controls
+   drop below the scoreboard row and the killfeed follows. On phones the scoreboard fits the stage
+   width and the controls become a scrollable strip along the bottom of the stage. */
+@media (min-width: 769px) and (max-width: 1500px) {
+  .broadcast-stage-controls { top: 106px; }
+  .broadcast-killfeed { top: 152px; }
+}
+@media (max-width: 768px) {
+  .broadcast-scoreboard { left: 8px; right: 8px; width: auto; transform: none; }
+  .broadcast-scoreboard__team { padding: 6px 8px; gap: 6px; min-width: 0; }
+  .broadcast-scoreboard__team-info { min-width: 0; }
+  .broadcast-scoreboard__team-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .broadcast-scoreboard__team-sub { display: none; }
+  .broadcast-scoreboard__center { min-width: 0; padding: 4px 8px; }
+  .broadcast-scoreboard__round-info { flex-wrap: nowrap; white-space: nowrap; gap: 4px; font-size: 8px; }
+  .broadcast-stage-controls { top: auto; bottom: 8px; left: 8px; right: 8px; overflow-x: auto; scrollbar-width: none; }
+  .broadcast-stage-controls button { flex: 0 0 auto; }
+  .broadcast-radar { top: 92px; }
 }

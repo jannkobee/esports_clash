@@ -15,6 +15,8 @@ const cards=Array.from({length:10},(_,i)=>({id:`combat-choice-${i}`,name:`Player
 const identity={players:Object.fromEntries(cards.map((p,i)=>[p.id,{id:p.id,assignments:{t:FPS_T_POSITIONS[i%5],ct:FPS_CT_POSITIONS[i%5]},personality:FPS_IDENTITY_PERSONALITIES[i],dna:generatePlayerDNA(p.id),intensity:.6,roleSuitability:.6,familiarity:.5}])),teams:{blue:{coach,plan,chemistry},red:{coach,plan,chemistry}}};
 function game(){
   const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),1337,identity);
+  // Coordination fixture: a fixed team smoke plan (the authored examples) instead of this round's calculated one.
+  sim.roundSmokes=sim.map.authoredSmokeLineups.map(l=>({...l}));
   Object.assign(sim,{phase:'live',time:20,liveElapsed:10,remaining:90});sim.pendingBuys.clear();
   for(const p of sim.actors)Object.assign(p,{hp:0,bomb:false,target:undefined,nextSense:Infinity,nextThink:Infinity,
     nextShot:0,utilityPreparation:undefined,throwAt:undefined,reload:0,channel:0,blinded:0,weaponReady:0,
@@ -199,4 +201,35 @@ test('a nearby eligible teammate can cover an opening lineup when the support ca
   sim.informationOrders[entry.team]={mode:'hold',responders:[],until:25,strength:0,reason:'Default'};
   assert.equal(sim.openingUtility(thrower),false);assert.equal(sim.openingUtility(entry),true);
   assert.equal(entry.smokeLineupId,lineup.id);
+});
+
+test('catching an opponent pants-down cancels peek/retreat and commits to the spray',()=>{
+  for(const mode of ['reloading','knife','blinded','facing-away']){
+    const {sim,p,enemy}=game();
+    Object.assign(p,{target:enemy.id,acquired:19.5,seenAt:20,decision:'prepare',hp:32,engagementShots:2,lastShot:19.9,
+      retreatUntil:21.2,peek:{home:{x:-22,z:-10},out:{x:-19,z:-10},back:true,until:22,pause:0,style:'shoulder',pumps:0,prefired:0}});
+    Object.assign(enemy,{reload:mode==='reloading'?1.2:0,equipped:mode==='knife'?'knife':'ak47',
+      blinded:mode==='blinded'?.9:0,yaw:mode==='facing-away'?0:Math.PI,speed:0,crouch:true});
+    const commit=sim.computeDuelCommitment(p,enemy,1,0);
+    assert.ok(commit.targetExposed&&commit.score>=.65,`Expected high commitment for ${mode}, got ${commit.score}`);
+    assert.equal(sim.peekShouldReturn(p),false,`Should not return behind cover when enemy is ${mode}`);
+    sim.stepDuelMovement(p,enemy,1/30);
+    assert.equal(p.peek,undefined,`Should cancel peek when catching enemy ${mode}`);
+    assert.ok(p.retreatUntil<=sim.time,`Should clear retreat when enemy is ${mode}`);
+    const beforeCommit=p.shotCommitUntil??0;
+    sim.fire(p,enemy);
+    assert.ok(p.shotCommitUntil>beforeCommit+.25,`Should extend shotCommitUntil for ${mode}`);
+  }
+});
+
+test('mid-duel utility is suppressed against a vulnerable opponent while multi-angle outnumbered risk dampens commitment',()=>{
+  const {sim,p,enemy}=game();
+  Object.assign(p,{target:enemy.id,acquired:19.5,seenAt:20,hp:40,flash:1,smoke:1,utilityAt:0});
+  Object.assign(enemy,{equipped:'flash',utilityPreparation:{kind:'flash'},speed:0});
+  sim.useUtility(p);
+  assert.equal(p.utilityPreparation,undefined,'Should keep gun out instead of throwing utility at a vulnerable enemy');
+  const solo=sim.computeDuelCommitment(p,enemy,1,0);
+  Object.assign(enemy,{equipped:'ak47',utilityPreparation:undefined,speed:3.5,crouch:false});
+  const outnumbered=sim.computeDuelCommitment(p,enemy,3,3);
+  assert.ok(outnumbered.score<solo.score&&outnumbered.score<.6,`Multi-angle outnumbered risk should dampen commitment (${outnumbered.score} vs ${solo.score})`);
 });

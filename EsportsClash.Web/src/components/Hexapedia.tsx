@@ -12,7 +12,7 @@ import {PlayerDossier} from './PlayerDossier';
 import {AwardsHall} from './AwardsHall';
 import {FpsIdentityMarks} from './FpsIdentityMarks';
 import {PersonPortrait} from './PersonPortrait';
-import {onWorldUpdate} from '../worldLive';
+import {onWorldUpdate,visibleInterval} from '../worldLive';
 import {TournamentLogo} from './TournamentLogo';
 import {LabelIcon} from './LabelIcon';
 import {PlayerCareerRecord} from './PlayerCareerRecord';
@@ -22,11 +22,18 @@ import {LaunchArchive} from './WorldMedia';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowRight, BookOpen, Brain, ChevronRight, Search, Sparkles, Trophy, Radio, Crosshair } from 'lucide-react';
 import { request, isCloudPersistenceConfigured } from '../cloudPersistence';
+import { SearchField } from './ui/SearchField';
+import { SectionNav, type SectionNavGroup } from './ui/SectionNav';
+import { FilterBar, SelectField } from './ui/FilterBar';
+import { PageHeader } from './ui/PageHeader';
+import { EmptyState, ErrorState, ListSkeleton } from './ui/States';
+import { FPS_SECTION_ICONS, ICONS, type IconKey } from './ui/icons';
 import { useAccount } from '../AccountContext';
 import { openAuthentication } from '../authNavigation';
 import { PEDIA_KINDS, PEDIA_LABELS, pediaHref, readPediaRoute, pediaTime, pediaMoney, pediaStatus, pediaTier, type PediaKind, type PediaHub, type PediaFixture, type PediaTournament, type PediaTeam, type PediaPlayer, type PediaArticle, type PediaDirectory, type PediaRow } from '../hexapedia';
 import { ClubCrest } from './ClubIdentityEditor';
-import { toScale10 } from '../marketBatchEngine';
+// Manager-facing 1–10 levels use the one owner-mandated conversion (fpsScale10).
+import {fpsScale10 as toScale10} from '../fps/fpsScale10';
 import './hexapedia.css';
 import { ReferenceIcon, ReferenceMark } from './ReferenceIcon';
 import { WorldActivity } from './WorldActivity';
@@ -50,6 +57,17 @@ function Section({id,title,children}: {id:string;title:string;children:ReactNode
   return <section id={`pedia-${id}`} className="pedia-section"><h2><LabelIcon name={title} size={19}/>{title}</h2>{children}</section>;
 }
 function TeamLink({team}: {team:{id:number;name:string;national?:boolean;flag?:string;identity?:PediaTeam['identity']}}) { return <a className="pedia-entity-link" href={pediaHref(team.national?'nations':'teams',team.id)}><>{team.national?<CountryFlag code={team.flag} name={team.name}/>:<ReferenceMark kind="teams" identity={team.identity}/>}</>{team.name}</a>; }
+const DIRECTORY_BLURBS: Partial<Record<PediaKind,string>> = {
+  tournaments: 'Every edition on the circuit, from open cups to the Crown Championship.',
+  teams: 'Club rosters, tiers and identities across the pyramid.',
+  nations: 'National teams and their international results.',
+  players: 'Scouting records for every player: roles, tendencies and verified match history.',
+  coaches: 'Coaches and the staff roles they hold.',
+  organizers: 'Organizations that publish and run tournaments.',
+  sponsors: 'Sponsors and the competitions and clubs they back.',
+  talent: 'Casters, analysts, hosts, referees and other circuit professionals.',
+  managers: 'Club managers and their records.',
+};
 function Empty({children}: {children:ReactNode}) { return <p className="pedia-empty">{children}</p>; }
 function PlayerAttributes({stats}: {stats?:Record<string,number>}) {
   return <dl className="pedia-attributes">{Object.entries(attributes).map(([key,label])=>{const value=stats?.[key];return <div key={key}><dt><LabelIcon name={label} size={13}/>{label}</dt><dd>{typeof value==='number'?<><meter min={0} max={10} value={toScale10(value)} aria-label={label}/><strong>{toScale10(value)}/10</strong></>:<span className="pedia-muted">Not published</span>}</dd></div>;})}</dl>;
@@ -120,9 +138,11 @@ function GlobalSearch() {
       .catch(()=>{if(!controller.signal.aborted)setState(local.length?'World records are temporarily unavailable.':'Search is temporarily unavailable.');}),250);
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[query]);
+  const busy=open&&query.trim().length>=2&&state==='Searching...';
   return <div className="pedia-search" ref={root} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node))setOpen(false);}}>
-    <label><Search size={16}/><span className="sr-only">Search Hexapedia</span><input type="search" maxLength={100} value={query} placeholder="Search people, FPS roles, gear..." onFocus={()=>setOpen(true)} onChange={e=>{setQuery(e.target.value);setOpen(true);}} onKeyDown={e=>{if(e.key==='Escape')setOpen(false);}} aria-expanded={open&&query.trim().length>=2} aria-controls="pedia-search-results"/></label>
-    {open&&query.trim().length>=2&&<div className="pedia-search-results" id="pedia-search-results" aria-label="Article search results"><p role="status">{state||`${rows.length} entries found`}</p>{rows.map(row=><a href={row.href} key={row.href} onClick={()=>{setOpen(false);setQuery('');}}><span>{row.name}</span><small>{row.group}</small></a>)}</div>}
+    <SearchField size="lg" label="Search Hexapedia" placeholder="Search people, FPS roles, gear…" value={query} loading={busy} controls="pedia-search-results" expanded={open&&query.trim().length>=2}
+      onFocus={()=>setOpen(true)} onChange={value=>{setQuery(value);setOpen(true);}} onEscape={()=>setOpen(false)}/>
+    {open&&query.trim().length>=2&&<div className="pedia-search-results" id="pedia-search-results" role="listbox" aria-label="Article search results"><p role="status">{state&&state!=='Searching...'?state:busy?'Searching…':`${rows.length} ${rows.length===1?'entry':'entries'} found`}</p>{rows.map(row=><a role="option" aria-selected="false" href={row.href} key={row.href} onClick={()=>{setOpen(false);setQuery('');}}><span>{row.name}</span><small>{row.group}</small></a>)}</div>}
   </div>;
 }
 
@@ -163,13 +183,22 @@ function Directory({kind}: {kind:PediaKind}) {
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[kind,query,page,tier,year,status,phase,sort,role,nationality,perPage,directoryRevision]);
   const groups=kind==='tournaments'?(sort==='lifecycle'&&!phase?TOURNAMENT_PHASES.map(([key,label])=>({key,label,rows:result?.items.filter(row=>row.lifecycle===key)??[]})):[{key:'editions',label:phase?TOURNAMENT_PHASES.find(([key])=>key===phase)?.[1]??'Editions':'Competition editions',rows:result?.items??[]}]):[];
-  return <div className="pedia-directory"><p className="pedia-eyebrow">Hexapedia directory</p><h1>{PEDIA_LABELS[kind]}</h1><div className="pedia-directory-toolbar"><label>Find {PEDIA_LABELS[kind].toLowerCase()}<input type="search" value={query} maxLength={100} onChange={event=>{setQuery(event.target.value);setPage(1);}} placeholder="Search by name"/></label><p>{result?`${result.meta.total.toLocaleString()} records`:'Loading records…'}</p></div>
-    <div className="record-filters directory-filters">{(kind==='tournaments'||kind==='teams')&&<label>Tier<select value={tier} onChange={e=>{setTier(e.target.value);setPage(1);}}><option value="">Every tier</option>{[1,2,3,4,5].map(t=><option key={t} value={t}>Tier {t}</option>)}</select></label>}{kind==='tournaments'&&<><label>Year<input type="number" min={2020} max={2200} value={year} placeholder="All years" onChange={e=>{setYear(e.target.value);setPage(1);}}/></label><label>Sort by<select value={sort} onChange={e=>{setSort(e.target.value);setPage(1);}}>{[['lifecycle','Category, then date'],['starts_asc','Starting soonest'],['starts_desc','Latest start first'],['ends_desc','Latest end first'],['name','Name'],['prize','Highest prize pool']].map(([id,label])=><option value={id} key={id}>{label}</option>)}</select></label></>}{kind==='players'&&<><label>Nationality<CountrySelect label="Nationality" value={nationality} onChange={v=>{setNationality(v);setPage(1);}}/></label></>}<label>Rows per page<select value={perPage} onChange={e=>{setPerPage(Number(e.target.value));setPage(1);}}>{[20,30,50].map(n=><option key={n}>{n}</option>)}</select></label><button className="cm-btn" onClick={()=>{setQuery('');setTier('');setYear('');setStatus('');setPhase('');setSort('lifecycle');setRole('');setNationality('');setPage(1);}}>Clear filters</button><small>Filters search the complete registry.</small></div>
+  const hasFilters=!!(query||tier||year||status||phase||role||nationality)||sort!=='lifecycle';
+  const clearFilters=()=>{setQuery('');setTier('');setYear('');setStatus('');setPhase('');setSort('lifecycle');setRole('');setNationality('');setPage(1);};
+  return <div className="pedia-directory"><PageHeader eyebrow="Hexapedia directory" icon={(kind in ICONS?kind:undefined) as IconKey|undefined} title={PEDIA_LABELS[kind]} description={DIRECTORY_BLURBS[kind]}/>
+    <FilterBar count={result?`${result.meta.total.toLocaleString()} ${result.meta.total===1?'record':'records'}`:error?'':'Loading records…'} active={hasFilters} onClear={clearFilters}>
+      <SearchField label={`Find ${PEDIA_LABELS[kind].toLowerCase()}`} placeholder="Search by name" value={query} loading={!result&&!error} onChange={value=>{setQuery(value);setPage(1);}}/>
+      {(kind==='tournaments'||kind==='teams')&&<SelectField label="Tier" value={tier} onChange={v=>{setTier(v);setPage(1);}}><option value="">Every tier</option>{[1,2,3,4,5].map(t=><option key={t} value={t}>Tier {t}</option>)}</SelectField>}
+      {kind==='tournaments'&&<><label className="ui-select-field"><span className="ui-field-label">Year</span><input type="number" min={2020} max={2200} value={year} placeholder="All years" onChange={e=>{setYear(e.target.value);setPage(1);}}/></label><SelectField label="Sort by" value={sort} onChange={v=>{setSort(v);setPage(1);}}>{[['lifecycle','Category, then date'],['starts_asc','Starting soonest'],['starts_desc','Latest start first'],['ends_desc','Latest end first'],['name','Name'],['prize','Highest prize pool']].map(([id,label])=><option value={id} key={id}>{label}</option>)}</SelectField></>}
+      {kind==='players'&&<div className="ui-select-field"><span className="ui-field-label">Nationality</span><CountrySelect label="Nationality" value={nationality} onChange={v=>{setNationality(v);setPage(1);}}/></div>}
+      <SelectField label="Rows per page" value={perPage} onChange={v=>{setPerPage(Number(v));setPage(1);}}>{[20,30,50].map(n=><option key={n} value={n}>{n}</option>)}</SelectField>
+    </FilterBar>
     {kind==='tournaments'&&<TournamentPhaseFilters value={phase} counts={result?.counts} onChange={v=>{setPhase(v);setPage(1);}}/>}
     {kind==='talent'&&<nav className="talent-role-chips" aria-label="Talent roles">{['','caster','analyst','streamer','host','referee','observer','manager'].map(role=><button key={role} className={query===role?'selected':''} onClick={()=>{setQuery(role);setPage(1);}}>{role?<RoleLabel role={role}/>:'Everyone'}</button>)}</nav>}
-    {error&&<p role="alert" className="pedia-empty">{error}</p>}
-    {result&&!result.items.length&&<Empty>No matching records. Try another name or return to the main page.</Empty>}
-    {kind==='tournaments'?groups.filter(g=>g.rows.length).map(g=><Section key={g.key} id={g.key} title={g.label}><TournamentTable events={g.rows as PediaTournament[]}/></Section>):kind==='teams'?<TeamCards teams={(result?.items??[]) as PediaTeam[]}/>:<div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Name</th><th>Information</th></tr></thead><tbody>{result?.items.map(row=><tr key={row.id}><th scope="row"><a href={pediaHref(kind,row.id)}>{kind==='players'?<WorldPlayerPortrait id={String(row.id)} name={row.name} appearance={row.presentation?.appearance} size={48}/>:kind==='talent'||kind==='coaches'||kind==='managers'?<PersonPortrait id={kind==='talent'?'talent-'+row.id:kind==='managers'?'manager-'+row.id:'coach-'+row.id} name={row.name} role={row.role??'staff'} size={48}/>:kind==='nations'?<CountryFlag code={row.flag} name={row.name}/>:<ReferenceMark kind={kind} id={row.id} name={row.name}/>}<span>{row.name}{row.personal_details&&<small className="directory-real-name">{row.personal_details.real_name}</small>}</span></a></th><td><RecordDescription kind={kind} row={row}/>{kind==='players'&&(row.fpsIdentity?<FpsIdentityMarks profile={row.fpsIdentity}/>:null)} {row.personal_details&&<small className="directory-residence">{row.personal_details.residence.city}, {row.personal_details.residence.country} · {row.personal_details.languages.join(', ')}</small>}</td></tr>)}</tbody></table></div>}
+    {error&&<ErrorState title="Records could not be loaded" message={error} onRetry={()=>setDirectoryRevision(v=>v+1)}/>}
+    {!result&&!error&&<ListSkeleton rows={8} label="Loading records"/>}
+    {result&&!result.items.length&&<EmptyState title="No matching records" action={hasFilters?<button type="button" className="cm-btn" onClick={clearFilters}>Clear filters</button>:<a className="cm-btn" href={pediaHref()}>Back to Hexapedia</a>}>{hasFilters?'Nothing matches these filters. Try another name or clear the filters.':'This directory has no records yet.'}</EmptyState>}
+    {kind==='tournaments'?groups.filter(g=>g.rows.length).map(g=><Section key={g.key} id={g.key} title={g.label}><TournamentTable events={g.rows as PediaTournament[]}/></Section>):kind==='teams'?(result?.items.length?<TeamCards teams={result.items as PediaTeam[]}/>:null):result?.items.length?<div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Name</th><th>Information</th></tr></thead><tbody>{result?.items.map(row=><tr key={row.id}><th scope="row"><a href={pediaHref(kind,row.id)}>{kind==='players'?<WorldPlayerPortrait id={String(row.id)} name={row.name} appearance={row.presentation?.appearance} size={48}/>:kind==='talent'||kind==='coaches'||kind==='managers'?<PersonPortrait id={kind==='talent'?'talent-'+row.id:kind==='managers'?'manager-'+row.id:'coach-'+row.id} name={row.name} role={row.role??'staff'} size={48}/>:kind==='nations'?<CountryFlag code={row.flag} name={row.name}/>:<ReferenceMark kind={kind} id={row.id} name={row.name}/>}<span>{row.name}{row.personal_details&&<small className="directory-real-name">{row.personal_details.real_name}</small>}</span></a></th><td><RecordDescription kind={kind} row={row}/>{kind==='players'&&(row.fpsIdentity?<FpsIdentityMarks profile={row.fpsIdentity}/>:null)} {row.personal_details&&<small className="directory-residence">{row.personal_details.residence.city}, {row.personal_details.residence.country} · {row.personal_details.languages.join(', ')}</small>}</td></tr>)}</tbody></table></div>:null}
     {result&&result.meta.last_page>1&&<div className="pedia-pagination"><button disabled={page<=1} onClick={()=>setPage(value=>value-1)}>Previous</button><span>Page {page} of {result.meta.last_page}</span><button disabled={page>=result.meta.last_page} onClick={()=>setPage(value=>value+1)}>Next</button></div>}
   </div>;
 }
@@ -229,6 +258,20 @@ function ArticleBody({article,onWatch,register,joining}: {article:PediaArticle;o
   </>;
 }
 
+function pediaGroups(route:{kind?:PediaKind|null;page?:string|null}):SectionNavGroup[] {
+  return [
+    {id:'overview',label:'Start here',description:'Overview and how the game works',items:[
+      {key:'main',label:'Main page',href:pediaHref(),icon:'pediaHome',current:!route.kind&&!route.page},
+      {key:'guide',label:'Game guide',href:'#hexapedia/guide',icon:'guide',current:route.page==='guide'},
+    ]},
+    {id:'reference',label:'Game reference',description:'Roles, weapons, maps and rules',items:(Object.keys(FPS_REFERENCE_SECTIONS) as FpsReferenceSection[]).map(key=>({key,label:FPS_REFERENCE_SECTIONS[key],href:fpsReferenceHref(key),icon:FPS_SECTION_ICONS[key],current:route.page===key}))},
+    {id:'records',label:'World records',description:'Teams, players and tournaments',items:[
+      ...PEDIA_KINDS.filter(kind=>kind in ICONS).map(kind=>({key:kind,label:PEDIA_LABELS[kind],href:pediaHref(kind),icon:kind as IconKey,current:route.kind===kind})),
+      {key:'awards',label:'Laurels',href:'#hexapedia/awards',icon:'laurels' as IconKey,current:route.page==='awards'},
+    ]},
+  ];
+}
+
 export function Hexapedia({onWatch}:Props) {
   const {session}=useAccount();
   const [route,setRoute]=useState(readPediaRoute);
@@ -248,8 +291,8 @@ export function Hexapedia({onWatch}:Props) {
     const load=()=>void request<{data:PediaHub|PediaArticle}>(path,null,{signal:controller.signal})
       .then(result=>{if(controller.signal.aborted)return;setError('');if(route.id){const next=result.data as PediaArticle;const record={...next.record};for(const key of ['teams','roster','tournaments','fixtures','coverage','posts','appointments','talent'] as const){if(record[key]!==undefined)(record as Record<string,unknown>)[key]=apiRecords(record[key]);}setArticle({...next,record});}else{const next=result.data as PediaHub;setHub({...next,clubs:apiRecords(next.clubs),players:apiRecords(next.players),events:apiRecords(next.events),fixtures:apiRecords(next.fixtures),standings:apiRecords(next.standings)});}})
       .catch(problem=>{if(!controller.signal.aborted)setError((problem as Error).message);});
-    load();const stopLive=onWorldUpdate(['fixtures','clubs','players','competitions','records','awards'],load);const timer=window.setInterval(load,60000);
-    return()=>{controller.abort();window.clearInterval(timer);stopLive();};
+    load();const stopLive=onWorldUpdate(['fixtures','clubs','players','competitions','records','awards'],load);const stopTimer=visibleInterval(load,60000);
+    return()=>{controller.abort();stopTimer();stopLive();};
   },[route.kind,route.id,route.page,route.error,refresh,retry]);
   useEffect(()=>{if(article&&route.id===String(article.record.id))document.title=`${article.record.name} · Hexapedia`;else document.title=(route.page?({...FPS_REFERENCE_SECTIONS,guide:'Game guide',awards:'Hexatrick Laurels'})[route.page]:route.kind?PEDIA_LABELS[route.kind]:'Hexapedia')+' | Hexatrick';},[article,route.kind,route.id,route.page]);
   async function register(){
@@ -264,7 +307,7 @@ export function Hexapedia({onWatch}:Props) {
   const sections:[string,string][]=route.kind?[...(embedded?[['overview','Overview']] as [string,string][]:sectionIds[route.kind]??[]),['sources','Record sources']]:[];
   return <div className="avatarpedia">
     <header className="pedia-masthead"><a href={pediaHref()} className="pedia-brand"><BookOpen size={26} strokeWidth={1.4}/><span>Hexapedia</span></a><GlobalSearch/></header>
-    <nav className="pedia-navigation pedia-navigation--unified" aria-label="Hexapedia navigation"><a href={pediaHref()} aria-current={!route.kind&&!route.page?'page':undefined}><BookOpen size={14}/> Main page</a>{Object.entries(FPS_REFERENCE_SECTIONS).map(([key,label])=><a key={key} href={fpsReferenceHref(key as FpsReferenceSection)} aria-current={route.page===key?'page':undefined}><Crosshair size={14}/>{label}</a>)}{PEDIA_KINDS.map(kind=><a href={pediaHref(kind)} key={kind} aria-current={route.kind===kind?'page':undefined}><ReferenceIcon kind={kind} size={14}/>{PEDIA_LABELS[kind]}</a>)}{[['awards','Laurels'],['guide','Game guide']].map(([page,label])=><a key={page} className="pedia-resource-tab" href={'#hexapedia/'+page} aria-current={route.page===page?'page':undefined}><LabelIcon name={label}/>{label}</a>)}</nav>
+    <SectionNav label="Hexapedia" activeGroup={isFpsReferenceSection(route.page)?'reference':route.kind||route.page==='awards'?'records':'overview'} groups={pediaGroups(route)}/>
     {isFpsReferenceSection(route.page)?<FpsHexapediaPage key={`${route.page}:${route.id??''}`} section={route.page} itemId={route.id}/>:route.error?<div className="pedia-empty" role="alert"><h1>Record not found</h1><p>{route.error}</p><a href={pediaHref()}>Return to Hexapedia</a></div>:route.page==='awards'?<AwardsHall/>:route.page==='guide'?<GameGuide/>:!isCloudPersistenceConfigured()?<Empty>The reference server is unavailable. Please open the connected application.</Empty>:error?<div className="pedia-empty" role="alert"><p>We could not load this Hexapedia record.</p><p>{error}</p><button className="cm-btn mt-3" onClick={()=>setRetry(value=>value+1)}>Try again</button> <a href={pediaHref()}>Main page</a></div>:route.kind&&route.id?article?<>
       <div className="pedia-article-heading"><p><a href={pediaHref()}>Hexapedia</a><ChevronRight size={12}/><a href={pediaHref(route.kind)}>{PEDIA_LABELS[route.kind]}</a></p><h1>{article.record.name}</h1><span>Overview · current record</span></div>
       <div className="pedia-article-tabs"><Contents sections={sections}/></div>

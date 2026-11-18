@@ -14,6 +14,7 @@ import {
   create3DWeaponMesh,
   createTacticalOperativeMesh,
   createViewmodelMesh,
+  updateOperativeUtilityCarry,
 } from './fps/fpsLiveViewer.ts';
 import { FpsLiveSimulation } from './fps/fpsLiveSimulation.ts';
 import { FPS_IDENTITY_PERSONALITIES, generatePlayerDNA } from './fps/fpsIdentity.ts';
@@ -459,4 +460,175 @@ test('HE grenade detonation audio is synthesized separately from the C4 bomb exp
   playedBuffers.length = 0;
   audio.playBombExplode(fakeContext, 1, 0);
   assert.equal(playedBuffers.includes(mockExplosionBuffer), true, 'C4 bomb detonation continues to use explosionBuffer');
+});
+
+test('rig grenades follow the inventory: none carried, none shown; the one in hand leaves the pouch', () => {
+  const f = createSceneFixture();
+  try {
+    for (const force of ['ct', 't']) {
+      const op = createTacticalOperativeMesh(force, `carry-${force}`, f.scene, f.getMat);
+      const shown = () => Object.fromEntries(op.utilityCarry.map((c) => [c.kind, c.mesh.isEnabled(false)]));
+      assert.deepEqual(op.utilityCarry.map((c) => c.kind).sort(), ['flash', 'he', 'incendiary', 'smoke']);
+      for (const c of op.utilityCarry) {
+        assert.ok(c.mesh.name.includes(`-${force}-kit-`));
+        assert.notEqual(c.mesh.name.endsWith('_merged'), true);
+      }
+      const player = { hp: 100, equipped: 'rifle', smoke: 0, flash: 0, he: 0, incendiary: 0 };
+      updateOperativeUtilityCarry(op, player);
+      assert.deepEqual(shown(), { smoke: false, flash: false, he: false, incendiary: false });
+      updateOperativeUtilityCarry(op, { ...player, smoke: 1, flash: 2 });
+      assert.deepEqual(shown(), { smoke: true, flash: true, he: false, incendiary: false });
+      updateOperativeUtilityCarry(op, { ...player, smoke: 1, flash: 1, equipped: 'smoke' });
+      assert.deepEqual(shown(), { smoke: false, flash: true, he: false, incendiary: false });
+      updateOperativeUtilityCarry(op, { ...player, hp: 0, smoke: 1 });
+      assert.equal(shown().smoke, false);
+    }
+  } finally {
+    f.dispose();
+  }
+});
+
+test('anatomically sculpted 3D human operatives mirror asymmetric limbs, sculpt front/back torso and facial skull contours', () => {
+  const f = createSceneFixture();
+  try {
+    const op = createTacticalOperativeMesh('ct', 'anat-ct', f.scene, f.getMat, 1);
+    const meshes = op.root.getChildMeshes();
+    const posOf = (mesh) => Array.from(mesh.getVerticesData(VertexBuffer.PositionKind));
+
+    // 1. Torso front (+z chest) differs from back (-z scapulae / spine)
+    const torsoPts = posOf(op.torso);
+    let frontMaxZ = 0, backMinZ = 0;
+    for (let i = 0; i < torsoPts.length; i += 3) {
+      frontMaxZ = Math.max(frontMaxZ, torsoPts[i + 2]);
+      backMinZ = Math.min(backMinZ, torsoPts[i + 2]);
+    }
+    assert.ok(frontMaxZ > Math.abs(backMinZ) + 0.008, `pectoral projection (+z=${frontMaxZ.toFixed(4)}) exceeds back (${backMinZ.toFixed(4)})`);
+
+    // 2. Left and right thighs & combat boots mirror medial/lateral 3D asymmetry
+    const leftThigh = posOf(op.leftLeg), rightThigh = posOf(op.rightLeg);
+    let leftMinX = Infinity, leftMaxX = -Infinity, rightMinX = Infinity, rightMaxX = -Infinity;
+    for (let i = 0; i < rightThigh.length; i += 3) {
+      leftMinX = Math.min(leftMinX, leftThigh[i]);
+      leftMaxX = Math.max(leftMaxX, leftThigh[i]);
+      rightMinX = Math.min(rightMinX, rightThigh[i]);
+      rightMaxX = Math.max(rightMaxX, rightThigh[i]);
+    }
+    assert.ok(Math.abs(leftMinX + rightMaxX) < 1e-4 && Math.abs(leftMaxX + rightMinX) < 1e-4, 'mirrored thigh extents are exact X reflections');
+    assert.ok(Math.abs(rightMaxX - Math.abs(rightMinX)) > 0.002, 'thigh has 3D outer/inner muscle asymmetry');
+
+    const bootL = meshes.find((m) => m.name === 'anat-ct-boot-l');
+    const bootR = meshes.find((m) => m.name === 'anat-ct-boot-r');
+    assert.ok(bootL && bootR);
+    const bootLPts = posOf(bootL), bootRPts = posOf(bootR);
+    let asymDiff = 0;
+    for (let i = 0; i < bootRPts.length; i += 3) asymDiff = Math.max(asymDiff, Math.abs(bootLPts[i] - bootRPts[i]));
+    assert.ok(asymDiff > 0.004, 'left/right combat boots sculpt asymmetric medial toe sweeps');
+
+    // 3. Head skull sculpts brow/cheek/chin projection (+z) differently from occiput/nape (-z)
+    const headPts = posOf(op.head);
+    let headFrontZ = 0, headBackZ = 0;
+    for (let i = 0; i < headPts.length; i += 3) {
+      headFrontZ = Math.max(headFrontZ, headPts[i + 2]);
+      headBackZ = Math.min(headBackZ, headPts[i + 2]);
+    }
+    assert.ok(Math.abs(headFrontZ - Math.abs(headBackZ)) > 0.003, 'head features asymmetric anterior face vs posterior skull');
+
+    // 4. SAS gas-mask CT variant builds thigh harness & sculpted respirator within mesh budget
+    const sas = createTacticalOperativeMesh('ct', 'anat-sas', f.scene, f.getMat, 0);
+    assert.equal(sas.variantStyle?.code, 'sas-fast');
+    assert.ok(sas.root.getChildMeshes().length < 75, 'SAS gas-mask kit stays within mesh budget');
+    assert.ok(sas.headPivot.getChildMeshes().some((m) => m.isEnabled()), 'SAS head pivot carries merged respirator parts');
+  } finally {
+    f.dispose();
+  }
+});
+
+test('1st-person POV viewmodels use sculpted cylindrical forearms, contoured hands, and beveled AK/M4 receivers', () => {
+  const f = createSceneFixture();
+  try {
+    const akVm = createViewmodelMesh('ak47', 'red', 'vm-pov-ak', f.scene, f.getMat, true);
+    const meshes = akVm.getChildMeshes();
+    const forearmL = meshes.find((m) => m.name === 'vm-pov-ak-l-forearm');
+    const forearmR = meshes.find((m) => m.name === 'vm-pov-ak-r-forearm');
+    const palmL = meshes.find((m) => m.name === 'vm-pov-ak-l-palm');
+    const knuckleL = meshes.find((m) => m.name === 'vm-pov-ak-l-knuckle');
+    const fingersL = meshes.find((m) => m.name === 'vm-pov-ak-l-fingers');
+    assert.ok(forearmL && forearmR && palmL && knuckleL && fingersL);
+
+    const vCount = (m) => (m.getVerticesData(VertexBuffer.PositionKind)?.length ?? 0) / 3;
+    assert.ok(vCount(forearmL) > 80, `1P left forearm must be contoured 3D capsule geometry (got ${vCount(forearmL)} verts)`);
+    assert.ok(vCount(forearmR) > 80, `1P right forearm must be contoured 3D capsule geometry (got ${vCount(forearmR)} verts)`);
+    assert.ok(vCount(palmL) > 24 && vCount(fingersL) > 24, '1P hand and finger clusters are rounded 3D meshes, not raw boxes');
+
+    assert.ok(meshes.some((m) => m.name === 'vm-pov-ak-gun-dust-cover'), 'AK-47 viewmodel has sculpted top dust cover');
+    assert.ok(meshes.some((m) => m.name === 'vm-pov-ak-gun-upper-guard'), 'AK-47 viewmodel has contoured upper handguard');
+    assert.ok(meshes.some((m) => m.name === 'vm-pov-ak-gun-gas-block'), 'AK-47 includes slanted gas block');
+    assert.ok(meshes.some((m) => m.name === 'vm-pov-ak-gun-cleaning-rod'), 'AK-47 includes under-barrel cleaning rod');
+    assert.ok(meshes.some((m) => m.name.includes('tritium')), 'firearms include 3-dot tritium iron sight beads');
+    assert.ok(meshes.some((m) => m.name === 'vm-pov-ak-l-watch-case'), 'left wrist carries 3D tactical chronograph');
+    assert.ok(meshes.some((m) => m.name === 'vm-pov-ak-l-digit-0') && meshes.some((m) => m.name === 'vm-pov-ak-r-digit-0'),
+      'both hands sculpt individual articulated finger digits');
+    assert.equal(meshes.some((m) => m.name.includes('top-rail')), false, 'AK-47 omits bulky boxy Picatinny studs along dust cover');
+
+    const m4Vm = createViewmodelMesh('m4a1_s', 'blue', 'vm-pov-m4', f.scene, f.getMat, false);
+    const m4Meshes = m4Vm.getChildMeshes();
+    assert.ok(m4Meshes.some((m) => m.name === 'vm-pov-m4-gun-upper-crown'), 'M4A1-S viewmodel has rounded upper receiver crown');
+    assert.ok(m4Meshes.some((m) => m.name === 'vm-pov-m4-gun-charging-handle'), 'M4A1-S includes T-charging handle');
+    assert.ok(m4Meshes.some((m) => m.name === 'vm-pov-m4-gun-forward-assist'), 'M4A1-S includes forward assist');
+    assert.ok(m4Meshes.some((m) => m.name === 'vm-pov-m4-r-trigger-finger'), 'right hand includes trigger finger geometry');
+    assert.ok(meshes.every((m) => m.renderingGroupId === 1) && m4Meshes.every((m) => m.renderingGroupId === 1),
+      '1st-person viewmodels render in foreground group 1 above smoke depth');
+  } finally {
+    f.dispose();
+  }
+});
+
+test('crouching, planting and defusing keep headPivot cleanly above spine and aligned with forward neck tilt', () => {
+  const f = createSceneFixture();
+  try {
+    const op = createTacticalOperativeMesh('t', 'crouch-neck-t', f.scene, f.getMat, 0);
+    const gun = create3DWeaponMesh('glock', 'crouch-gun', f.scene, f.getMat, true);
+    const view = { operative: op, force: 't', gunNode: gun, gunWeapon: 'glock' };
+    const base = { ...makeBasePlayer('t', 'crouch-t'), equipped: 'glock', weapon: 'glock' };
+
+    for (let i = 0; i < 35; i++) {
+      applyOperativeAnimation(view, { ...base, crouch: true }, 1 + i / 60, 1 / 60);
+    }
+    const crouchSep = op.headPivot.position.y - op.spine.position.y;
+    assert.ok(crouchSep >= 0.42, `crouched head-spine separation ${crouchSep.toFixed(3)}m must keep neck clear of torso`);
+    assert.ok(op.headPivot.position.z > 0.04, `crouched head z (${op.headPivot.position.z.toFixed(3)}) tracks forward spine lean`);
+
+    op.poseMemory.initialized = false;
+    for (let i = 0; i < 20; i++) {
+      applyOperativeAnimation(view, { ...base, equipped: 'bomb', weapon: 'glock', crouch: true, channel: 2.0 }, 3 + i / 60, 1 / 60);
+    }
+    assert.ok(op.headPivot.position.y - op.spine.position.y >= 0.40, 'planting head stays above tilted torso');
+    assert.ok(op.headPivot.position.z > 0.12, `planting head z (${op.headPivot.position.z.toFixed(3)}) tracks forward plant bend`);
+  } finally {
+    f.dispose();
+  }
+});
+
+test('semi-auto pistols animate slide blowback on firing and settle cleanly between shots', () => {
+  const f = createSceneFixture();
+  try {
+    const op = createTacticalOperativeMesh('ct', 'recoil-ct', f.scene, f.getMat, 0);
+    const deagle = create3DWeaponMesh('deagle', 'recoil-deagle', f.scene, f.getMat, false);
+    const view = { operative: op, force: 'ct', gunNode: deagle, gunWeapon: 'deagle' };
+    const meta = deagle.metadata;
+    assert.ok(meta?.slide && meta?.slideHomeZ !== undefined, '3D Deagle tracks upper slide mesh for blowback');
+
+    const base = { ...makeBasePlayer('ct', 'recoil-ct'), equipped: 'deagle', weapon: 'deagle', lastShot: 1.0 };
+    applyOperativeAnimation(view, base, 1.03, 1 / 60);
+    const kickedZ = meta.slide.position.z;
+    assert.ok(kickedZ < meta.slideHomeZ - 0.015, `Deagle slide blows backward cleanly at t+0.03s (${kickedZ.toFixed(4)} vs home ${meta.slideHomeZ.toFixed(4)})`);
+
+    applyOperativeAnimation(view, base, 1.30, 1 / 60);
+    assert.ok(Math.abs(meta.slide.position.z - meta.slideHomeZ) < 1e-5, 'Deagle slide returns flush to rest position after cycle');
+
+    const vm = createViewmodelMesh('usp_s', 'blue', 'vm-recoil-usp', f.scene, f.getMat, false);
+    assert.ok(vm.metadata?.slide && vm.metadata?.slideHomeZ !== undefined, '1st-person pistol viewmodels expose slide metadata for blowback');
+  } finally {
+    f.dispose();
+  }
 });

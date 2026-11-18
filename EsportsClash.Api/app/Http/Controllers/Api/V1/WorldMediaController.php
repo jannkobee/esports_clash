@@ -77,14 +77,14 @@ class WorldMediaController extends Controller
         $relations=['match','homeClub:id,name,identity,tier','awayClub:id,name,identity,tier','homeNation:id,name','awayNation:id,name'];
         $liveQuery=(clone $base)->where('kickoff_at','<=',now())->whereHas('match',fn($q)=>$q->where('status','running')->where('spectator_ready',true));
         $liveTotal=(clone $liveQuery)->count();$live=$liveQuery->with($relations)->orderByDesc('kickoff_at')->limit(30)->get();
-        $upcoming=(clone $base)->where('kickoff_at','>=',now())->where(fn($q)=>$q->whereNull('match_id')->orWhereHas('match',fn($q)=>$q->where('status','allocated')))->with($relations)->orderBy('kickoff_at')->paginate(20,['*'],'upcoming_page',$v['upcoming_page']??1);
+        $upcoming=(clone $base)->where(fn($q)=>$q->where(fn($q)=>$q->where('kickoff_at','>=',now())->whereNull('match_id'))->orWhereHas('match',fn($q)=>$q->where('status','allocated')))->with($relations)->orderBy('kickoff_at')->paginate(20,['*'],'upcoming_page',$v['upcoming_page']??1);
         $replays=(clone $base)->where('kickoff_at','<=',now())->whereHas('match',fn($q)=>$q->whereIn('status',['completed','interrupted'])->where('spectator_ready',true))->with($relations)->orderByDesc('kickoff_at')->paginate(20,['*'],'replay_page',$v['replay_page']??1);
         $fixtures=$live->concat($upcoming->getCollection())->concat($replays->getCollection());
         $events=ClubTournament::whereIn('id',$fixtures->pluck('tournament_id')->filter())->get()->keyBy('id');
         $counts=DB::table('world_broadcast_presence')->where('seen_at','>',now()->subSeconds(90))->selectRaw('match_id, COUNT(*) AS viewers')->groupBy('match_id')->pluck('viewers','match_id');
         $crews=DB::table('fixture_talent_assignments as a')->join('world_media_personalities as t','t.id','=','a.talent_id')->whereIn('a.fixture_id',$fixtures->pluck('id'))->get(['a.fixture_id','t.id','t.name','a.role'])->groupBy('fixture_id');
         $project=function($f)use($events,$counts,$crews){$m=$f->match;$event=$events[$f->tournament_id]??null;
-            return ['fixture_id'=>$f->id,'competition'=>$f->competition,'tournament_id'=>$f->tournament_id,'kickoff_at'=>$f->kickoff_at,'status'=>$m?->status??'scheduled',
+            return ['fixture_id'=>$f->id,'competition'=>$f->competition,'tournament_id'=>$f->tournament_id,'kickoff_at'=>$f->kickoff_at,'status'=>$m?->status==='allocated'&&$f->kickoff_at->isPast()?'delayed':($m?->status??'scheduled'),
                 'home'=>$f->homeClub?->only(['id','name','identity','tier'])??($f->homeNation?->only(['id','name'])?['id'=>$f->homeNation->id,'name'=>$f->homeNation->name,'national'=>true]:null),'away'=>$f->awayClub?->only(['id','name','identity','tier'])??($f->awayNation?->only(['id','name'])?['id'=>$f->awayNation->id,'name'=>$f->awayNation->name,'national'=>true]:null),
                 'watch_id'=>$m?->canSpectate()?$m->id:null,'viewers'=>$m?(int)($counts[$m->id]??0):0,'featured'=>$event?->accreditation==='official'||min($f->homeClub?->tier??5,$f->awayClub?->tier??5)===1,
                 'provenance'=>$event?->provenance??'verified','crew'=>$crews[$f->id]??[],'score'=>$m?->status==='completed'?['blue'=>$m->result['report']['blueKills']??null,'red'=>$m->result['report']['redKills']??null]:null,
@@ -109,13 +109,6 @@ class WorldMediaController extends Controller
     public function report(int $id){
         $f=ClubFixture::with(['match','homeClub:id,name','awayClub:id,name','homeNation:id,name','awayNation:id,name'])->findOrFail($id);$m=$f->match;
         abort_unless($m?->canSpectate()&&$m->status==='completed',404,'A public verified report is not available yet.');
-        $r=$m->result['report'];$players=[];
-        foreach(['blue','red'] as $side)foreach($m->plan[$side] as $i=>$slot){$p=$m->plan['player_profiles'][$slot['instance_id']]??[];
-            $draft=$r['draft'][$side][$i]??[];$players[]=['id'=>$slot['instance_id'],'name'=>$p['name']??$m->plan['player_identities'][$slot['instance_id']]??$draft['player']['name']??'Archived player',
-                'team'=>$side,'nationality'=>$p['nationality']??null,'avatar'=>$draft['champion']['displayName']??$draft['champion']['name']??$slot['avatar_id']];}
-        return ['data'=>['fixture_id'=>$f->id,'competition'=>$f->competition,'kickoff_at'=>$f->kickoff_at,'started_at'=>$m->started_at,'completed_at'=>$m->completed_at,'match_id'=>$m->id,
-            'clubs'=>$m->plan['clubs'],'winner'=>$m->result['winner'],'duration_seconds'=>$r['durationSeconds'],'blue_kills'=>$r['blueKills']??null,'red_kills'=>$r['redKills']??null,
-            'terminal_nexus'=>$m->result['terminal_nexus'],'players'=>$players,'events'=>array_map(fn($e)=>array_intersect_key($e,array_flip(['second','text','type','sequence','tick'])),$r['events']??[]),
-            'provenance'=>'verified','execution'=>array_intersect_key($m->result['execution']??[],array_flip(['mode','from_second','notice'])),'tournament_id'=>$f->tournament_id]];
+        return ['data'=>app(\App\Services\MatchDebrief::class)->public($f,$m)];
     }
 }

@@ -23,7 +23,7 @@ function safeDestination(value:string):string{
   const club=params.get('club');if(club&&['calendar','lineup','identity','friendly'].includes(club))allowed.set('club',club);
   const competitions=params.get('competitions');if(competitions&&['circuit','calendar','rankings','nations','organizer'].includes(competitions))allowed.set('competitions',competitions);
  }
- if(section==='market'){const tab=params.get('tab');if(tab&&['auctions','sell','trades','academy'].includes(tab))allowed.set('tab',tab);const player=params.get('player');if(player&&/^[a-f0-9-]{36}$/i.test(player))allowed.set('player',player);}
+ if(section==='market'){const tab=params.get('tab');if(tab&&['auctions','sell','trades','academy','scouting'].includes(tab))allowed.set('tab',tab);const player=params.get('player');if(player&&/^[a-f0-9-]{36}$/i.test(player))allowed.set('player',player);}
  if(section==='squad'){const tab=params.get('tab');if(tab&&['lineup','training','staff'].includes(tab))allowed.set('tab',tab);}
  if(section==='home'){const office=params.get('office');if(office&&['inbox','reports'].includes(office))allowed.set('office',office);}
  return canonicalRoute(section+(allowed.size?'?'+allowed.toString():''));

@@ -1,7 +1,8 @@
 import {PlayerForm} from './PlayerForm';
 import {FPS_ATTRIBUTE_LABELS} from '../fps/fpsPersonality';
 import { pediaHref, pediaMoney, pediaTime, type PlayerCareerData } from '../hexapedia';
-import { toScale10 } from '../marketBatchEngine';
+// Manager-facing 1–10 levels use the one owner-mandated conversion (fpsScale10).
+import {fpsScale10 as toScale10} from '../fps/fpsScale10';
 import { LabelIcon } from './LabelIcon';
 import { ratingWord } from '../matchRatingScale';
 

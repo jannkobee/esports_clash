@@ -1,0 +1,8 @@
+<!doctype html><html><body style="margin:0"><iframe id="f" src="./index.html?view=home" width="390" height="2000" style="border:0"></iframe>
+<script>
+setTimeout(()=>{const w=document.getElementById('f').contentWindow,d=w.document;const h=d.querySelector('.fx-hero');const hits=[];
+const walk=(rules,media)=>{for(const r of rules){if(r.cssRules&&!r.selectorText){if(!r.media||w.matchMedia(r.media.mediaText).matches)walk(r.cssRules,r.media?.mediaText);continue;}
+ if(r.selectorText&&r.style&&r.style.gridTemplateColumns){try{if(h.matches(r.selectorText))hits.push((media||'')+' '+r.selectorText+' => '+r.style.gridTemplateColumns);}catch(e){}}}};
+for(const s of d.styleSheets){try{walk(s.cssRules);}catch(e){}}
+document.body.setAttribute('data-probe',JSON.stringify(hits));},6000);
+</script></body></html>

@@ -8,7 +8,8 @@ import type {ExchangeResult} from './TransferAuctionBoard';
 import {ExchangeSkills} from './TransferAuctionBoard';
 import {WorldPlayerPortrait} from './WorldPlayerPortrait';
 import {pediaHref,pediaMoney} from '../hexapedia';
-import {toScale10} from '../marketBatchEngine';
+// Manager-facing 1–10 levels use the one owner-mandated conversion (fpsScale10).
+import {fpsScale10 as toScale10} from '../fps/fpsScale10';
 
 export function ReserveTransferListing({players,busy,onList}:{players:PlayerCard[];busy:boolean;onList:(id:string,opening:number)=>Promise<ExchangeResult>}){
   const [selected,setSelected]=useState(()=>new URLSearchParams(location.hash.split('?')[1]??'').get('player')??players[0]?.id??''),[price,setPrice]=useState('50'),[error,setError]=useState('');

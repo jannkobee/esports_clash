@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class ClubMatchHistory {
  private function base(int $club){return ClubFixture::where(fn($q)=>$q->where('home_club_id',$club)->orWhere('away_club_id',$club));}
- private function verified($q){return $q->where('status','completed')->whereNotNull('result_hash')->where(fn($q)=>$q->where(fn($q)=>$q->where('result->winner','blue')->where('result->terminal_nexus->red',true))->orWhere(fn($q)=>$q->where('result->winner','red')->where('result->terminal_nexus->blue',true)));}
+ private function verified($q){return \App\Models\OnlineMatch::constrainVerified($q);}
  private function dateFilter($q,array $filters,string $column):void {
   if($filters['from']??null)$q->where($column,'>=',CarbonImmutable::parse($filters['from'],'Asia/Manila')->startOfDay()->utc());
   if($filters['to']??null)$q->where($column,'<',CarbonImmutable::parse($filters['to'],'Asia/Manila')->startOfDay()->addDay()->utc());
@@ -31,10 +31,10 @@ class ClubMatchHistory {
   $this->dateFilter($q,$filters,'kickoff_at');
   $page=$q->with(['match','tournament','homeClub:id,name,identity','awayClub:id,name,identity'])->orderBy('kickoff_at',($filters['sort']??'newest')==='oldest'?'asc':'desc')->orderByDesc('id')->paginate($filters['per_page']??20,['*'],'page',$filters['page']??1);
   $archiveLinks=DB::table('launch_history_games')->whereIn('fixture_id',$page->getCollection()->pluck('id'))->where('status','statistical_exhibition')->pluck('id','fixture_id');
-  $page->setCollection($page->getCollection()->map(function($f)use($club,$archiveLinks){$m=$f->match;$winner=$m?->status==='completed'?($m->result['winner']??null):null;$confirmed=in_array($winner,['blue','red'],true)&&$m->result_hash&&($m->result['terminal_nexus'][$winner==='blue'?'red':'blue']??false)===true;$ownSide=$f->home_club_id===$club->id?'blue':'red';
+  $page->setCollection($page->getCollection()->map(function($f)use($club,$archiveLinks){$m=$f->match;$winner=$m?->status==='completed'?($m->result['winner']??null):null;$confirmed=$m&&$m->verifiedWinner()!==null;$ownSide=$f->home_club_id===$club->id?'blue':'red';
    return ['id'=>$f->id,'competition'=>$f->competition,'tournament_id'=>$f->tournament_id,'kickoff_at'=>$f->kickoff_at,'completed_at'=>$m?->completed_at,'home'=>['id'=>$f->home_club_id,'name'=>$m?->plan['clubs']['blue']??$f->homeClub?->name,'identity'=>$m?->plan['club_identities']['blue']??$f->homeClub?->identity],'away'=>['id'=>$f->away_club_id,'name'=>$m?->plan['clubs']['red']??$f->awayClub?->name,'identity'=>$m?->plan['club_identities']['red']??$f->awayClub?->identity],
     'status'=>$f->hold_reason?'review':($m?->status??'scheduled'),'scope'=>$f->tournament?(CommunityCups::isFun($f->tournament)?'community':'tournament'):(in_array($f->competition,['Club Friendly','Scrimmage'])?'scrimmage':'club_fixture'),
-    'verified'=>(bool)$confirmed,'outcome'=>$winner?(($confirmed?'':'recorded_').($winner===$ownSide?'win':'loss')):'unresolved','score'=>$winner?['blue'=>$m->result['report']['blueKills']??null,'red'=>$m->result['report']['redKills']??null]:null,'duration_seconds'=>$winner?($m->result['report']['durationSeconds']??null):null,'watch_id'=>$m?->canSpectate()?$m->id:null,'archive_id'=>$archiveLinks[$f->id]??null,'result_hash'=>$m?->result_hash];
+    'verified'=>(bool)$confirmed,'outcome'=>$winner?(($confirmed?'':'recorded_').($winner===$ownSide?'win':'loss')):'unresolved','score'=>$winner?($m->finalScore()??['blue'=>$m->result['report']['blueKills']??null,'red'=>$m->result['report']['redKills']??null]):null,'score_kind'=>$winner?($m->isFpsResult()?'rounds':'kills'):null,'map'=>$m?->result['report']['mapName']??null,'duration_seconds'=>$winner?($m->result['report']['durationSeconds']??null):null,'watch_id'=>$m?->canSpectate()?$m->id:null,'archive_id'=>$archiveLinks[$f->id]??null,'result_hash'=>$m?->result_hash];
   }));
   return ['club'=>$club->only(['id','name']),'summary'=>$summary,'page'=>$page];
  }
