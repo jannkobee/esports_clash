@@ -43,10 +43,13 @@ export interface FpsOfficialLiveReport {
   broadcastSeconds: number;
   /** Broadcast timestamp (seconds) when each round's live phase started, for replay round-seeking. */
   roundStartSeconds: number[];
+  /** Own attacking-round observations for a settled club debrief. */
+  orderObservations: { round: number; team: FpsTeamId; firstContactSeconds?: number; firstExecuteSeconds?: number; entrySupported?: boolean }[];
   /** Lawful per-round playbook/opponent summaries when club playbooks were pinned for this match. */
   playbookExperience?: Partial<Record<FpsTeamId, { rounds: FpsPlaybookUpdate['round'][]; observed: NonNullable<FpsPlaybookUpdate['observed']>[] }>>;
 }
 export interface FpsOfficialTeamLearningInput {
+  recordExperience?: boolean;
   playbook?: unknown;
   opponents?: unknown;
   utility?: unknown;
@@ -76,11 +79,11 @@ export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[],
     const book = loadFpsTeamPlaybook(input?.playbook) ?? approved?.playbooks?.[mapId];
     const opponents = loadFpsOpponentModel(input?.opponents) ?? approved?.opponents;
     const util = loadFpsUtilityBrain(input?.utility) ?? approved?.utility;
-    if (book || opponents || util) {
+    if (book || opponents || util || input?.recordExperience || input?.opponentId) {
       const bucket = { rounds: [] as FpsPlaybookUpdate['round'][], observed: [] as NonNullable<FpsPlaybookUpdate['observed']>[] };
-      if (book || input?.playbook || input?.opponentId) playbookExperience[team] = bucket;
+      if (book || input?.recordExperience || input?.opponentId) playbookExperience[team] = bucket;
       teamLearning[team] = {
-        ...(book || input?.opponentId ? {
+        ...(book || input?.recordExperience || input?.opponentId ? {
           playbook: {
             mode: 'frozen',
             ...(book && book.map === mapId ? { model: book } : {}),
@@ -200,6 +203,7 @@ export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[],
     durationSeconds: +roundDurations.reduce((s, d) => s + d, 0).toFixed(2),
     broadcastSeconds: +(tick * LIVE_FPS_STEP).toFixed(2),
     roundStartSeconds,
+    orderObservations: rounds.map(r => ({ round: r.round, team: r.attackTeam, ...r.orders })),
     ...(Object.keys(playbookExperience).length ? { playbookExperience } : {}),
   };
 }

@@ -140,22 +140,27 @@ class CoachDraftService
 
     private function metaForm(): array
     {
+        // Only the few fields read below leave the database: a completed live-engine result is several MB, and
+        // decoding whole plans and results for every recent match exhausted the queue worker's memory.
+        $performance = OnlineMatch::query()->getQuery()->getGrammar()->wrap('result->player_performance');
         $records = OnlineMatch::where('status', 'completed')->whereNotNull('completed_at')
             ->where(fn($q)=>$q->whereNull('plan->fixture->progression->kind')->orWhere('plan->fixture->progression->kind','!=','community_fun'))
             ->where('completed_at', '>=', now()->subDays(90))
-            ->orderByDesc('completed_at')->limit(500)->get(['plan', 'result']);
+            ->orderByDesc('completed_at')->limit(500)
+            ->select(['plan->mode as mode', 'result->winner as winner', 'result->report->draft as draft'])
+            ->selectRaw("($performance) is not null as has_performance")
+            ->toBase()->get();
         $totals = [];
         $matchCount = 0;
         foreach ($records as $record) {
-            if (($record->plan['fixture']['progression']['kind'] ?? null) === 'community_fun') continue;
-            if (($record->plan['mode'] ?? null) !== 'normal'
-                || ! isset($record->result['player_performance'], $record->result['report']['draft'])) {
+            $draft = is_string($record->draft) ? json_decode($record->draft, true) : null;
+            if ($record->mode !== 'normal' || ! $record->has_performance || ! is_array($draft)) {
                 continue;
             }
             $matchCount++;
             foreach (['blue', 'red'] as $side) {
-                $won = ($record->result['winner'] ?? null) === $side;
-                foreach ($record->result['report']['draft'][$side] ?? [] as $pick) {
+                $won = $record->winner === $side;
+                foreach ($draft[$side] ?? [] as $pick) {
                     $id = $pick['champion']['id'] ?? null;
                     if (! is_string($id)) {
                         continue;

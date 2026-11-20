@@ -90,7 +90,7 @@ class OnlineController extends Controller
             'execution' => array_intersect_key($match->result['execution'] ?? [], array_flip(['mode', 'from_second', 'notice'])),
         ] : null;
         if ($result && ($match->plan['game_mode'] ?? null) === 'fps_mr15_v1') {
-            $result['report'] = $match->result['report'];
+            $result['report'] = array_diff_key($match->result['report'], array_flip(['playbookExperience', 'orderObservations']));
             unset($result['report']['identityExperiment'],$result['report']['identityDevelopment']);
         }
         return response()->json(['data' => [
@@ -132,7 +132,13 @@ class OnlineController extends Controller
         $complete = $complete && ($header['final'] ?? false);
         // Only whole chunks are served, so a viewer can never read ahead of the broadcast.
         $chunks = $complete ? (int) $header['chunks'] : intdiv($frames, $perChunk);
-        return response()->json(['data' => [...array_diff_key($header, array_flip(['frames', 'chunks', 'broadcastSeconds'])),
+        $starts = $header['roundStartSeconds'] ?? [];
+        if (! $complete) {
+            $playableUntil = ($chunks * $perChunk - 1) * (float) $header['frameSeconds'];
+            $starts = array_values(array_filter($starts, fn ($at) => $at <= $playableUntil));
+        }
+        return response()->json(['data' => [...array_diff_key($header, array_flip(['frames', 'chunks', 'broadcastSeconds', 'roundStartSeconds'])),
+            'final' => $complete, 'roundStartSeconds' => $starts,
             'frames' => $complete ? (int) $header['frames'] : $chunks * $perChunk, 'chunks' => $chunks, 'complete' => $complete,
             'broadcastSeconds' => $complete ? $header['broadcastSeconds'] : null,
             'liveSeconds' => $complete ? null : round(min($match->broadcastSecondsVisible(), (float) $header['broadcastSeconds']), 1)]]);

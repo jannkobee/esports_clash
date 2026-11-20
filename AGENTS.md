@@ -16,9 +16,9 @@ Read [the record](docs/fps-gameplay-gunplay-aim-polish-20261120.md) before chang
   - Dual-map 36-round audit (seeds 101/202/303): Fontessa `55.6% T / 44.4% CT` (was `77.8% T`), TTD `811 -> 715 ms`, Rifle HS `20.0 -> 26.4%`, `SettlingMidSpray 98 -> 19`; Spillway `52.8% T / 47.2% CT`, TTD `820 -> 630 ms`, Rifle HS `14.2 -> 18.2%`, `SettlingMidSpray 133 -> 29`.
   - Coordination: 4 unrelated Fontessa geometry tests currently fail under a concurrent agent's new `FONTESSA_VISUAL_COLLIDERS` (`fpsVillageColliders.ts` / `fpsLiveMap.ts`); those visual collider files were left untouched.
 
-## Fontessa visual pass: Mercato gate, surface mapping, light balance, landmarks, grounded smoke (2026-11-20)
+## Fontessa visual and collision pass: Mercato gate, surfaces, light, landmarks, grounded smoke, drawn geometry collides (2026-11-20)
 
-Read [the record](docs/fps-fontessa-mercato-and-detail-pass-20261120.md) before changing Fontessa scenery, surface textures, the sun or shadows, roofs, or smoke shape.
+Read [the record](docs/fps-fontessa-mercato-and-detail-pass-20261120.md) before changing Fontessa scenery, surface textures, the sun or shadows, roofs, smoke shape, or any collider in `fpsVillageColliders.ts`.
 
 - **Surfaces.** Create every textured box with `wrap: LIVE_SURFACE_BOX_WRAP`. Babylon's default layout rotates and stretches the texture on the ±x, top and bottom faces.
 - **Light.** Fontessa's light balance and shadow casters live in the Fontessa branch of `fpsLiveViewer.ts`. Scenery outside the play area and sub-texel rods do not cast shadows; keep it that way, or the sun's shadow map stretches again.
@@ -26,7 +26,18 @@ Read [the record](docs/fps-fontessa-mercato-and-detail-pass-20261120.md) before 
 - **Roofs.** Pitched roofs over flat cutaway slabs are tagged `cutawayRoof` and hide with the slabs.
 - **Draw cost.** New props bake their colour into vertex colours (`fpsVillageTint.ts`), so they share batches.
 - **Smoke.** `liveSmokeSettle` rests clouds under about 3 m radius on their floor. Bots and the renderer read the same lobes. Full-size smokes are unchanged.
-- **Preserved.** No collision, navigation or gameplay data changed. `fpsLiveMap.ts`, `fpsLiveTerrain.ts` and `fpsLiveSimulation.ts` were not edited. In `fpsLiveBrain.ts`, only the smoke lobes and the centre of the other agent's bounding-sphere reject changed.
+- **Collision: drawn = collided.** `buildFontessaVisualColliders` adds 894 `visual-*` colliders built from the dimensions the scenery draws with (`fpsVillageLayout.ts`). Every face is within about 4 cm of the drawn surface: roofs as nested bands with ridges and chimneys, the belfry, the palazzo portico and pediment, the Mercato gate, terrace and passage timbers, and proud stone. If you move or resize a drawn piece, change its collider too, and keep `scripts/diagnose-visual-collision.mjs` at 0 shoot-throughs and 0 phantoms (a sample is tested). Only the Mercato pier bodies and the fontanella block movement. Cloth, foliage, branches, glass, signs, ironwork and thin window dressing are deliberately not collided.
+- **Edits to the shared `fpsLiveMap.ts`** (the only ones this pass made there):
+  1. Imports `buildFontessaVisualColliders`. `FONTESSA_MAP_DEFINITION.movementSolids` gains the colliders that block movement, and `collisionSolids` gains all of them.
+  2. `bulletPenetration` is removed from `b-logs`, `west-container` and `b-coffins`.
+  3. In `createLiveMapRuntime`, `sightline`, `wallIntersections` and `grenadeSightline` read candidates through `lineSolidsAt`. A line that stays below 2.4 m skips solids starting at or above 2.4 m (radial shapes are always kept). Results and their order are identical, and simulation time fell from 2.49 to 1.42 ms/step.
+- **Other shared edits.**
+  - `fpsLiveTerrain.ts` and `fpsLiveSimulation.ts` were not touched. In `fpsLiveBrain.ts`, only the smoke lobes and the centre of the bounding-sphere reject changed.
+  - Five tests now reflect the drawn geometry, with the reasons written in them: Pro Regression 6, `fpsSpatialAwareness`, `fpsSmokeLineupIntegration`, the HE practice budget in `fpsUtilityBrain` and `fpsCanalLayout`.
+- **Dev backend (fixed on request during this pass).** `/backend` returned 502.
+  - The `api` and `worker` containers were recreated from the current compose files. The API ran 12 pending migrations on the local dev database.
+  - `CoachDraftService::metaForm` now selects only the JSON fields it reads. The queue worker had been running out of memory.
+  - The duplicate `OnlineMatch::toArray()` in another agent's uncommitted official-learning work was merged into one method that keeps every hidden field.
 
 ## Game feel: cards, tactics board, signing cards, X-style Wire, streaming Hexacast, logo and portraits (2026-11-19)
 

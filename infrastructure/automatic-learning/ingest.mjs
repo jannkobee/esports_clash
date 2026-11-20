@@ -7,10 +7,11 @@ import {modelKey} from './store.mjs';
 /** Turn one API experience row into worker records (ids are stable, so the ledger deduplicates). */
 export function experienceRecords(row){
   const records=[],lineage=row.lineage,map=row.payload?.map;
-  if(!/^club:[0-9]{1,18}$/.test(lineage)||typeof map!=='string')throw Error('Invalid experience row');
+  const official=/^worker:official-club-[0-9]{1,18}$/.test(lineage);
+  if((!official&&!/^club:[0-9]{1,18}$/.test(lineage))||typeof map!=='string')throw Error('Invalid experience row');
   for(const [i,r] of (row.payload.rounds??[]).entries()){
     const id=`api:${row.id}:play:${i}`;
-    records.push({id,kind:'playbook',lineage,payload:{id,map,round:{id,side:r.side,playId:r.play_id,won:r.won,...(r.opponent?{opponent:r.opponent}:{})},
+    records.push({id,kind:'playbook',lineage,payload:{id,map,round:{id,side:r.side,playId:r.play_id,won:r.won,...(r.opponent?{opponent:r.opponent}:{}),...(official&&r.variant?{variant:r.variant}:{})},
       ...(r.opponent&&r.observed?{observed:{opponent:r.opponent,seen:{opponentAttacked:!!r.observed.opponentAttacked,...(r.observed.plantSite?{plantSite:r.observed.plantSite}:{}),
         ...(r.observed.firstBlood?{firstBlood:r.observed.firstBlood}:{}),earlyRush:!!r.observed.earlyRush,slowDefault:!!r.observed.slowDefault,heavyUtility:!!r.observed.heavyUtility,
         saved:!!r.observed.saved,passiveAnchors:!!r.observed.passiveAnchors}}}:{})}});
@@ -26,11 +27,19 @@ export function experienceRecords(row){
 export function ingestExperience(store,rows){
   const changed=new Set(),rejected=[];
   for(const row of rows){
-    let records;
-    try{records=experienceRecords(row);}catch(error){rejected.push({id:row.id,reason:String(error.message)});continue;}
-    try{store.transaction(()=>{for(const record of records)store.appendInTransaction(record,true);});changed.add(row.lineage);}
-    catch(error){rejected.push({id:row.id,reason:String(error.message)});}
-    store.set('experienceAfter',Math.max(store.get('experienceAfter')??0,row.id));
+    try{
+      const records=experienceRecords(row);
+      store.transaction(()=>{
+        for(const record of records)store.appendInTransaction(record,true);
+        store.set('experienceToPublish',[...new Set([...(store.get('experienceToPublish')??[]),row.lineage])]);
+        store.set('experienceAfter',Math.max(store.get('experienceAfter')??0,row.id));
+      });
+      changed.add(row.lineage);
+    }
+    catch(error){
+      rejected.push({id:row.id,reason:String(error.message)});
+      store.set('experienceAfter',Math.max(store.get('experienceAfter')??0,row.id));
+    }
   }
   return {changed:[...changed],rejected};
 }
@@ -41,11 +50,12 @@ export async function pullAndPublish(store,{url=process.env.LEARNING_API_URL,tok
   if(!response.ok)throw Error('Experience pull failed: '+response.status);
   const {experience=[]}=await response.json();
   const result=ingestExperience(store,experience);
-  for(const lineage of result.changed){
+  for(const lineage of store.get('experienceToPublish')??[]){
     const bundle=store.get(modelKey(lineage)),parent=store.snapshotModel('real-match',lineage);
     const body=JSON.stringify({kind:'bundle',payload:JSON.stringify(bundle),origin:'real-match',promote:true,reason:'real-match experience',metrics:{parent}});
     const publish=await fetchImpl(`${base}/fps/lineages/${encodeURIComponent(lineage)}/versions`,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body,signal:AbortSignal.timeout(15000)});
     if(!publish.ok)throw Error(`Publishing ${lineage} failed: ${publish.status}`);
+    store.set('experienceToPublish',store.get('experienceToPublish').filter(key=>key!==lineage));
   }
   return result;
 }

@@ -12,7 +12,7 @@ import { classifyFpsUtilityThrow, judgeFpsUtilityOutcome } from './fps/fpsUtilit
 import { seedFpsUtilityBrain, readFpsUtilityBrain, saveFpsUtilityBrain, FPS_UTILITY_BRAIN_STORAGE_KEY } from './fps/fpsUtilityBrainStorage.ts';
 import { FpsLiveSimulation } from './fps/fpsLiveSimulation.ts';
 import { createFpsIdentityContext } from './fps/fpsIdentityMatch.ts';
-import { LIVE_UTILITY_FUSES } from './fps/fpsLiveGrenades.ts';
+import { LIVE_UTILITY_FUSES, launchLiveGrenade, predictLiveGrenade, isGrenadeOnSupportSurface } from './fps/fpsLiveGrenades.ts';
 
 const fontessa = getLiveMapRuntime('fontessa');
 const spillway = getLiveMapRuntime('spillway');
@@ -141,11 +141,42 @@ test('fire and HE are scored on floor contact near the target, and a miss teache
   }
 });
 
+test('fire takes a direct path to an open floor even with a stale high throw in memory', () => {
+  for (const [map, from, target, maxFlight] of [
+    [fontessa, {x: -20, z: -12}, {x: -20, z: 15}, 1.2],
+    [spillway, {x: -15, z: 31}, {x: -25, z: 31}, .7],
+  ]) {
+    const height = map.terrain.groundHeight(from) + 1.55;
+    const brain = createFpsUtilityBrain();
+    const key = fpsUtilityThrowKey(map.id, 'incendiary', from, target);
+    brain.entries[key] = {style: 'overhead', flight: 2.8, aimDx: 0, aimDz: 0, attempts: 3, successes: 1, lastError: 1, rejected: []};
+    const plan = calculateLiveThrow('incendiary', from, target, height, map, brain);
+    assert.ok(plan && plan.flightTime <= maxFlight, map.id);
+    const grenade = launchLiveGrenade(1, 'incendiary', 'bot', 'blue', from, plan.aimTarget, 0, false, plan.style, height, {x: 0, z: 0}, plan.flightTime, map);
+    const landed = predictLiveGrenade(grenade, 0, map);
+    assert.ok(grenade.detonateAt < LIVE_UTILITY_FUSES.fireAirFuse && isGrenadeOnSupportSurface(landed, map));
+    assert.ok(Math.hypot(landed.x - target.x, landed.z - target.z) < 1, map.id);
+    assert.equal(brain.entries[key].flight, 2.8, 'planning preserves the frozen memory');
+  }
+});
+
+test('fire declines a blocked B approach when every usable arc outlasts the fire fuse', () => {
+  for (const [map, from, target] of [
+    [fontessa, {x: 12, z: 36}, {x: 32, z: 18.6}],
+    [spillway, {x: 28, z: 0}, {x: 37, z: 21}],
+  ]) {
+    const height = map.terrain.groundHeight(from) + 1.55;
+    assert.equal(calculateLiveThrow('incendiary', from, target, height, map), undefined, map.id);
+  }
+});
+
 test('practice masters fire and HE drills with the game physics as feedback', () => {
   for (const kind of ['incendiary', 'he']) {
     const drills = fpsUtilityPracticeTargets(fontessa, kind);
     assert.ok(drills.length >= 4, `${kind} drills`);
-    const result = practiceFpsUtilityTargets(createFpsUtilityBrain(), fontessa, drills, 16, kind);
+    // 32 throws: since the Mercato arch collides as drawn (2026-11-20), the HE drill through the B passage only
+    // passes a flat throw under the 2.6 m intrados, which the learner finds after about 30 throws (16 before).
+    const result = practiceFpsUtilityTargets(createFpsUtilityBrain(), fontessa, drills, 32, kind);
     assert.ok(result.mastered >= 3, `${kind}: ${result.mastered}/${result.targets} mastered`);
   }
 });

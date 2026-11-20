@@ -108,6 +108,11 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
   const wallsAt = createLiveGeometryIndex(walls);
   const movementSolidsAt = createLiveGeometryIndex(movementSolids);
   const collisionSolidsAt = createLiveGeometryIndex(collisionSolids);
+  // Lines that stay below LOW_LINE_Y (most lines of sight and fire) skip solids that start at or above it (roofs and
+  // upper works): they cannot meet them, and the remaining candidates keep their order, so results are unchanged.
+  const LOW_LINE_Y = 2.4;
+  const lowCollisionSolidsAt = createLiveGeometryIndex(collisionSolids.filter(w => (w.baseY ?? 0) < LOW_LINE_Y || definition.radialShapesById[w.id]));
+  const lineSolidsAt = (a: FpsPoint, b: FpsPoint, maxY: number) => maxY < LOW_LINE_Y ? lowCollisionSolidsAt(a, b) : collisionSolidsAt(a, b);
   const wallLookup = new Map<string, LiveSolid>(collisionSolids.map(w => [w.id, w]));
   const bounds = definition.bounds;
 
@@ -266,7 +271,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
   };
 
   const wallIntersections = (from: LiveWorldPoint, to: LiveWorldPoint): LiveWallIntersection[] =>
-    collisionSolidsAt(from, to).flatMap(wall => {
+    lineSolidsAt(from, to, Math.max(from.y, to.y)).flatMap(wall => {
       const t = wallSegmentHit(from, to, wall);
       return t === undefined ? [] : [{ wall, t }];
     }).sort((a, b) => a.t - b.t);
@@ -278,7 +283,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     const minX = Math.min(a.x, b.x), maxX = Math.max(a.x, b.x);
     const minZ = Math.min(a.z, b.z), maxZ = Math.max(a.z, b.z);
     const minY = Math.min(eyeA, eyeB), maxY = Math.max(eyeA, eyeB);
-    for (const wall of collisionSolidsAt(a, b)) {
+    for (const wall of lineSolidsAt(a, b, maxY)) {
       const maxH = definition.radialShapesById[wall.id]?.maxHeight ?? wall.height;
       if (maxX < wall.minX || minX > wall.maxX || maxZ < wall.minZ || minZ > wall.maxZ
         || maxY < (wall.baseY ?? 0) || minY > maxH) continue;
@@ -288,7 +293,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
   };
 
   const grenadeSightline = (from: FpsPoint & { y: number }, to: FpsPoint & { y: number }): boolean =>
-    !collisionSolidsAt(from, to).some(w => {
+    !lineSolidsAt(from, to, Math.max(from.y, to.y)).some(w => {
       let enter = 0, exit = 1;
       for (const [origin, delta, min, max] of [
         [from.x, to.x - from.x, w.minX, w.maxX],

@@ -7,10 +7,11 @@ import {LIVE_WINDOW_FURNITURE} from './fpsMidWindowInterior.ts';
 export function buildMidWindowScenery(scene:Scene,{box,detail}:VillageBuilder):void {
   const front=16.84;
   const winMid=(w.windowMinX+w.windowMaxX)/2,winW=w.windowMaxX-w.windowMinX,winH=w.lintelY-w.sillY;
-  // Jamb stones sit on the piers either side of the opening; inside it they were solid-looking but bullet-thin.
-  for(const x of [w.windowMinX-.06,w.windowMaxX+.06])box(`mid-window-stone-reveal-${x}`,x,(w.sillY+w.lintelY)/2,front,.13,winH,.12,'#dcc8a5');
+  // Jamb stones sit on the piers either side of the opening (inside it they were solid-looking but bullet-thin),
+  // 4 cm proud of the facade (they stood 10 cm out, where shots grazed past the pier collision).
+  for(const x of [w.windowMinX-.06,w.windowMaxX+.06])box(`mid-window-stone-reveal-${x}`,x,(w.sillY+w.lintelY)/2,front+.06,.13,winH,.12,'#dcc8a5');
   box('mid-window-stone-sill',winMid,w.sillY-.03,front,winW+.15,.12,.24,'#dfcaa8');
-  box('mid-window-lintel-reveal',winMid,w.lintelY+.03,front,winW+.15,.14,.13,'#d7c3a1');
+  box('mid-window-lintel-reveal',winMid,w.lintelY+.03,front+.065,winW+.15,.14,.13,'#d7c3a1');
   // Ground-level open wooden doorway facing T-side lower Mid with upper shuttered window.
   // A normal street door: frame, header and an opened leaf hinged on its west jamb.
   const doorMid=(w.doorMinX+w.doorMaxX)/2,doorW=w.doorMaxX-w.doorMinX;
@@ -37,8 +38,10 @@ export function buildMidWindowScenery(scene:Scene,{box,detail}:VillageBuilder):v
   // Door posts sit on the wall ends at the edges of the side opening, not inside it.
   for(const z of [22.14,26.44])box(`mid-window-wide-door-frame-${z}`,-4.47,3.05,z,.12,2.5,.12,'#d4c2a1');
   // Visible stair flights remain inside the house and civic wing behind street doors.
-  for(const z of [22.55,26.05])box(`mid-window-civic-street-frame-${z}`,-15.65,1.3,z,.1,2.6,.1,'#dcc8a5');
-  box('mid-window-civic-street-top',-15.65,2.65,24.3,.1,.14,3.65,'#dcc8a5');
+  // Street door posts stand on the jamb ends at most 4 cm proud of the wall (they stood 8 cm into the opening,
+  // where bullets crossed them).
+  for(const z of [22.47,26.23])box(`mid-window-civic-street-frame-${z}`,-15.61,1.3,z,.1,2.6,.1,'#dcc8a5');
+  box('mid-window-civic-street-top',-15.61,2.65,24.35,.1,.14,3.86,'#dcc8a5');
   for(let i=0;i<12;i++){
     const h=(i+1)*.15,z=w.stairStart+(i+1)*(w.stairEnd-w.stairStart)/w.steps-.025;
     box(`mid-window-t-interior-tread-${i}`,-3.1,h+.008,z,2.4,.016,.07,'#d7c6a5');
@@ -47,10 +50,10 @@ export function buildMidWindowScenery(scene:Scene,{box,detail}:VillageBuilder):v
   }
   for(let i=0;i<12;i++)box(`mid-window-ct-interior-tread-${i}`,2.8,(12-i)*.15+.008,20.5+(i+1)*.5-.025,3.05,.016,.07,'#d7c6a5');
   for(const x of [1.2,4.5]){
-    const px=x>3?4.33:1.26;
-    box(`mid-window-ct-street-frame-${x}`,px,1.4,26.67,.12,2.8,.14,'#dcc8a5');
+    const px=x>3?4.44:1.14;
+    box(`mid-window-ct-street-frame-${x}`,px,1.4,26.59,.12,2.8,.14,'#dcc8a5');
   }
-  box('mid-window-ct-street-top',2.795,2.85,26.67,3.2,.14,.14,'#dcc8a5');
+  box('mid-window-ct-street-top',2.79,2.85,26.59,3.42,.14,.14,'#dcc8a5');
   // Upper windows stay above the ground-level CT doorway.
   for(const x of [-2.8,0,2.8]){
     box(`mid-window-rear-frame-${x}`,x,4.2,w.maxZ+.14,1.35,1.4,.08,'#dac6a4');

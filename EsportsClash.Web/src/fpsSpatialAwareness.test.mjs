@@ -162,7 +162,9 @@ test('selectComplementaryWatchPoint avoids staring into walls and covers the com
   const actor = { id: 'ct-1', slot: 0, x: 0, z: 8 };
   const blockedEntry = { x: -24.9, z: 20 }; // behind solid geometry from (0,8)
   const openEntryMain = { x: -4, z: 0 };
-  const openEntrySplit = { x: 5, z: 0 };
+  // (5, 0) from the bridge eye at (0, 8) grazes the top of a drawn bridge pilaster cap, which collides since the
+  // 2026-11-20 collision pass; one metre south the line is clear.
+  const openEntrySplit = { x: 5, z: -1 };
 
   // Never picks wall-blocked choke when an open choke is visible
   const visibleWatch = selectComplementaryWatchPoint(

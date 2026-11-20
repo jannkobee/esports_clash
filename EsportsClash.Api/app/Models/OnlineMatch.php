@@ -14,8 +14,9 @@ class OnlineMatch extends Model
     public function toArray(): array
     {
         $out=parent::toArray();
-        unset($out['plan']['fps_identity']);
-        unset($out['result']['report']['identityExperiment'],$out['result']['report']['identityDevelopment']);
+        unset($out['plan']['fps_identity'], $out['plan']['fps_learning']);
+        unset($out['result']['report']['identityExperiment'],$out['result']['report']['identityDevelopment'],
+            $out['result']['report']['playbookExperience'], $out['result']['report']['orderObservations']);
         return $out;
     }
 

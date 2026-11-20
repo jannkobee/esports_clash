@@ -89,7 +89,7 @@ export interface LiveActor extends LivePlayer {
   suppression?: { smokeId: number; key: string; startedAt: number; shots: number; burstShots: number; nextBurstAt: number };
   freezeDelay?: number; buyAt?: number; postRoamAt?: number; fakeDefuseDone?: boolean; halfDefuseDone?: boolean; fakeDefuseHoldUntil?: number; fakePlantDone?: boolean; fakePlantHoldUntil?: number; triggerDisciplineUntil?: number;
   approachUntil?: number; radioAt?: number; acknowledgedOrder?: number; strafeSettleUntil?: number;
-  knownSmokes: LiveSmoke[]; flashWindow?: { point: FpsPoint; opens: number; expires: number };
+  knownSmokes: LiveSmoke[]; flashedByGrenade?: number; flashWindow?: { point: FpsPoint; opens: number; expires: number };
   reloadRounds: number;
   routeEvidence?: string; routeUpdatedAt?: number; objectiveUrgent?: boolean;
   holsteredPrimary?: { weapon: LiveWeapon; ammo: number; reserve: number; nextShot?: number };
@@ -144,6 +144,13 @@ export interface LiveRoundTelemetry {
   round: number; winner: FpsTeamId; attackTeam: FpsTeamId; reason: string; planted: boolean; time: number;
   /** Plays called this round (family names plus play ids) and where the round went. */
   tactic?: LiveTacticArchetype; defenseSetup?: LiveDefenseSetup; site?: 'A' | 'B'; firstBloodSite?: 'A' | 'B' | 'Mid'; attackPlayId?: string; defensePlayId?: string;
+  orders?: LiveRoundOrderObservation;
+}
+
+export interface LiveRoundOrderObservation {
+  firstContactSeconds?: number;
+  firstExecuteSeconds?: number;
+  entrySupported?: boolean;
 }
 
 /** One team's persisted playbook for this map, plus its lawful cross-match opponent model. */

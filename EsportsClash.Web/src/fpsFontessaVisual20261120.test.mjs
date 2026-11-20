@@ -7,7 +7,12 @@ import { buildCanalWaterfront } from './fps/fpsCanalWaterfront.ts';
 import { buildLiveScenery } from './fps/fpsLiveScenery.ts';
 import { LIVE_CANAL_STAIRWELLS, MERCATO_GATE } from './fps/fpsVillageMercato.ts';
 import { LIVE_LAUNDRY_LINES } from './fps/fpsVillageDetails.ts';
-import { LIVE_FPS_MAP, LIVE_ACTOR_RADIUS } from './fps/fpsLiveMap.ts';
+import { LIVE_FPS_MAP, LIVE_ACTOR_RADIUS, FONTESSA_MAP_RUNTIME, FONTESSA_MAP_DEFINITION } from './fps/fpsLiveMap.ts';
+import { Matrix, Ray, Vector3 } from '@babylonjs/core';
+import { auditVisualCollision } from './fps/fpsVisualCollisionAudit.ts';
+import { liveVillageAsset } from './fps/fpsVillageDesign.ts';
+import { fontessaSlabRoofs, villageRoofShape } from './fps/fpsVillageLayout.ts';
+import { LIVE_JUMP_GRAVITY, LIVE_JUMP_VELOCITY } from './fps/fpsLiveMovement.ts';
 import { FONTESSA_TERRAIN_RUNTIME, liveGroundHeight } from './fps/fpsLiveTerrain.ts';
 
 // CPU stand-ins verify geometry and data; they do not claim GPU or visual acceptance.
@@ -108,5 +113,86 @@ test('village scenery shadow casters stay inside the playable village so the sun
       assert.ok(min.x >= -40.5 && max.x <= 40.5 && min.z >= -48.5 && max.z <= 48.5, `${mesh.name} x ${min.x.toFixed(1)}..${max.x.toFixed(1)} z ${min.z.toFixed(1)}..${max.z.toFixed(1)}`);
     }
     for (const line of LIVE_LAUNDRY_LINES) assert.ok(line.y - line.sag - .7 > 2.4, `${line.id} laundry hangs above head height`);
+  } finally { f.dispose(); }
+});
+
+// Collision pass (2026-11-20): drawn masonry and roofs collide as drawn, and nothing collides where the world is open.
+const visualColliders = () => FONTESSA_MAP_DEFINITION.collisionSolids.filter(s => s.id.startsWith('visual-'));
+
+test('seeded lines of fire and lobs find no shoot-through and no phantom block on Fontessa', () => {
+  const f = fixture();
+  try {
+    buildLiveScenery(f.scene, f.material, new LiveSurfaceLibrary(f.scene), { batch: false });
+    const audit = auditVisualCollision(f.scene, FONTESSA_MAP_RUNTIME, { rays: 3000, lobs: 3000, seed: 3 });
+    assert.equal(audit.rays + audit.lobRays, 6000);
+    assert.ok(audit.blockedVisual > 2500, `${audit.blockedVisual} lines blocked by scenery: the sample must reach the buildings`);
+    const show = list => list.slice(0, 3).map(x => `${x.mesh ?? x.collider} at ${x.point.x.toFixed(2)},${x.point.y.toFixed(2)},${x.point.z.toFixed(2)}`).join('; ');
+    assert.equal(audit.findings.length, 0, `shoot-through: ${show(audit.findings)}`);
+    assert.equal(audit.phantoms.length, 0, `phantom: ${show(audit.phantoms)}`);
+  } finally { f.dispose(); }
+});
+
+test('no bullet-only visual collider holds a reachable actor centre line (Mercato piers and the fontanella block movement)', () => {
+  // Standing body height plus the apex of a jump: the arch near the Mercato piers is drawn just above it.
+  const map = FONTESSA_MAP_RUNTIME, reach = 1.72 + LIVE_JUMP_VELOCITY ** 2 / (2 * LIVE_JUMP_GRAVITY);
+  const blockers = visualColliders().filter(c => c.blocksMovement).map(c => c.id);
+  assert.deepEqual(blockers.filter(id => id.startsWith('visual-mercato')).sort(), ['north-east', 'north-west', 'south-east', 'south-west'].map(t => `visual-mercato-pier-${t}`).sort());
+  assert.ok(blockers.every(id => /^visual-(mercato-pier-(north|south)-(east|west)|village-fontanella-)/.test(id)), blockers.join(' '));
+  for (const c of visualColliders().filter(c => !c.blocksMovement && (c.baseY ?? 0) < 6)) {
+    const step = Math.max(.05, Math.min(.25, (c.maxX - c.minX) / 4, (c.maxZ - c.minZ) / 4));
+    for (let x = c.minX + step / 2; x < c.maxX; x += step) for (let z = c.minZ + step / 2; z < c.maxZ; z += step) {
+      for (const level of FONTESSA_MAP_DEFINITION.nav.levels) {
+        const p = level === 'street' ? { x, z } : { x, z, level };
+        if (!map.movementSegmentClear(p, p)) continue;
+        const floor = map.terrain.groundHeight(p);
+        assert.ok(c.height <= floor + .01 || (c.baseY ?? 0) >= floor + reach,
+          `${c.id} (y ${(c.baseY ?? 0).toFixed(2)}..${c.height.toFixed(2)}) holds an actor standing at ${x.toFixed(2)},${z.toFixed(2)} (floor ${floor.toFixed(2)})`);
+      }
+    }
+  }
+});
+
+test('the log pile, west container and coffin maker stop bullets like the solid blocks they look like', () => {
+  for (const id of ['b-logs', 'west-container', 'b-coffins']) {
+    const solid = FONTESSA_MAP_DEFINITION.collisionSolids.find(s => s.id === id);
+    assert.ok(solid, id);
+    assert.ok(!solid.bulletPenetration, `${id} must be opaque`);
+  }
+});
+
+test('roof bands follow the drawn tile surface within 4.5 cm across every pitched roof', () => {
+  const f = fixture();
+  try {
+    buildLiveScenery(f.scene, f.material, new LiveSurfaceLibrary(f.scene), { batch: false });
+    const roofs = LIVE_FPS_MAP.solids.filter(s => !s.id.startsWith('mid-window-furniture-') && ['house', 'shop', 'civic'].includes(liveVillageAsset(s.id).kind))
+      .map(s => ({ id: s.id, x: (s.minX + s.maxX) / 2, z: (s.minZ + s.maxZ) / 2, w: s.maxX - s.minX, d: s.maxZ - s.minZ, y: s.height }));
+    roofs.push(...fontessaSlabRoofs(id => LIVE_FPS_MAP.solids.find(s => s.id === id)));
+    assert.ok(roofs.length >= 30, `${roofs.length} roofs`);
+    const colliders = visualColliders();
+    let checked = 0;
+    for (const roof of roofs) {
+      const r = villageRoofShape(roof.w, roof.d), half = r.span / 2 + r.overhang;
+      const bands = colliders.filter(c => c.id.startsWith(`visual-${roof.id}-roof-`));
+      assert.ok(bands.length >= 3, `${roof.id} bands`);
+      const tiles = [-1, 1].map(side => f.scene.getMeshByName(`${roof.id}-tile-roof-${side}`));
+      assert.ok(tiles.every(Boolean), `${roof.id} tile panels`);
+      for (let k = 0; k < 24; k++) {
+        const across = (k % 2 ? 1 : -1) * half * (Math.floor(k / 2) + .5) / 12.5, along = (k % 3 - 1) * r.run / 4;
+        const x = r.alongX ? roof.x + along : roof.x + across, z = r.alongX ? roof.z + across : roof.z + along;
+        // The drawn tile top, picked straight down through the actual panel meshes.
+        const ray = new Ray(new Vector3(x, roof.y + 4, z), new Vector3(0, -1, 0), 6, 0);
+        let drawn = -Infinity;
+        for (const mesh of tiles) {
+          mesh.computeWorldMatrix(true);
+          const world = mesh.getWorldMatrix(), hit = mesh.intersects(Ray.Transform(ray, Matrix.Invert(world)), false, undefined, false, world);
+          if (hit.hit && hit.pickedPoint) drawn = Math.max(drawn, hit.pickedPoint.y);
+        }
+        const top = Math.max(...bands.filter(b => x >= b.minX && x <= b.maxX && z >= b.minZ && z <= b.maxZ).map(b => b.height));
+        assert.ok(Number.isFinite(drawn) && Math.abs(top - drawn) <= .045,
+          `${roof.id} at ${x.toFixed(2)},${z.toFixed(2)}: bands top ${top.toFixed(3)}, drawn tiles ${drawn.toFixed(3)}`);
+        checked++;
+      }
+    }
+    assert.ok(checked >= 720, `${checked} roof samples`);
   } finally { f.dispose(); }
 });

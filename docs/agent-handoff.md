@@ -7,20 +7,38 @@ Owner requested a full simulation upgrade across performance, competitive balanc
 - **Measured (36 rounds/map, seeds 101/202/303).** Fontessa: `77.8% T -> 55.6% T / 44.4% CT`, TTD `811 -> 715 ms`, Rifle HS `20.0% -> 26.4%`, `SettlingMidSpray 98 -> 19`, `LongWhiff 263 -> 194`. Spillway: `55.6% T -> 52.8% T / 47.2% CT`, TTD `820 -> 630 ms`, Rifle HS `14.2% -> 18.2%`, `SettlingMidSpray 133 -> 29`, `LongWhiff 559 -> 417`.
 - **Checks.** Dedicated anti-regression suite `fpsGunplayAimGameplayPolish20261120.test.mjs` (**8/8**), `fpsEngineUpgrades20261119.test.mjs` (**10/10**), `fpsLiveGunplay.test.mjs` (**17/17**), `fpsOperativeHitbox.test.mjs` (**4/4**), and `fpsLiveRouting.test.mjs` (**7/7**) all pass; `tsc -b`, Vite `npm run build` (2.96 s), and `dist-worker/fps-engine.mjs` pass. Four unrelated Fontessa geometry tests fail under a concurrent agent's `FONTESSA_VISUAL_COLLIDERS` edits in `fpsLiveMap.ts` (untouched by this pass). No GPU FPS measured.
 
-## Current: Fontessa visual pass, Mercato di Fontessa, unfinished details and grounded smoke (20 November 2026)
+## Current: Fontessa visual and collision pass: Mercato di Fontessa, details, grounded smoke, drawn geometry collides (20 November 2026)
 
-Owner reported that the Mercato di Fontessa passage looked wrong and "glowing", asked for unfinished map details to be finished and more added, then reported a smoke puff floating at chest height. Read [the record](fps-fontessa-mercato-and-detail-pass-20261120.md).
+Owner reported that the Mercato di Fontessa passage looked wrong and "glowing", asked for unfinished map details to be finished and more added, then reported a smoke puff floating at chest height. They then asked for the parts of Fontessa that bullets pass through although they look solid to be fixed, and for the record's open items to be closed. Read [the record](fps-fontessa-mercato-and-detail-pass-20261120.md).
 
-- **Root causes.**
-  - Babylon's default box layout rotated and stretched textures on the ±x, top and bottom faces.
-  - The sky term made pale floors about 1.5 times as bright as facades.
-  - Out-of-area casters stretched the sun's shadow map, so thin rafters aliased into hatching.
-  - The gate itself was unfinished.
-  - Small (blooming, dissipating or HE-cut) smokes hung at the full-size centre height.
-- **Fixed and added.** Surface mapping, light balance, shadow casters, the Mercato gate and terrace, stairwell cheeks, landmark detail (campanile, palazzo, compass rose, roofs, Mid lookout), interiors and street dressing, and grounded small smokes.
-- **Draw cost.** Village scenery batches fell from 551 to 467.
-- **Checks.** `npm run check:game` passes 614/614 (design validation and `tsc -b` included). `npm run build` passes. Rendered in headless Chrome (SwiftShader); GPU frame rate was not measured.
-- **Coordination.** Another agent was actively editing `fpsLiveSimulation.ts` during this pass. This pass did not edit it, nor `fpsLiveMap.ts` or `fpsLiveTerrain.ts`. In the shared `fpsLiveBrain.ts` it changed only the smoke lobes (`liveSmokeSettle`, `LIVE_SMOKE_FLOOR_DROP`) and the centre of the existing bounding-sphere reject in `liveSmokeDepth`. Scenery claims are released.
+- **Visual part.**
+  - Root causes: Babylon's default box layout rotated and stretched textures; the sky term made pale floors about 1.5 times as bright as facades; out-of-area casters stretched the sun's shadow map; the gate was unfinished; small smokes hung at the full-size centre height.
+  - Fixed: surface mapping, light balance, shadow casters, the Mercato gate and terrace, stairwell cheeks, landmark detail, interiors, street dressing and grounded small smokes.
+  - Village scenery batches fell from 551 to 467.
+- **Collision part.**
+  - 894 `visual-*` colliders follow the drawn surfaces within about 4 cm. They come from `fpsVillageColliders.ts`, built from the shared dimensions in `fpsVillageLayout.ts`, and cover roofs (bands, ridges, chimneys), belfry, palazzo, Mercato gate, terrace, passage timbers and proud stone.
+  - `b-logs`, `west-container` and `b-coffins` are opaque. The Mercato pier bodies and the fontanella block movement.
+  - The rebuilt audit (lob lines, a phantom check, whole-word solid classification, exact ray tests) went from 65 shoot-throughs and 284 phantoms to 0 and 0 over seeds 1 to 10.
+  - Drawn pieces moved onto collision: the roof verge, window frames, Mid window reveals and street doors, and the B car kiosk arch.
+  - Open items: (a) and (b) resolved; (c) not applicable, because the viewer has no night or alternative lighting mode.
+- **Gameplay effects.**
+  - Grenades bounce off drawn roofs and arches. The `guard-market` smoke now solves as a walk throw off the B market eave, and `restaurant-civic` lands within 0.81 m instead of 0.6 m.
+  - Replaying the committed brain on the practice targets succeeds 18 times out of 42 (20 without visual colliders). Both lost throws strike the drawn Mercato arch.
+  - HE practice needs about 30 throws on the B passage drill.
+- **Performance.** Lines below 2.4 m skip solids that start above them (`lineSolidsAt` in `fpsLiveMap.ts`), with identical results. Simulation time went from 2.49 to 1.42 ms/step.
+- **Checks.**
+  - `npm run check:game`: 630 of 631 tests pass. `Emergence 3` fails the same way with no visual colliders (other work in progress).
+  - `tsc -b` and `npm run build` pass.
+  - Rendered in headless Chrome (SwiftShader); GPU frame rate was not measured.
+- **Coordination.**
+  - `fpsLiveMap.ts` has exactly three edits from this pass: the collider wiring, the three penetration removals and `lineSolidsAt` (listed in the record). `fpsLiveTerrain.ts` and `fpsLiveSimulation.ts` were not edited. In `fpsLiveBrain.ts`, only the smoke lobes and the centre of the bounding-sphere reject changed.
+  - Five tests were adjusted for the drawn geometry, with reasons written in them.
+  - `dist-worker/fps-engine.mjs` was not rebuilt.
+- **Dev backend (fixed on request during this pass).** `/backend` returned 502 because the API container was crash-looping on a configuration from 11 November that lacked the catalog mounts.
+  - The `api` and `worker` containers were recreated from the current compose files. The API ran 12 pending migrations on the local dev database.
+  - The queue worker had been running out of memory in `LockClubFixture`: `CoachDraftService::metaForm` decoded whole match results, and now selects only the fields it reads.
+  - Another agent's uncommitted work had added a second `OnlineMatch::toArray()`. It is merged into one method that keeps every hidden field.
+  - `OnlineTest` passes 24/24 with the current `phpunit.xml`. The image's copy lacks the `FPS_SIMULATION_VERSION=4` pin.
 
 ## Current: Decision-making, buying, IGL, utility and smoke-fire polish (14 November 2026)
 

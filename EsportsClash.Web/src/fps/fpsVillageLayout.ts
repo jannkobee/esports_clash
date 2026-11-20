@@ -4,11 +4,27 @@
  * Pure data: importable from the map definition without an import cycle.
  */
 
-export interface VillageRoofShape { alongX: boolean; span: number; run: number; rise: number; overhang: number }
-/** Pitched clay roof over a w by d footprint; the ridge runs along the long side. */
+/**
+ * Pitched clay roof over a w by d footprint; the ridge runs along the long side. Tile panels (12 cm thick) run from
+ * the eave edge, `overhang` past the walls, up to the ridge, and `verge` past the walls at each gable end; the
+ * gable walls stand 2.5 to `gableOut` (9.5 cm) past the walls.
+ */
+export interface VillageRoofShape { alongX: boolean; span: number; run: number; rise: number; overhang: number; verge: number; gableOut: number }
 export function villageRoofShape(w: number, d: number): VillageRoofShape {
   const alongX = w > d * 1.15, span = alongX ? d : w, run = alongX ? w : d;
-  return { alongX, span, run, rise: Math.min(1.25, .28 + span * .055), overhang: .18 };
+  return { alongX, span, run, rise: Math.min(1.25, .28 + span * .055), overhang: .18, verge: .185, gableOut: .095 };
+}
+/** Buildings (not pavilions, slab roofs or the campanile) at least this tall carry chimneys on their roof. */
+export const VILLAGE_CHIMNEY_MIN_HEIGHT = 5.2;
+/** Chimney stack dimensions relative to `topY`: a 48 cm shaft and a 60 cm cap (the clay pot above is not solid). */
+export const VILLAGE_CHIMNEY = Object.freeze({ shaft: .48, shaftBottom: -.11, shaftTop: .67, cap: .6, capBottom: .65, capTop: .73 });
+/** Chimney positions on a roof over (x, z) with eaves at y. */
+export function villageRoofChimneys(r: VillageRoofShape, x: number, z: number, y: number): { x: number; z: number; topY: number }[] {
+  const count = r.run >= 11 ? 2 : 1;
+  return Array.from({ length: count }, (_, i) => {
+    const along = count === 1 ? -r.run * .18 : (i === 0 ? -r.run * .28 : r.run * .24);
+    return { x: r.alongX ? x + along : x + (i % 2 ? -.65 : .65), z: r.alongX ? z + (i % 2 ? -.55 : .55) : z + along, topY: y + r.rise * .82 };
+  });
 }
 
 interface Footprint { minX: number; maxX: number; minZ: number; maxZ: number; height: number }
@@ -54,3 +70,21 @@ export const CAMPANILE_BELFRY = Object.freeze({
 
 /** Palazzo Comunale portico pediment (world coordinates). */
 export const PALAZZO_PEDIMENT = Object.freeze({ left: -28.05, right: -17.95, base: 4.05, apex: 5.5, front: 24.84, back: 25.4 });
+
+/** Palazzo Comunale portico: columns, capitals, the loggia eave and the elliptical arch rings between the columns. */
+export const PALAZZO_PORTICO = Object.freeze({
+  columns: [-27.5, -24.6, -21.4, -18.5] as const, columnZ: 26,
+  capital: { half: .34, minY: 3.64, maxY: 3.82 },
+  eave: { minX: -28.05, maxX: -17.95, minY: 3.83, maxY: 4.05, minZ: 24.85, maxZ: 26.45 },
+  ring: { springY: 3.05, rise: .66, z: 25.95, depth: .38, thickness: .16, stones: 11, inset: .12 },
+});
+/** Voussoirs of the arch ring between two columns: centre, width along the ring and turn about z (Babylon rotation.z). */
+export function palazzoArchVoussoirs(fromX: number, toX: number): { x: number; y: number; width: number; angle: number }[] {
+  const R = PALAZZO_PORTICO.ring, mid = (fromX + toX) / 2, half = (toX - fromX) / 2 - R.inset;
+  return Array.from({ length: R.stones }, (_, i) => {
+    const t = (i + .5) / R.stones * Math.PI;
+    // Voussoir width follows the local arc length so the flatter crown has no gaps between stones.
+    const arc = Math.PI / R.stones * Math.hypot(half * Math.sin(t), R.rise * Math.cos(t));
+    return { x: mid - Math.cos(t) * half, y: R.springY + Math.sin(t) * R.rise, width: Math.max(.28, arc + .02), angle: Math.atan2(Math.cos(t) * R.rise, Math.sin(t) * half) };
+  });
+}

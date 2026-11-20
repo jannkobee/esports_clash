@@ -32,7 +32,9 @@ test('customs port is behind the dry CT spawn, with clear departures and no land
 test('B has a low covered entry and tight masonry sides while A keeps an open approach',()=>{
   assert.ok(LIVE_CHOKES.find(c=>c.name==='B main').width<LIVE_CHOKES.find(c=>c.name==='A main').width);
   const ceiling=liveWallIntersections({x:18.5,y:1.6,z:9.5},{x:18.5,y:8,z:9.5});
-  assert.equal(ceiling[0]?.wall.id,'b-sottoportego');
+  // The covered entry's ceiling: the slab, or one of the drawn timbers under it (they collide since 2026-11-20).
+  assert.match(ceiling[0]?.wall.id??'',/^(b-sottoportego|visual-mercato-ceiling-)/);
+  assert.ok(ceiling.some(h=>h.wall.id==='b-sottoportego'));
   assert.equal(liveWallIntersections({x:-19,y:1.6,z:9.5},{x:-19,y:8,z:9.5}).length,0);
   assert.ok(!liveSightline({x:18.5,z:11},{x:26,z:11}),'Tall shop row breaks the main-to-gallery cross angle');
   assert.ok(liveSightline({x:18.5,z:12},{x:18.5,z:19}),'Main entrance still opens onto the fountain side');

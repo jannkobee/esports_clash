@@ -7,6 +7,13 @@ import {emptyLiveIntel,rememberLiveIntel} from './fps/fpsLiveIntel.ts';
 import {launchLiveGrenade,predictLiveGrenade} from './fps/fpsLiveGrenades.ts';
 import {solveLiveGrenadeThrow} from './fps/fpsLiveLineups.ts';
 import {liveGroundHeight} from './fps/fpsLiveTerrain.ts';
+import {judgeFpsUtilityOutcome} from './fps/fpsUtilityPurpose.ts';
+
+test('a smoke-clearing grenade only gets credit for disturbing a live smoke',()=>{
+  const intent={grenade:'he',primary:'SMOKE_CLEARING'};
+  assert.equal(judgeFpsUtilityOutcome(intent,{landingError:25,enemyDamage:30,smokesDisturbed:0}).achieved,false);
+  assert.equal(judgeFpsUtilityOutcome(intent,{landingError:4,enemyDamage:0,smokesDisturbed:1}).achieved,true);
+});
 
 const plan={tempo:.6,structure:.7,aggression:.5,preparation:.7,freedom:.5,economy:.8};
 const coach={...plan,rigidity:.7,communication:.7,leadership:.7,adaptability:.7,development:.5};
@@ -27,6 +34,25 @@ function game(attacking=true){
   sim.informationOrders[p.team]={mode:'hold',responders:[],until:sim.time+5,strength:0,reason:'Hold current space'};
   return {sim,p};
 }
+test('flash follow-up credits damage by a teammate while the victim is blinded by that throw',()=>{
+  const {sim,p}=game();
+  const teammate=sim.actors.find(actor=>actor.team===p.team&&actor!==p);
+  const opponent=sim.actors.find(actor=>actor.team!==p.team);
+  Object.assign(teammate,{hp:100,x:19,z:-12});
+  Object.assign(opponent,{hp:100,x:19,z:-4,yaw:Math.PI,jumpY:0});
+  const flash={id:995,kind:'flash',actorId:p.id,team:p.team,x:19,y:1.6,z:-10,vx:0,vy:0,vz:0,
+    releaseAt:sim.time-1.5,detonateAt:sim.time,coordinated:false};
+  const intent={grenade:'flash',primary:'ENTRY_SUPPORT',secondary:[],objective:'Support the entry'};
+  sim.grenadeIntents.set(flash.id,intent);
+  sim.utilityLog.push({grenadeId:flash.id,round:sim.round,team:p.team,actorId:p.id,at:flash.releaseAt,intent});
+  sim.grenades.push(flash);
+  sim.stepGrenades(0);
+  assert.equal(sim.utilityPurposeLog()[0].outcome.enemiesBlinded,1);
+  sim.damage(p,opponent,10,false,p.weapon,false);
+  assert.equal(sim.utilityPurposeLog()[0].outcome.teammateUsedOpening,false);
+  sim.damage(teammate,opponent,10,false,teammate.weapon,false);
+  assert.equal(sim.utilityPurposeLog()[0].outcome.teammateUsedOpening,true);
+});
 function contact(sim,p,point,source='sight',uncertainty=.5){
   rememberLiveIntel(p.intel,{key:'reported-contact',observerId:p.id,source,...point,observed:sim.time-.2,confidence:.95,uncertainty},sim.time);
 }
@@ -121,9 +147,11 @@ test('post-plant utility is conserved when its setup and flight cannot beat the 
 test('retake flash, HE, and incendiary throws solve arcs over tall cover even during idle weapon draw',()=>{
   const {sim,p}=game(false);
   const coverTarget={x:19,z:21};
-  const hand={x:17,z:33};
-  const baseHeight=1.55+liveGroundHeight(hand);
   for(const kind of ['flash','he','incendiary']){
+    // From z=33 the B screen forces fire into an arc that expires just above the floor.
+    // Two steps back there is a playable arc that clears the same screen and lands in time.
+    const hand={x:17,z:kind==='incendiary'?35:33};
+    const baseHeight=1.55+liveGroundHeight(hand);
     const solved=solveLiveGrenadeThrow(kind,hand,coverTarget,baseHeight);
     assert.ok(solved,`${kind} should find a wall-clearing arc over b-screen`);
     assert.ok(solved.forecast.z<26.5,`solved ${kind} should land beyond b-screen (z=${solved.forecast.z.toFixed(2)})`);
@@ -135,6 +163,7 @@ test('retake flash, HE, and incendiary throws solve arcs over tall cover even du
     const preview=launchLiveGrenade(-1,kind,p.id,p.team,hand,p.utilityPreparation.aimTarget??coverTarget,sim.time+2,false,p.utilityPreparation.throwStyle,baseHeight,{x:0,z:0},p.utilityPreparation.flightTime);
     const landed=predictLiveGrenade(preview,sim.time+2);
     assert.ok(landed.z<26.5,`prepared ${kind} preview must clear b-screen instead of bouncing back at CT (z=${landed.z.toFixed(2)})`);
+    if(kind==='incendiary')assert.ok(landed.y<.12,'the bot must reach the floor behind B screen');
   }
 });
 

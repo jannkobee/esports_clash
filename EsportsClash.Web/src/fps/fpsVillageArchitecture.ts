@@ -6,7 +6,7 @@ import {buildVillageMarket} from './fpsVillageMarket.ts';
 import {buildVillageFurnishings} from './fpsVillageFurnishings.ts';
 import { LIVE_SURFACE_METRES, type LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
 import { MeshDraft, addArchedWall } from './fpsVillageMeshDraft.ts';
-import { CAMPANILE_BELFRY, PALAZZO_PEDIMENT, fontessaGalleryLeanTo, fontessaSlabRoofs, villageRoofShape } from './fpsVillageLayout.ts';
+import { CAMPANILE_BELFRY, PALAZZO_PEDIMENT, PALAZZO_PORTICO, VILLAGE_CHIMNEY, VILLAGE_CHIMNEY_MIN_HEIGHT, fontessaGalleryLeanTo, fontessaSlabRoofs, palazzoArchVoussoirs, villageRoofChimneys, villageRoofShape } from './fpsVillageLayout.ts';
 
 export interface VillageBuilder {
   box:(name:string,x:number,y:number,z:number,w:number,h:number,d:number,color:string)=>Mesh;
@@ -65,12 +65,12 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
     VertexData.ComputeNormals(data.positions,data.indices,normals);data.normals=normals;data.applyToMesh(mesh);
     return mesh;
   };
-  const roof=(id:string,x:number,z:number,w:number,d:number,y:number,color='#a96548',withChimneys=y>=5.2)=>{
+  const roof=(id:string,x:number,z:number,w:number,d:number,y:number,color='#a96548',withChimneys=y>=VILLAGE_CHIMNEY_MIN_HEIGHT)=>{
     // Shared with the roof colliders (fpsVillageColliders.ts), so what is drawn is what stops bullets and grenades.
-    const {alongX,span,run,rise}=villageRoofShape(w,d);
+    const shape=villageRoofShape(w,d),{alongX,span,run,rise,verge}=shape;
     const angle=Math.atan2(rise,span/2+.18),panel=Math.hypot(span/2+.18,rise);
     for(const side of [-1,1]){
-      const part=box(`${id}-tile-roof-${side}`,alongX?x:x+side*(w/4+.09),y+rise/2,alongX?z+side*(d/4+.09):z,alongX?w+.4:panel,.12,alongX?panel:d+.4,color);
+      const part=box(`${id}-tile-roof-${side}`,alongX?x:x+side*(w/4+.09),y+rise/2,alongX?z+side*(d/4+.09):z,alongX?w+2*verge:panel,.12,alongX?panel:d+2*verge,color);
       if(alongX)part.rotation.x=side<0?-angle:angle;
       else part.rotation.z=side<0?angle:-angle;
       if(surfaces)part.material=surfaces.material('clay',color);
@@ -95,13 +95,10 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
     }
     box(`${id}-ridge`,x,y+rise,z,alongX?w+.48:.2,.16,alongX?.2:d+.48,'#aa6245');
     if(withChimneys){
-      const count=run>=11?2:1;
-      for(let i=0;i<count;i++){
-        const along=count===1?-run*.18:(i===0?-run*.28:run*.24);
-        const cx=alongX?x+along:x+(i%2?-.65:.65),cz=alongX?z+(i%2?-.55:.55):z+along;
-        const topY=y+rise*.82;
-        box(`${id}-chimney-shaft-${i}`,cx,topY+.28,cz,.48,.78,.48,'#d4c7ab');
-        box(`${id}-chimney-cap-${i}`,cx,topY+.69,cz,.6,.08,.6,'#c5b698');
+      const C=VILLAGE_CHIMNEY;
+      for(const [i,{x:cx,z:cz,topY}] of villageRoofChimneys(shape,x,z,y).entries()){
+        box(`${id}-chimney-shaft-${i}`,cx,topY+(C.shaftBottom+C.shaftTop)/2,cz,C.shaft,C.shaftTop-C.shaftBottom,C.shaft,'#d4c7ab');
+        box(`${id}-chimney-cap-${i}`,cx,topY+(C.capBottom+C.capTop)/2,cz,C.cap,C.capTop-C.capBottom,C.cap,'#c5b698');
         const pot=detail(MeshBuilder.CreateCylinder(`${id}-chimney-pot-${i}`,{height:.28,diameterTop:.18,diameterBottom:.24,tessellation:10},scene),'#b56e50');
         pot.position.set(cx,topY+.86,cz);
       }
@@ -142,7 +139,8 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
   };
   const shutterWindowZ=(key:string,at:number,floor:number,fz:number,face:number,style:BuildingStyle,angleSeed:number,tall=false)=>{
     const h=tall?1.65:1.3,recessH=tall?1.45:1.08;
-    box(`${key}-window-frame`,at,floor,fz,1.16,h,.065,style.frame);
+    // Callers pass a point 2.8 cm off the wall: the frame sits 1.3 cm back from it, at most 5 cm proud of the wall.
+    box(`${key}-window-frame`,at,floor,fz-face*.013,1.16,h,.065,style.frame);
     box(`${key}-window-recess`,at,floor,fz+face*.035,.96,recessH,.035,'#2e4549');
     box(`${key}-interior-ceiling`,at,floor+recessH/2-.03,fz+face*.14,.94,.04,.22,'#a99b7c');
     const curtain=box(`${key}-window-curtain`,at-.28,floor,fz+face*.1,.18,recessH*.9,.03,'#d7cab0');curtain.rotation.y=.18;
@@ -155,7 +153,7 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
     }
   };
   const shutterWindowX=(key:string,at:number,floor:number,fx:number,side:number,style:BuildingStyle,angleSeed:number)=>{
-    box(`${key}-window-frame`,fx,floor,at,.065,1.25,1.1,style.frame);
+    box(`${key}-window-frame`,fx-side*.013,floor,at,.065,1.25,1.1,style.frame);
     box(`${key}-window-recess`,fx+side*.035,floor,at,.03,1.02,.9,(Math.round(at+floor)%3)?'#334a4d':'#8d724c');
     const swing=[.8,.48,.14][Math.round(Math.abs(angleSeed))%3];
     for(const leaf of [-1,1]){
@@ -168,12 +166,13 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
       leaves.position.set(fx+side*.15,floor-.52,at-.24+plant*.24);
     }
   };
-  const shopBay=(key:string,cx:number,cz:number,isZ:boolean,dir:number,wSpan:number,rolling:boolean)=>{
-    const bayW=Math.min(2.35,wSpan-.9);
+  const shopBay=(key:string,cx:number,cz:number,isZ:boolean,dir:number,wSpan:number,rolling:boolean,top=2.745)=>{
+    const bayW=Math.min(2.35,wSpan-.9),recessTop=Math.min(2.495,top-.05);
     // Ring centred on the wall face (5 cm proud) with the recess set back behind it; it used to stand 8 cm out.
+    // On a wall lower than the ring (the B car kiosk) it stops under the eave instead of rising through the tiles.
     cx-=!isZ?dir*.028:0;cz-=isZ?dir*.028:0;
-    box(`${key}-arch-ring`,cx,1.42,cz,isZ?bayW+.3:.1,2.65,isZ?.1:bayW+.3,'#dad0b6');
-    box(`${key}-shop-recess`,cx+(!isZ?dir*.015:0),1.32,cz+(isZ?dir*.015:0),isZ?bayW:.05,2.35,isZ?.05:bayW,rolling?'#677170':'#283d41');
+    box(`${key}-arch-ring`,cx,(top+.095)/2,cz,isZ?bayW+.3:.1,top-.095,isZ?.1:bayW+.3,'#dad0b6');
+    box(`${key}-shop-recess`,cx+(!isZ?dir*.015:0),(recessTop+.145)/2,cz+(isZ?dir*.015:0),isZ?bayW:.05,recessTop-.145,isZ?.05:bayW,rolling?'#677170':'#283d41');
     if(rolling){
       for(let s=0;s<7;s++){
         box(`${key}-rolling-slat-${s}`,cx+(!isZ?dir*.032:0),.42+s*.28,cz+(isZ?dir*.032:0),isZ?bayW-.08:.025,.14,isZ?.025:bayW-.08,s%2?'#7f8886':'#6c7472');
@@ -301,7 +300,7 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
       return;
     }
     if(wall.id==='b-car'){
-      shopBay('b-car-kiosk',x,wall.minZ-.025,true,-1,w,true);
+      shopBay('b-car-kiosk',x,wall.minZ-.025,true,-1,w,true,wall.height-.02);
       utilityBox('b-car-box',x+1.35,1.25,wall.minZ-.02,true,-1);
       return;
     }
@@ -512,22 +511,21 @@ export function buildVillageArchitecture(scene:Scene,b:VillageBuilder,material:(
   }
 
   // Civic Palazzo Comunale portico arches, iron tie rods, pediment, doors, and courtyard seal.
-  box('civic-loggia-eave',-23,3.94,25.65,10.1,.22,1.6,'#d7c8a6');
-  for(const x of [-27.5,-24.6,-21.4,-18.5]){
-    box(`civic-loggia-capital-${x}`,x,3.73,26,.68,.18,.68,'#ded1af');
-    box(`civic-loggia-column-base-${x}`,x,.15,26,.65,.3,.65,'#b7a887');
+  // Shared with the portico colliders (fpsVillageColliders.ts).
+  const {eave,capital,columns,columnZ,ring}=PALAZZO_PORTICO;
+  box('civic-loggia-eave',(eave.minX+eave.maxX)/2,(eave.minY+eave.maxY)/2,(eave.minZ+eave.maxZ)/2,eave.maxX-eave.minX,eave.maxY-eave.minY,eave.maxZ-eave.minZ,'#d7c8a6');
+  for(const x of columns){
+    box(`civic-loggia-capital-${x}`,x,(capital.minY+capital.maxY)/2,columnZ,capital.half*2,capital.maxY-capital.minY,capital.half*2,'#ded1af');
+    box(`civic-loggia-column-base-${x}`,x,.15,columnZ,.65,.3,.65,'#b7a887');
   }
-  for(const [idx,[a,bX]] of [[-27.5,-24.6],[-24.6,-21.4],[-21.4,-18.5]].entries()){
-    const mid=(a+bX)/2,half=(bX-a)/2-.12;
-    for(let i=0;i<11;i++){
-      const t=(i+.5)/11*Math.PI,vx=mid-Math.cos(t)*half,vy=3.05+Math.sin(t)*.66;
-      // Voussoir width follows the local arc length so the flatter crown has no gaps between stones.
-      const arc=Math.PI/11*Math.hypot(half*Math.sin(t),.66*Math.cos(t));
-      const stone=box(`a-loggia-arch-ring-${idx}-${i}`,vx,vy,25.95,Math.max(.28,arc+.02),.16,.38,i%2?'#d6c8aa':'#c6b797');
-      stone.rotation.z=Math.atan2(Math.cos(t)*.66,Math.sin(t)*half);
+  for(let idx=0;idx<columns.length-1;idx++){
+    const a=columns[idx],bX=columns[idx+1],mid=(a+bX)/2;
+    for(const [i,v] of palazzoArchVoussoirs(a,bX).entries()){
+      const stone=box(`a-loggia-arch-ring-${idx}-${i}`,v.x,v.y,ring.z,v.width,ring.thickness,ring.depth,i%2?'#d6c8aa':'#c6b797');
+      stone.rotation.z=v.angle;
     }
     const rod=detail(MeshBuilder.CreateCylinder(`a-loggia-tie-rod-${idx}`,{height:bX-a-.24,diameter:.035,tessellation:6},scene),'#464d47');
-    rod.rotation.z=Math.PI/2;rod.position.set(mid,3.1,25.95);
+    rod.rotation.z=Math.PI/2;rod.position.set(mid,3.1,ring.z);
   }
   triangularPrism('civic-portico-pediment',[
     -28.05,4.05,24.84,-17.95,4.05,24.84,-23,5.5,24.84,

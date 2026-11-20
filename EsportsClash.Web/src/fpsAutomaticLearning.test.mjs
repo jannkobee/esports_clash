@@ -5,10 +5,44 @@ import {execFileSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
 import {gunzipSync} from 'node:zlib';
-import {Store} from '../../infrastructure/automatic-learning/store.mjs';
+import {Store,modelKey} from '../../infrastructure/automatic-learning/store.mjs';
+import {pullAndPublish} from '../../infrastructure/automatic-learning/ingest.mjs';
 import {FpsLiveMechanicsLearner} from './fps/fpsLiveMechanicsLearning.ts';
 import {baseline} from '../../infrastructure/automatic-learning/model.mjs';
 import {runMatch} from '../../infrastructure/automatic-learning/match.mjs';
+test('settled club experience publishes once and survives a failed publication and restart', async () => {
+ const directory=mkdtempSync(tmpdir()+'/fps-official-learning-');
+ const lineage='worker:official-club-1';
+ const experience={id:1,lineage,payload:{map:'fontessa',rounds:[{round:1,side:'attack',play_id:'seed:default_pick',won:true,opponent:'club:2'}]}};
+ let store=new Store(directory);
+ try{
+  const options={url:'http://learning.test',token:'test',fetchImpl:async(url,request)=>{
+   if(!request.method)return Response.json({experience:[experience]});
+   return new Response(null,{status:503});
+  }};
+  await assert.rejects(pullAndPublish(store,options),/failed: 503/);
+  const learned=store.get(modelKey(lineage)).playbooks.fontessa;
+  assert.equal(learned.attack['seed:default_pick'].wins,1);
+  store.close();
+  store=new Store(directory);
+  let published=0;
+  options.fetchImpl=async(url,request)=>{
+   if(!request.method){
+    assert.equal(new URL(url).searchParams.get('after'),'1');
+    return Response.json({experience:[]});
+   }
+   assert.ok(url.endsWith('/'+encodeURIComponent(lineage)+'/versions'));
+   const body=JSON.parse(request.body);
+   assert.deepEqual(JSON.parse(body.payload).playbooks.fontessa,learned);
+   assert.equal(body.promote,true);
+   published++;
+   return new Response(null,{status:201});
+  };
+  await pullAndPublish(store,options);
+  await pullAndPublish(store,options);
+  assert.equal(published,1);
+ }finally{store.close();rmSync(directory,{recursive:true,force:true});}
+});
 test('durable ingestion is atomic, detects conflicting retries, and survives archive retention',async()=>{
  const directory=mkdtempSync(tmpdir()+'/fps-store-');let store;
  try{

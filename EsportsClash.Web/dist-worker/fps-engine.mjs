@@ -371984,7 +371984,7 @@ function judgeFpsUtilityOutcome(intent, o) {
 		case "incendiary":
 			achieved = !!o.ignited && (o.landingError ?? 0) <= 3.5;
 			break;
-		default: achieved = intent.primary === "SMOKE_CLEARING" || (o.enemyDamage ?? 0) >= 12 || (o.enemiesDisplaced ?? 0) > 0;
+		default: achieved = intent.primary === "SMOKE_CLEARING" ? (o.smokesDisturbed ?? 0) > 0 : (o.enemyDamage ?? 0) >= 12 || (o.enemiesDisplaced ?? 0) > 0;
 	}
 	if ((o.alliesBlinded ?? 0) > 0 && intent.grenade === "flash" && !(o.enemiesBlinded ?? 0) && !(o.enemiesTurnedAway ?? 0)) achieved = false;
 	return {
@@ -373279,13 +373279,16 @@ function planWithStyle(kind, key, style, rememberedFlight, from, aim, target, he
 	const dx = aim.x - from.x, dz = aim.z - from.z, d = Math.hypot(dx, dz);
 	if (d < .3) return;
 	if (d > phys.maxRange + Math.max(0, (y0 - targetY) * 1.6)) return;
-	const [lo, hi] = trustExperience ? [.42, 3.4] : flightRange(style, kind);
+	const [lo, styleMax] = trustExperience ? [.42, 3.4] : flightRange(style, kind);
+	const hi = kind === "incendiary" ? Math.min(styleMax, LIVE_UTILITY_FUSES.fireAirFuse - 1 / 30) : styleMax;
+	if (kind === "incendiary" && rememberedFlight !== void 0 && rememberedFlight > hi) return;
 	const bands = readPath(from, aim, runtime);
 	const tFor = (y, s) => Math.sqrt(Math.max(0, 2 * (y - y0 - (targetY - y0) * s) / (g * s * (1 - s))));
 	const forbidden = bands.map((band) => [tFor(band.bottom, band.s), tFor(band.top, band.s)]).filter(([a, b]) => b > a);
 	const speedAt = (t) => Math.hypot(d / t, (targetY - y0 + .5 * g * t * t) / t);
 	const allowed = (t) => speedAt(t) <= phys.maxLaunchSpeed && (trustExperience || !forbidden.some(([a, b]) => t > a && t < b));
-	const preferred = Math.max(lo, Math.min(hi, rememberedFlight ?? (kind === "flash" ? LIVE_UTILITY_FUSES.flashFuse : naturalFlight(style, d))));
+	const defaultTime = kind === "incendiary" ? lo : kind === "flash" ? LIVE_UTILITY_FUSES.flashFuse : naturalFlight(style, d);
+	const preferred = Math.max(lo, Math.min(hi, rememberedFlight ?? defaultTime));
 	let T;
 	for (let step = 0; step <= Math.ceil((hi - lo) / .04); step++) {
 		for (const t of step === 0 ? [preferred] : [preferred + step * .04, preferred - step * .04]) if (t >= lo - 1e-9 && t <= hi + 1e-9 && allowed(t)) {
@@ -384896,6 +384899,7 @@ var FpsLiveSimulation = class {
 	teamMechanics = {};
 	teamMovement = {};
 	onRoundComplete;
+	roundOrderObservation = {};
 	routeLearner(team) {
 		return this.teamLearners[team] ?? this.learner;
 	}
@@ -385422,6 +385426,7 @@ var FpsLiveSimulation = class {
 		};
 		this.completedSmokeLineups.clear();
 		this.unthrowableSmokeLineups.clear();
+		this.roundOrderObservation = {};
 		this.openingSmokeTeams.clear();
 		this.corpseDangerRecorded.clear();
 		resetLiveInfluenceGrid(this.influenceGrid("blue"), this.time);
@@ -385640,6 +385645,7 @@ var FpsLiveSimulation = class {
 			p.contact = void 0;
 			p.target = void 0;
 			p.flashedBy = void 0;
+			p.flashedByGrenade = void 0;
 			p.nextThink = this.time;
 			p.nextShot = this.time;
 			p.contactAt = -100;
@@ -385967,13 +385973,13 @@ var FpsLiveSimulation = class {
 		});
 	}
 	/** Score a grenade against its purpose when it goes off. */
-	judgeUtility(grenade, intent, hpBefore) {
+	judgeUtility(grenade, intent, hpBefore, smokesDisturbed = 0) {
 		const entry = this.utilityLog.find((e) => e.grenadeId === grenade.id && !e.outcome);
 		this.grenadeIntents.delete(grenade.id);
 		if (!entry) return void 0;
 		const intended = this.throwPlans.get(grenade.id)?.intended;
 		const lost = (team) => this.actors.filter((a) => team === "enemy" === (a.team !== grenade.team)).reduce((sum, a) => sum + Math.max(0, (hpBefore.get(a.id) ?? a.hp) - a.hp), 0);
-		const blinded = (team) => this.actors.filter((a) => a.hp > 0 && team === "enemy" === (a.team !== grenade.team) && a.flashedBy === grenade.actorId && a.blinded >= (team === "enemy" ? .2 : .5)).length;
+		const blinded = (team) => this.actors.filter((a) => a.hp > 0 && team === "enemy" === (a.team !== grenade.team) && a.flashedByGrenade === grenade.id && a.blinded >= (team === "enemy" ? .2 : .5)).length;
 		const turnedAway = grenade.kind === "flash" ? this.actors.filter((a) => a.hp > 0 && a.team !== grenade.team && a.turnedFromFlashBy === grenade.actorId && (a.turnedFromFlashUntil ?? 0) >= this.time - .25).length : 0;
 		const displaced = grenade.kind === "flash" ? this.actors.filter((a) => a.hp > 0 && a.team !== grenade.team && distance$2(a, grenade) <= LIVE_UTILITY_RULES.flashRadius && (a.retreatUntil > this.time || a.turnedFromFlashBy === grenade.actorId)).length : grenade.kind === "he" ? this.actors.filter((a) => a.hp > 0 && a.team !== grenade.team && distance$2(a, grenade) <= LIVE_HE_RULES.damageRadius + 1.5 && a.retreatUntil > this.time).length : 0;
 		entry.outcome = judgeFpsUtilityOutcome(intent, {
@@ -385982,12 +385988,14 @@ var FpsLiveSimulation = class {
 				enemiesBlinded: blinded("enemy"),
 				alliesBlinded: blinded("ally"),
 				enemiesTurnedAway: turnedAway,
-				enemiesDisplaced: displaced
+				enemiesDisplaced: displaced,
+				teammateUsedOpening: false
 			} : {},
 			...grenade.kind === "he" ? {
 				enemyDamage: Math.round(lost("enemy")),
 				allyDamage: Math.round(lost("ally")),
-				enemiesDisplaced: displaced
+				enemiesDisplaced: displaced,
+				smokesDisturbed
 			} : {},
 			...grenade.kind === "incendiary" ? { ignited: this.fires.some((f) => f.id === grenade.id) } : {}
 		});
@@ -387349,6 +387357,7 @@ var FpsLiveSimulation = class {
 			let fireLabel = "Incendiary spreads";
 			const judged = this.grenadeIntents.get(grenade.id);
 			const hpBefore = judged ? new Map(this.actors.map((a) => [a.id, a.hp])) : void 0;
+			let smokesDisturbed = 0;
 			if (grenade.kind === "smoke") {
 				this.smokes.push({
 					id: grenade.id,
@@ -387420,6 +387429,7 @@ var FpsLiveSimulation = class {
 					if (duration >= actor.blinded) {
 						actor.blinded = duration;
 						actor.flashedBy = grenade.actorId;
+						actor.flashedByGrenade = grenade.id;
 					}
 				}
 			} else {
@@ -387438,7 +387448,8 @@ var FpsLiveSimulation = class {
 					y: grenade.y,
 					z: grenade.z
 				});
-				for (const smoke of this.smokes) if (distance$2(smoke, grenade) < smoke.radius + LIVE_HE_RULES.smokeClearanceRadius) {
+				for (const smoke of this.smokes) if (smoke.expires > this.time && distance$2(smoke, grenade) < smoke.radius + LIVE_HE_RULES.smokeClearanceRadius) {
+					smokesDisturbed++;
 					this.disturbSmoke(smoke, LIVE_HE_RULES.smokeDisturbance, this.time + LIVE_HE_RULES.smokeDisturbance);
 					smoke.blastUntil = Math.max(smoke.blastUntil ?? 0, this.time + LIVE_HE_RULES.smokeDisturbance);
 					for (const ally of this.actors.filter((a) => a.team === grenade.team && a.hp > 0 && !this.duelCommitted(a) && distance$2(a, smoke) < 18)) {
@@ -387489,7 +387500,7 @@ var FpsLiveSimulation = class {
 				}
 			}
 			if (grenade.kind !== "smoke") {
-				const tacticalAchieved = judged && hpBefore ? this.judgeUtility(grenade, judged, hpBefore) : void 0;
+				const tacticalAchieved = judged && hpBefore ? this.judgeUtility(grenade, judged, hpBefore, smokesDisturbed) : void 0;
 				this.learnUtilityOutcome(grenade, tacticalAchieved);
 			}
 			this.emit("utility", `${grenade.kind === "flash" ? "Flash detonates" : grenade.kind === "smoke" ? "Smoke blooms" : grenade.kind === "he" ? "HE explodes" : fireLabel} · ${this.map.callout(grenade)}`, grenade.team, grenade.actorId);
@@ -390018,6 +390029,7 @@ var FpsLiveSimulation = class {
 						setPiece: set.setPiece,
 						utilityPlan: set.utilityPlan
 					};
+					this.roundOrderObservation.firstExecuteSeconds ??= this.liveElapsed;
 					this.radio(p, quietContact ? `IGL: Contact ${this.site} — save utility until first contact, stay tight!` : `IGL: ${set.setPiece} — smoke chokes, molly corners, flash for entry!`, true);
 					return;
 				}
@@ -394106,6 +394118,14 @@ var FpsLiveSimulation = class {
 		const friendly = p.team === victim.team, scaledRawDamage = rawDamage * (friendly ? clamp(friendlyDamageScale, 0, 1) : 1);
 		const armorScale = Object.hasOwn(LIVE_WEAPONS, weaponId) ? LIVE_WEAPONS[weaponId].armorScale ?? .78 : .78;
 		const damage = scaledRawDamage * (victim.armor > 0 ? armorScale : 1), actualDamage = Math.min(victim.hp, damage);
+		if (this.phase === "live" && !friendly && actualDamage > 0) {
+			this.roundOrderObservation.firstContactSeconds ??= this.liveElapsed;
+			if (actualDamage >= victim.hp && victim.attacking && this.bomb.status !== "planted" && this.duty(victim) === "entry" && this.roundOrderObservation.entrySupported === void 0) this.roundOrderObservation.entrySupported = this.actors.some((trader) => trader.team === victim.team && trader.hp > 0 && trader.tradeFor === victim.id && distance$2(trader, victim) < 10 && trader.equipped === trader.weapon && trader.weaponReady <= 0 && trader.ammo > 0 && trader.reload <= 0 && trader.blinded < .2 && this.visible(trader, p, false));
+		}
+		if (this.phase === "live" && !friendly && actualDamage > 0 && victim.blinded >= .2 && victim.flashedBy !== p.id && victim.flashedByGrenade !== void 0 && (Object.hasOwn(LIVE_WEAPONS, weaponId) || weaponId === "knife")) {
+			const flash = this.utilityLog.findLast((e) => e.grenadeId === victim.flashedByGrenade);
+			if (flash?.team === p.team && flash.outcome) flash.outcome.teammateUsedOpening = true;
+		}
 		if (friendly && p !== victim) this.friendlyDamage += Math.max(0, actualDamage);
 		if (actualDamage > 0 && p !== victim) this.recordIncoming(victim, p, "hit", Math.min(1, actualDamage / 45));
 		if (actualDamage > 0 && (Object.hasOwn(LIVE_WEAPONS, weaponId) || weaponId === "knife")) {
@@ -394648,7 +394668,8 @@ var FpsLiveSimulation = class {
 			site: this.site,
 			...this.firstBloodArea ? { firstBloodSite: this.firstBloodArea } : {},
 			attackPlayId: this.attackPlay.id,
-			defensePlayId: this.defensePlay.id
+			defensePlayId: this.defensePlay.id,
+			orders: { ...this.roundOrderObservation }
 		});
 		this.grenades = [];
 		this.roundHistory.push({
@@ -395125,14 +395146,14 @@ function simulateOfficialLiveMatch(blue, red, seed, mapId, identity, options = {
 		const book = loadFpsTeamPlaybook(input?.playbook) ?? approved?.playbooks?.[mapId];
 		const opponents = loadFpsOpponentModel(input?.opponents) ?? approved?.opponents;
 		const util = loadFpsUtilityBrain(input?.utility) ?? approved?.utility;
-		if (book || opponents || util) {
+		if (book || opponents || util || input?.recordExperience || input?.opponentId) {
 			const bucket = {
 				rounds: [],
 				observed: []
 			};
-			if (book || input?.playbook || input?.opponentId) playbookExperience[team] = bucket;
+			if (book || input?.recordExperience || input?.opponentId) playbookExperience[team] = bucket;
 			teamLearning[team] = {
-				...book || input?.opponentId ? { playbook: {
+				...book || input?.recordExperience || input?.opponentId ? { playbook: {
 					mode: "frozen",
 					...book && book.map === mapId ? { model: book } : {},
 					...opponents ? { opponents } : {},
@@ -395343,6 +395364,11 @@ function simulateOfficialLiveMatch(blue, red, seed, mapId, identity, options = {
 		durationSeconds: +roundDurations.reduce((s, d) => s + d, 0).toFixed(2),
 		broadcastSeconds: +(tick * LIVE_FPS_STEP).toFixed(2),
 		roundStartSeconds,
+		orderObservations: rounds.map((r) => ({
+			round: r.round,
+			team: r.attackTeam,
+			...r.orders
+		})),
 		...Object.keys(playbookExperience).length ? { playbookExperience } : {}
 	};
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AutomaticLearningBundle;
 use App\Services\FpsLineageStore;
+use App\Services\FpsOfficialLearning;
 use App\Services\FpsPlaybookValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,8 +18,9 @@ use RuntimeException;
  */
 final class FpsLineageController extends Controller
 {
-    public function current(string $key, FpsLineageStore $store): Response|JsonResponse
+    public function current(Request $request, string $key, FpsLineageStore $store): Response|JsonResponse
     {
+        if (str_starts_with($key, FpsOfficialLearning::LINEAGE_PREFIX)) $this->authorizeWriter($request);
         $lineage = $store->find($key);
         if (! $lineage) return response()->json(['version' => 1, 'lineage' => $key, 'kinds' => (object) []]);
         $parts = [];
@@ -35,8 +37,9 @@ final class FpsLineageController extends Controller
         return response('{"version":1,"lineage":'.json_encode($key).',"kinds":{'.implode(',', $parts).'}}', 200, ['Content-Type' => 'application/json']);
     }
 
-    public function history(string $key, FpsLineageStore $store): JsonResponse
+    public function history(Request $request, string $key, FpsLineageStore $store): JsonResponse
     {
+        if (str_starts_with($key, FpsOfficialLearning::LINEAGE_PREFIX)) $this->authorizeWriter($request);
         $lineage = $store->find($key);
         abort_unless($lineage, 404);
         $kinds = [];

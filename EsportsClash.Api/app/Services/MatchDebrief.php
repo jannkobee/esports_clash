@@ -76,6 +76,11 @@ class MatchDebrief
             $gameplan[] = ['key' => $key, 'label' => $label, 'low' => $low, 'high' => $high, 'level' => $arch->scale10((float) $team['plan'][$key] * 100)];
         }
         $summary = $m->result['report']['behaviorSummary'] ?? [];
+        $orderObservations = [];
+        foreach ($m->result['report']['orderObservations'] ?? [] as $row) {
+            if (($row['team'] ?? null) !== $side || ! is_int($row['round'] ?? null)) continue;
+            $orderObservations[] = array_intersect_key($row, array_flip(['round', 'firstContactSeconds', 'firstExecuteSeconds', 'entrySupported']));
+        }
         $snapshots = collect($m->result['report']['roundSnapshots'] ?? []);
         $players = [];
         foreach ($m->plan[$side] as $slot) {
@@ -93,7 +98,7 @@ class MatchDebrief
                 'instruction' => $identity['instruction'] ?? null, 'training_focus' => $identity['trainingFocus'] ?? null,
                 'rounds_played' => $snapshots->where('playerId', $id)->count(), 'observed' => array_slice($observed, 0, 6)];
         }
-        return ['side' => $side, 'coach' => $team['coachName'] ?? null, 'gameplan' => $gameplan,
+        return ['side' => $side, 'coach' => $team['coachName'] ?? null, 'gameplan' => $gameplan, 'order_observations' => $orderObservations,
             'fixture_plan' => $fixture->home_club_id === $clubId ? $fixture->home_plan : $fixture->away_plan, 'players' => $players,
             'notice' => $pin ? 'Observed counts come from this match only. They describe decisions, not accuracy.' : 'This match predates pinned tactical plans.'];
     }

@@ -4,18 +4,39 @@ import {useAccount} from '../AccountContext';
 import {request} from '../cloudPersistence';
 import {pediaHref,pediaTime} from '../hexapedia';
 import {FPS_POSITION_LABELS} from '../fps/fpsIdentity';
+import {FpsOfficialBroadcast} from './FpsOfficialBroadcast';
 import './world-media.css';
 
 type Side='blue'|'red';
 interface Round {round:number;winner:Side|null;side:'attackers'|'defenders'|null;reason:string|null;site:string|null;pistol:boolean;score:{blue:number|null;red:number|null};seconds:number|null}
 interface PlayerLine {id:string;name:string;team:Side;avatar?:string|null;nationality:{code?:string;name:string}|null;rating?:number;stats?:{kills:number;deaths:number;assists:number;adr:number;headshot_rate:number;first_bloods:number;trade_kills:number;clutches_won:number;plants:number;defuses:number}}
 interface ClubDebrief {side:Side;coach:string|null;gameplan:{key:string;label:string;low:string;high:string;level:number}[];fixture_plan:{gameplan?:Record<string,number>;instructions?:Record<string,string>}|null;
+  order_observations?:{round:number;firstContactSeconds?:number;firstExecuteSeconds?:number;entrySupported?:boolean}[];
   players:{id:string;name:string;positions:{t:string|null;ct:string|null};instruction:string|null;training_focus:string|null;rounds_played:number;observed:{metric:string;label:string;attempts:number;opportunities:number}[]}[];notice:string}
-interface VerifiedReport {execution?:{mode:string;notice?:string};format:'fps'|'legacy';competition:string;kickoff_at:string;started_at:string;completed_at:string;clubs:Record<string,string>;winner:Side;verified:boolean;
+interface VerifiedReport {match_id:string;execution?:{mode:string;notice?:string};format:'fps'|'legacy';competition:string;kickoff_at:string;started_at:string;completed_at:string;clubs:Record<string,string>;winner:Side;verified:boolean;
   duration_seconds:number|null;map:{id:string|null;name:string|null}|null;score:Record<Side,number>|null;half_score:Record<Side,number>|null;second_half_score:Record<Side,number>|null;overtime_score?:Record<Side,number>|null;
   rounds:Round[];blue_kills:number|null;red_kills:number|null;players:PlayerLine[];events:{second:number;text:string}[];club?:ClubDebrief}
 
 const clock=(s:number)=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+
+function OrderObservations({rounds,onWatch}:{rounds:NonNullable<ClubDebrief['order_observations']>;onWatch:(round:number)=>void}) {
+  if(!rounds.length)return null;
+  const contact=rounds.flatMap(r=>r.firstContactSeconds===undefined?[]:[r.firstContactSeconds]);
+  const execute=rounds.flatMap(r=>r.firstExecuteSeconds===undefined?[]:[r.firstExecuteSeconds]);
+  const entries=rounds.filter(r=>r.entrySupported!==undefined);
+  const supported=entries.filter(r=>r.entrySupported);
+  const example=entries.find(r=>!r.entrySupported)??supported[0]??rounds.find(r=>r.firstExecuteSeconds!==undefined);
+  const mean=(values:number[])=>`${Math.round(values.reduce((sum,seconds)=>sum+seconds,0)/values.length)} s`;
+  return <section>
+    <h4>Attacking rounds</h4>
+    <dl className="club-facts">
+      {contact.length>0&&<div><dt>First damage</dt><dd>{mean(contact)} on average in {contact.length} of {rounds.length} rounds</dd></div>}
+      {execute.length>0&&<div><dt>First execute call</dt><dd>{mean(execute)} on average in {execute.length} of {rounds.length} rounds</dd></div>}
+      {entries.length>0&&<div><dt>Trade support when the entry died before the plant</dt><dd>{supported.length} of {entries.length} rounds</dd></div>}
+    </dl>
+    {example&&<button type="button" className="cm-btn" onClick={()=>onWatch(example.round)}>Watch round {example.round}</button>}
+  </section>;
+}
 
 /** Round strip: who won each round and how, with pistol rounds and the halves marked. */
 function RoundStrip({rounds,clubs}:{rounds:Round[];clubs:Record<string,string>}) {
@@ -56,15 +77,18 @@ export function FixtureReport({id}:{id:number}) {
   const {session}=useAccount();
   const [data,setData]=useState<VerifiedReport|null>(null),[error,setError]=useState('');
   const [logOpen,setLogOpen]=useState(false),[eventPage,setEventPage]=useState(0);
+  const [replayRound,setReplayRound]=useState<number|null>(null);
   const eventCount=data?.events.length??0;
   const eventStart=eventPage*100,eventEnd=Math.min(eventCount,eventStart+100);
-  useEffect(()=>{setData(null);setError('');setEventPage(0);setLogOpen(false);},[id]);
+  useEffect(()=>{setData(null);setError('');setEventPage(0);setLogOpen(false);setReplayRound(null);},[id]);
   useEffect(()=>{const c=new AbortController();
     const publicReport=()=>request<{data:VerifiedReport}>(`/world/reports/${id}`,null,{signal:c.signal});
     // Your own fixtures open the debrief with your plan; anything else (or a signed-out visitor) gets the public report.
     void (session?request<{data:VerifiedReport}>(`/online/fixtures/${id}/debrief`,session,{signal:c.signal}).catch(()=>publicReport()):publicReport())
       .then(r=>setData(r.data)).catch(e=>{if(!c.signal.aborted)setError(e.message);});return()=>c.abort();},[id,session]);
   const scoreLine=data?.score?`${data.score.blue}–${data.score.red}`:null;
+  if(data&&session&&replayRound!==null)return <FpsOfficialBroadcast matchId={data.match_id} session={session}
+    initialRound={replayRound} onExit={()=>setReplayRound(null)}/>;
   return <section className="world-report"><h3>Match report</h3>{error&&<p role="alert">{error}</p>}{data?<>
     {data.execution?.mode==='owner_requested_fast_forward'&&<p className="world-provenance">Owner-requested simulated completion. Original live frames are retained; later match frames are sampled. All event timestamps come from the same simulation.</p>}
     <p className="report-headline"><strong>{data.clubs[data.winner]}</strong> won{scoreLine?<> <b>{scoreLine}</b></>:null}{data.map?.name?<> on {data.map.name}</>:null} · {data.competition}{data.verified?'':' · result not verified'}</p>
@@ -80,7 +104,7 @@ export function FixtureReport({id}:{id:number}) {
       <p className="club-help report-legend"><span className="report-round is-blue"/> {data.clubs.blue} <span className="report-round is-red"/> {data.clubs.red}</p></>}
     <h4>Players</h4>
     <PlayerTable players={data.players} clubs={data.clubs}/>
-    {data.club&&<YourPlan club={data.club}/>}
+    {data.club&&<><YourPlan club={data.club}/>{session&&<OrderObservations rounds={data.club.order_observations??[]} onWatch={setReplayRound}/>}</>}
     <details open={logOpen} onToggle={e=>setLogOpen(e.currentTarget.open)}><summary>Event log ({data.events.length})</summary><div className="club-commentary-pages"><button className="cm-btn" disabled={eventPage===0} onClick={()=>setEventPage(p=>p-1)}>Earlier events</button><span>{eventCount?eventStart+1:0}-{eventEnd} of {eventCount}</span><button className="cm-btn" disabled={eventEnd>=eventCount} onClick={()=>setEventPage(p=>p+1)}>Later events</button></div>{logOpen&&<ol className="world-events">{data.events.slice(eventStart,eventEnd).map((e,i)=><li key={i}><time>{clock(e.second)}</time> {e.text.replace(/^[\p{Extended_Pictographic}️ ]+/u,'')}</li>)}</ol>}</details>
     <p className="club-help">Statistics come from the match recording. Nothing missing is inferred from the score.</p>
   </>:!error&&<p role="status">Opening the match report…</p>}</section>;

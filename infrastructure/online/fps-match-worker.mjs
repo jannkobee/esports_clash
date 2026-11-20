@@ -55,10 +55,16 @@ async function simulateLive(blue, red, plan) {
   });
   let last;
   const learning = plan.fps_learning ?? {};
+  const teamLearning = Object.fromEntries(Object.entries(learning.team_playbooks ?? {}).map(([team, input]) => [team, {
+    ...input,
+    ...(input.playbook_json ? { playbook: JSON.parse(input.playbook_json) } : {}),
+    ...(input.opponents_json ? { opponents: JSON.parse(input.opponents_json) } : {}),
+    ...(input.lineage ? { recordExperience: true } : {}),
+  }]));
   const report = simulateOfficialLiveMatch(blue, red, plan.seed, plan.fps.map_id, plan.fps_identity, {
     onTick: ({ sim, cues }) => { last = sim; recorder.tick(() => sim.snapshot(), cues); },
-    ...(learning.approved_bundle ? { approvedBundle: learning.approved_bundle } : {}),
-    ...(learning.team_playbooks ? { teamLearning: learning.team_playbooks } : {}),
+    approvedBundle: learning.approved_bundle_json ? JSON.parse(learning.approved_bundle_json) : learning.approved_bundle,
+    teamLearning,
   });
   const totals = recorder.finish(last.snapshot());
   writeAtomic('header.json', header(totals.frames, totals.chunks, true, report.broadcastSeconds, report.roundStartSeconds));

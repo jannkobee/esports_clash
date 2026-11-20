@@ -57,7 +57,12 @@ test('paid opening smoke lineups route, settle, prepare and physically land for 
     const cloud=sim.smokes.find(s=>s.id===releaseId);assert.ok(cloud,context);
     // Throws are calculated, not pre-solved, so they can miss; every one is scored and remembered.
     assert.ok(Number.isFinite(cloud.x+cloud.y+cloud.z),context);
-    assert.ok(Math.abs(cloud.y-1.35-sim.map.terrain.floorAt(cloud,cloud.y))<.6,`${context}: smoke must pop resting on a surface`);
+    // The surface is the terrain or the top of a collision solid under the grenade: since the drawn roofs collide
+    // (2026-11-20), a learned throw that falls short can come to rest on one.
+    const base=cloud.y-1.35,pad=.09;
+    const support=Math.max(sim.map.terrain.floorAt(cloud,cloud.y),...sim.map.collisionSolidsAt(cloud,cloud,pad)
+      .filter(w=>cloud.x>=w.minX-pad&&cloud.x<=w.maxX+pad&&cloud.z>=w.minZ-pad&&cloud.z<=w.maxZ+pad&&w.height<=base+.6).map(w=>w.height));
+    assert.ok(Math.abs(base-support)<.6,`${context}: smoke must pop resting on a surface`);
     assert.ok((sim.snapshot().utilityLearning?.thisMatch.throws??0)>=1,`${context}: the utility brain must score the throw`);
   }
 });

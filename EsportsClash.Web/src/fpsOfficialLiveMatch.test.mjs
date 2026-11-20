@@ -92,7 +92,8 @@ test('the official map comes from the seed and only live maps are accepted',()=>
 });
 
 test('an official live match settles as a valid MR15 report with lawful, aggregated behaviour',{timeout:400_000},()=>{
-  const report=simulateOfficialLiveMatch(cards.slice(0,5),cards.slice(5),8128,'spillway',identity);
+  const teamLearning={blue:{recordExperience:true,opponentId:'club:2'},red:{recordExperience:true,opponentId:'club:1'}};
+  const report=simulateOfficialLiveMatch(cards.slice(0,5),cards.slice(5),8128,'spillway',identity,{teamLearning});
   assert.equal(report.simulationVersion,5);assert.equal(report.engine,'live-3d');assert.equal(report.mapId,'spillway');
   assert.ok(report.finalScore[report.winner]>=16);
   const score={blue:0,red:0};
@@ -105,6 +106,17 @@ test('an official live match settles as a valid MR15 report with lawful, aggrega
   for(const p of Object.values(report.playerStats))assert.ok(p.headshotRate>=0&&p.headshotRate<=100&&p.adr>=0);
   for(const [id,metrics] of Object.entries(report.behaviorSummary)){assert.ok(identity.players[id]);for(const m of Object.values(metrics))assert.ok(Number.isInteger(m.opportunities)&&m.attempts<=m.opportunities);}
   assert.equal(report.roundSnapshots.length,report.totalRounds*10);
+  assert.equal(report.orderObservations.length,report.totalRounds);
+  assert.ok(report.orderObservations.some(row=>row.firstContactSeconds>=0));
+  for(const team of ['blue','red']){
+    const experience=report.playbookExperience[team];
+    assert.equal(experience.rounds.length,report.totalRounds);
+    assert.equal(experience.observed.length,report.totalRounds);
+    experience.rounds.forEach((r,i)=>{
+      assert.equal(r.won,report.roundResults[i].winnerTeam===team);
+      assert.equal(r.side,report.orderObservations[i].team===team?'attack':'defense');
+    });
+  }
   assert.ok(!PRIVATE.test(JSON.stringify(report)));
   assert.ok(report.durationSeconds>0&&report.broadcastSeconds>report.durationSeconds);
   assert.ok(JSON.stringify(report).length<400_000,'compact enough to store per match');

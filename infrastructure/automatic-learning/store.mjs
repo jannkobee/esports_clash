@@ -17,7 +17,7 @@ export function atomic(path,value){
 /** Training lineages: two worker teams that co-evolve. `worker:main` keeps the legacy single model. */
 export const TRAINING_LINEAGES=['worker:main','worker:rival'];
 /** Training lineages plus club lineages that learn from submitted real matches. */
-export const validLineage=lineage=>TRAINING_LINEAGES.includes(lineage)||/^club:[0-9]{1,18}$/.test(lineage);
+export const validLineage=lineage=>TRAINING_LINEAGES.includes(lineage)||/^(club:|worker:official-club-)[0-9]{1,18}$/.test(lineage);
 export const modelKey=lineage=>!lineage||lineage==='worker:main'?'model':'model:'+lineage;
 export class Store{
   constructor(directory){

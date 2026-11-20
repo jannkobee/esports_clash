@@ -12,6 +12,8 @@ services:
     environment:
       LEARNING_DATA: /data
       LEARNING_REQUIRE_TELEMETRY: "true"
+      LEARNING_API_URL: ${LEARNING_API_URL:-}
+      LEARNING_API_TOKEN: ${LEARNING_API_TOKEN:-}
     volumes:
       - ./EsportsClash.Api/storage/app/automatic-learning:/data
     logging:

@@ -17,10 +17,22 @@ for(const seed of seeds){
   const sim=new FpsLiveSimulation(cards.slice(0,5),cards.slice(5),seed,identity,{mapId,skillProfiles:profiles});
   for(let i=0;i<steps;i++){sim.step();sim.drainAudioCues();if(sim.snapshot().phase==='finished')break;}
   for(const e of sim.utilityPurposeLog()){
-    const side=e.team===sim.snapshot().attackTeam?'':'';void side;
     const key=`${e.intent.grenade.padEnd(10)} ${e.intent.primary}`;
-    const r=rows[key]??={n:0,judged:0,ok:0,phases:{}};r.n++;if(e.outcome){r.judged++;if(e.outcome.achieved)r.ok++;}
+    const r=rows[key]??={n:0,judged:0,ok:0,landingError:0,landings:0,smokesDisturbed:0,flashFollowUps:0,phases:{}};
+    r.n++;
+    if(e.outcome){
+      r.judged++;
+      if(e.outcome.achieved)r.ok++;
+      if(e.outcome.landingError!==undefined){r.landingError+=e.outcome.landingError;r.landings++;}
+      r.smokesDisturbed+=e.outcome.smokesDisturbed??0;
+      if(e.outcome.teammateUsedOpening)r.flashFollowUps++;
+    }
     r.phases[e.intent.phase]=(r.phases[e.intent.phase]??0)+1;
   }
 }
-for(const [k,r] of Object.entries(rows).sort((a,b)=>b[1].n-a[1].n))console.log(k.padEnd(40),String(r.n).padStart(4),'achieved',`${r.ok}/${r.judged}`.padStart(7),JSON.stringify(r.phases));
+for(const [k,r] of Object.entries(rows).sort((a,b)=>b[1].n-a[1].n)){
+  const evidence={meanLandingError:r.landings?+(r.landingError/r.landings).toFixed(2):null,
+    ...(k.startsWith('he')?{smokesDisturbed:r.smokesDisturbed}:{}),
+    ...(k.startsWith('flash')?{flashFollowUps:r.flashFollowUps}:{})};
+  console.log(k.padEnd(40),String(r.n).padStart(4),'achieved',`${r.ok}/${r.judged}`.padStart(7),JSON.stringify(evidence),JSON.stringify(r.phases));
+}

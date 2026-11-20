@@ -129,6 +129,9 @@ export interface FpsUtilityOutcome {
   enemyDamage?: number;
   allyDamage?: number;
   ignited?: boolean;
+  smokesDisturbed?: number;
+  /** A teammate damaged an opponent while that opponent was blinded by this flash. */
+  teammateUsedOpening?: boolean;
   /** Whether the throw achieved what its purpose needs. */
   achieved: boolean;
 }
@@ -139,7 +142,9 @@ export function judgeFpsUtilityOutcome(intent: FpsUtilityIntent, o: Omit<FpsUtil
     case 'smoke': achieved = (o.landingError ?? 0) <= 3.8; break;
     case 'flash': achieved = (o.enemiesBlinded ?? 0) > 0 || (o.enemiesTurnedAway ?? 0) > 0 || ((intent.primary === 'RETREAT_PROTECTION' || intent.primary === 'INFORMATION_GATHERING') && (o.enemiesDisplaced ?? 0) > 0 && (o.alliesBlinded ?? 0) === 0 && (o.landingError ?? 0) <= 3.0); break;
     case 'incendiary': achieved = !!o.ignited && (o.landingError ?? 0) <= 3.5; break;
-    default: achieved = intent.primary === 'SMOKE_CLEARING' || (o.enemyDamage ?? 0) >= 12 || (o.enemiesDisplaced ?? 0) > 0;
+    default: achieved = intent.primary === 'SMOKE_CLEARING'
+      ? (o.smokesDisturbed ?? 0) > 0
+      : (o.enemyDamage ?? 0) >= 12 || (o.enemiesDisplaced ?? 0) > 0;
   }
   if ((o.alliesBlinded ?? 0) > 0 && intent.grenade === 'flash' && !(o.enemiesBlinded ?? 0) && !(o.enemiesTurnedAway ?? 0)) achieved = false;
   return {...o, achieved};

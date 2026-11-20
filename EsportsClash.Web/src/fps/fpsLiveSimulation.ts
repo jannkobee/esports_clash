@@ -224,6 +224,7 @@ export class FpsLiveSimulation {
   private teamMechanics:Partial<Record<FpsTeamId,FpsLiveMechanicsLearner>>={};
   private teamMovement:Partial<Record<FpsTeamId,FpsLiveMovementLearner>>={};
   private onRoundComplete?:LiveSimulationOptions['onRoundComplete'];
+  private roundOrderObservation:NonNullable<LiveRoundTelemetry['orders']>={};
   private routeLearner(team:FpsTeamId){return this.teamLearners[team]??this.learner;}
   private combatLearner(team:FpsTeamId){return this.teamMechanics[team]??this.mechanicsLearner;}
   private movementLearner(team:FpsTeamId){return this.teamMovement[team]??this.movementLearnerGlobal;}
@@ -534,6 +535,7 @@ export class FpsLiveSimulation {
     this.nextInformationProbe={blue:this.time+25,red:this.time+25};
     this.iglTakeoverAnnounced={blue:false,red:false};
     this.completedSmokeLineups.clear();this.unthrowableSmokeLineups.clear();
+    this.roundOrderObservation={};
     this.openingSmokeTeams.clear();this.corpseDangerRecorded.clear();resetLiveInfluenceGrid(this.influenceGrid('blue'),this.time);resetLiveInfluenceGrid(this.influenceGrid('red'),this.time);resetTacticalBlackboard(this.teamBlackboard('blue'));resetTacticalBlackboard(this.teamBlackboard('red'));this.territory={blue:createTeamTerritoryState(this.time),red:createTeamTerritoryState(this.time)};this.timing={blue:createTeamTimingState(),red:createTeamTimingState()};this.droppedUtility=[];this.droppedKits=[];this.firstBloodArea=undefined;this.corpses=[];this.teamReports=[];this.smokes=[];this.fires=[];this.blasts=[];this.bloodMarks=[];this.postPlantPlanterId=undefined;this.shots=[];this.noiseMasks=[];this.reports=[];this.droppedWeapons=[];this.pendingBuys.clear();this.planCommit=0;this.roundSiteKills={blue:0,red:0};this.eliminations=[];this.confirmedDeaths.clear();this.grenades=[];this.throwPlans.clear();this.heFloorContacts.clear();this.flashSightings.clear();this.fireCues=[];
     if(reset)this.losses={blue:0,red:0};
     for(const p of this.actors) {
@@ -589,7 +591,7 @@ export class FpsLiveSimulation {
       p.lastExposedAt=-100;p.territoryTask=undefined;p.flankTiming=undefined;p.punishWindow=undefined;
       p.position=this.identity.players[p.id].assignments![p.attacking?'t':'ct'];p.role=fpsExecutionRole(p.position);p.preferSniper=p.position.endsWith('FLEX')&&p.profile!.values.sniping>p.profile!.values.rifling;p.naturalIdentity=naturalFpsIdentity(this.identity.players[p.id].personality,p.position);
       p.hp=100;p.reload=0;p.reloadDuration=0;p.reloadSilent=false;p.reloadRounds=0;p.blinded=0;p.channel=0;p.bomb=false;p.path=[];p.goal=undefined;p.contact=undefined;
-      p.target=undefined;p.flashedBy=undefined;p.nextThink=this.time;p.nextShot=this.time;p.contactAt=-100;p.lastMoved=-100;p.lastShot=-100;
+      p.target=undefined;p.flashedBy=undefined;p.flashedByGrenade=undefined;p.nextThink=this.time;p.nextShot=this.time;p.contactAt=-100;p.lastMoved=-100;p.lastShot=-100;
       p.nextSense=this.time;p.seenAt=-100;p.burst=0;p.pressure=0;p.retreatUntil=0;p.reportAt=-100;p.stuckFor=0;
       p.watchPoint=undefined;p.aimFocus=undefined;p.exertion=p.profile?p.mentalState.exertion:0;p.intent='Prepare the round';
       p.engagementShots=0;p.engagementDamaged=false;p.openingAttempted=false;
@@ -785,14 +787,14 @@ export class FpsLiveSimulation {
       wonRound:this.phase==='post'?this.roundWinner===p.team:undefined});
   }
   /** Score a grenade against its purpose when it goes off. */
-  private judgeUtility(grenade:LiveGrenade,intent:FpsUtilityIntent,hpBefore:ReadonlyMap<string,number>):boolean|undefined {
+  private judgeUtility(grenade:LiveGrenade,intent:FpsUtilityIntent,hpBefore:ReadonlyMap<string,number>,smokesDisturbed=0):boolean|undefined {
     const entry=this.utilityLog.find(e=>e.grenadeId===grenade.id&&!e.outcome);
     this.grenadeIntents.delete(grenade.id);
     if(!entry)return undefined;
     const planEntry=this.throwPlans.get(grenade.id);
     const intended=planEntry?.intended;
     const lost=(team:'enemy'|'ally')=>this.actors.filter(a=>(team==='enemy')===(a.team!==grenade.team)).reduce((sum,a)=>sum+Math.max(0,(hpBefore.get(a.id)??a.hp)-a.hp),0);
-    const blinded=(team:'enemy'|'ally')=>this.actors.filter(a=>a.hp>0&&(team==='enemy')===(a.team!==grenade.team)&&a.flashedBy===grenade.actorId&&a.blinded>=(team==='enemy'?.2:.5)).length;
+    const blinded=(team:'enemy'|'ally')=>this.actors.filter(a=>a.hp>0&&(team==='enemy')===(a.team!==grenade.team)&&a.flashedByGrenade===grenade.id&&a.blinded>=(team==='enemy'?.2:.5)).length;
     const turnedAway=grenade.kind==='flash'?this.actors.filter(a=>a.hp>0&&a.team!==grenade.team&&a.turnedFromFlashBy===grenade.actorId&&(a.turnedFromFlashUntil??0)>=this.time-.25).length:0;
     const displaced=grenade.kind==='flash'
       ?this.actors.filter(a=>a.hp>0&&a.team!==grenade.team&&distance(a,grenade)<=LIVE_UTILITY_RULES.flashRadius&&(a.retreatUntil>this.time||a.turnedFromFlashBy===grenade.actorId)).length
@@ -801,8 +803,8 @@ export class FpsLiveSimulation {
         :0;
     entry.outcome=judgeFpsUtilityOutcome(intent,{
       ...(intended?{landingError:Math.round(distance(intended,grenade)*100)/100}:{}),
-      ...(grenade.kind==='flash'?{enemiesBlinded:blinded('enemy'),alliesBlinded:blinded('ally'),enemiesTurnedAway:turnedAway,enemiesDisplaced:displaced}:{}),
-      ...(grenade.kind==='he'?{enemyDamage:Math.round(lost('enemy')),allyDamage:Math.round(lost('ally')),enemiesDisplaced:displaced}:{}),
+      ...(grenade.kind==='flash'?{enemiesBlinded:blinded('enemy'),alliesBlinded:blinded('ally'),enemiesTurnedAway:turnedAway,enemiesDisplaced:displaced,teammateUsedOpening:false}:{}),
+      ...(grenade.kind==='he'?{enemyDamage:Math.round(lost('enemy')),allyDamage:Math.round(lost('ally')),enemiesDisplaced:displaced,smokesDisturbed}:{}),
       ...(grenade.kind==='incendiary'?{ignited:this.fires.some(f=>f.id===grenade.id)}:{}),
     });
     return entry.outcome.achieved;
@@ -1729,6 +1731,7 @@ export class FpsLiveSimulation {
       let fireLabel='Incendiary spreads';
       const judged=this.grenadeIntents.get(grenade.id);
       const hpBefore=judged?new Map(this.actors.map(a=>[a.id,a.hp])):undefined;
+      let smokesDisturbed=0;
       if(grenade.kind==='smoke'){
         this.smokes.push({id:grenade.id,x:grenade.x,z:grenade.z,level:grenade.level,y:grenade.y+1.35,startedAt:this.time,radius:.05,expires:this.time+LIVE_UTILITY_RULES.smokeDuration});
         this.visTickCache.clear();
@@ -1757,12 +1760,13 @@ export class FpsLiveSimulation {
           const facing=Math.cos(angle(heading(actor,grenade)-actor.yaw));
           const lookScale=facing>=.45?1:facing<=0?0:facing/.45;
           const duration=(LIVE_UTILITY_RULES.flashTurnedDuration+(LIVE_UTILITY_RULES.flashFacingDuration-LIVE_UTILITY_RULES.flashTurnedDuration)*lookScale)*Math.max(.25,1-range/16);
-          if(duration>=actor.blinded){actor.blinded=duration;actor.flashedBy=grenade.actorId;}
+          if(duration>=actor.blinded){actor.blinded=duration;actor.flashedBy=grenade.actorId;actor.flashedByGrenade=grenade.id;}
         }
       } else {
         this.blasts.push({id:grenade.id,x:grenade.x,z:grenade.z,level:grenade.level,startedAt:this.time,endsAt:this.time+.48,radius:LIVE_HE_RULES.damageRadius});
         this.audioCues.push({kind:'heExplode',x:grenade.x,y:grenade.y,z:grenade.z});
-        for(const smoke of this.smokes)if(distance(smoke,grenade)<smoke.radius+LIVE_HE_RULES.smokeClearanceRadius){
+        for(const smoke of this.smokes)if(smoke.expires>this.time&&distance(smoke,grenade)<smoke.radius+LIVE_HE_RULES.smokeClearanceRadius){
+          smokesDisturbed++;
           this.disturbSmoke(smoke,LIVE_HE_RULES.smokeDisturbance,this.time+LIVE_HE_RULES.smokeDisturbance);
           smoke.blastUntil=Math.max(smoke.blastUntil??0,this.time+LIVE_HE_RULES.smokeDisturbance);
           for(const ally of this.actors.filter(a=>a.team===grenade.team&&a.hp>0&&!this.duelCommitted(a)&&distance(a,smoke)<18)){
@@ -1785,7 +1789,7 @@ export class FpsLiveSimulation {
         }
       }
       if(grenade.kind!=='smoke'){
-        const tacticalAchieved=judged&&hpBefore?this.judgeUtility(grenade,judged,hpBefore):undefined;
+        const tacticalAchieved=judged&&hpBefore?this.judgeUtility(grenade,judged,hpBefore,smokesDisturbed):undefined;
         this.learnUtilityOutcome(grenade,tacticalAchieved);
       }
       this.emit('utility',`${grenade.kind==='flash'?'Flash detonates':grenade.kind==='smoke'?'Smoke blooms':grenade.kind==='he'?'HE explodes':fireLabel} · ${this.map.callout(grenade)}`,grenade.team,grenade.actorId);
@@ -3387,6 +3391,7 @@ export class FpsLiveSimulation {
           const set=this.buildCallUtilityPlan(p.team,'execute',this.site,allies);
           this.informationOrders[p.team]={mode:'execute',lifecycle:'proposed',site:this.site,responders:allies.map(a=>a.id),until:this.time+18,strength:pressure.strength,reason,executePhase:quietContact?'breach':'regroup',phaseAt:this.time,smokesSent:0,flashSent:false,mollySent:false,entryId:entryOrder.find(a=>!a.bomb)?.id,
             issuedAt:this.time,callerId:p.id,readyAt:callReadyDelay(.8),setPiece:set.setPiece,utilityPlan:set.utilityPlan};
+          this.roundOrderObservation.firstExecuteSeconds??=this.liveElapsed;
           this.radio(p,quietContact?`IGL: Contact ${this.site} — save utility until first contact, stay tight!`:`IGL: ${set.setPiece} — smoke chokes, molly corners, flash for entry!`,true);return;
         }
         order.reason=holdForProtection?`Pair up with ${entryActor!.name} before committing to ${this.site}`:assessment[this.site].identified>0?`${assessment[this.site].identified} last seen ${this.site}; work the known angles`:'No confirmed stack — gather information before committing';
@@ -6162,6 +6167,20 @@ export class FpsLiveSimulation {
     const friendly=p.team===victim.team,scaledRawDamage=rawDamage*(friendly?clamp(friendlyDamageScale,0,1):1);
     const armorScale=Object.hasOwn(LIVE_WEAPONS,weaponId)?LIVE_WEAPONS[weaponId as LiveWeapon].armorScale??.78:.78;
     const damage=scaledRawDamage*(victim.armor>0?armorScale:1),actualDamage=Math.min(victim.hp,damage);
+    if(this.phase==='live'&&!friendly&&actualDamage>0){
+      this.roundOrderObservation.firstContactSeconds??=this.liveElapsed;
+      if(actualDamage>=victim.hp&&victim.attacking&&this.bomb.status!=='planted'
+        &&this.duty(victim)==='entry'&&this.roundOrderObservation.entrySupported===undefined){
+        this.roundOrderObservation.entrySupported=this.actors.some(trader=>trader.team===victim.team&&trader.hp>0&&trader.tradeFor===victim.id
+          &&distance(trader,victim)<10&&trader.equipped===trader.weapon&&trader.weaponReady<=0&&trader.ammo>0
+          &&trader.reload<=0&&trader.blinded<.2&&this.visible(trader,p,false));
+      }
+    }
+    if(this.phase==='live'&&!friendly&&actualDamage>0&&victim.blinded>=.2&&victim.flashedBy!==p.id&&victim.flashedByGrenade!==undefined
+      &&(Object.hasOwn(LIVE_WEAPONS,weaponId)||weaponId==='knife')){
+      const flash=this.utilityLog.findLast(e=>e.grenadeId===victim.flashedByGrenade);
+      if(flash?.team===p.team&&flash.outcome)flash.outcome.teammateUsedOpening=true;
+    }
     if(friendly&&p!==victim)this.friendlyDamage+=Math.max(0,actualDamage);
     if(actualDamage>0&&p!==victim)this.recordIncoming(victim,p,'hit',Math.min(1,actualDamage/45));
     if(actualDamage>0&&(Object.hasOwn(LIVE_WEAPONS,weaponId)||weaponId==='knife')){
@@ -6421,7 +6440,7 @@ export class FpsLiveSimulation {
     }
     this.onRoundComplete?.({round:this.round,winner:team,attackTeam:this.attackTeam,reason,planted:['planted','exploded','defused'].includes(this.bomb.status),time:this.time,
       tactic:this.tacticArchetype,defenseSetup:this.defenseSetup,site:this.site,...(this.firstBloodArea?{firstBloodSite:this.firstBloodArea}:{}),
-      attackPlayId:this.attackPlay.id,defensePlayId:this.defensePlay.id});
+      attackPlayId:this.attackPlay.id,defensePlayId:this.defensePlay.id,orders:{...this.roundOrderObservation}});
     this.grenades=[];
     this.roundHistory.push({
       round: this.round,

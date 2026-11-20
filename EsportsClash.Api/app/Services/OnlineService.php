@@ -313,6 +313,11 @@ class OnlineService
                 if($version===5)$plan['fps']['map_id']=in_array($fixtureRow?->map_id,self::FPS_LIVE_MAPS,true)?$fixtureRow->map_id:self::FPS_LIVE_MAPS[$seed%count(self::FPS_LIVE_MAPS)];
                 $plans=$fixtureRow?['blue'=>$fixtureRow->home_plan,'red'=>$fixtureRow->away_plan]:[];
                 $plan['fps_identity']=app(FpsIdentityEngine::class)->pin($blue,$red,$blueUser,$redUser,collect($catalog->payload['cards'])->keyBy('id')->all(),$plans);
+                if ($version === 5) {
+                    $clubsByUser = OnlineClub::whereIn('user_id', array_filter([$blueUser, $redUser]))->pluck('id', 'user_id');
+                    $clubIds = array_filter(['blue' => $clubsByUser[$blueUser] ?? null, 'red' => $clubsByUser[$redUser] ?? null]);
+                    $plan['fps_learning'] = app(FpsOfficialLearning::class)->pin($plan['fps']['map_id'], $clubIds);
+                }
             }
             return OnlineMatch::create(['id' => $id, 'blue_user_id' => $blueUser, 'red_user_id' => $redUser,
                 'plan' => $plan, 'plan_hash' => hash('sha256', json_encode($plan, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))]);
@@ -381,6 +386,9 @@ class OnlineService
                 || ($result['report']['seed'] ?? null) !== $match->plan['seed']) $this->invalid('Worker result does not match its allocation.');
             if ($fps) {
                 $this->validateFpsReport($result, $match);
+                if (($match->plan['fixture']['progression']['training'] ?? true) && $match->usesLiveEngine()) {
+                    app(FpsOfficialLearning::class)->record($match, $result['report']);
+                }
             } else {
                 $nexus = $result['terminal_nexus'] ?? [];
                 // Preserve the live engine's existing red-Nexus-first terminal ordering,

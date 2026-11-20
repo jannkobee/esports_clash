@@ -396,7 +396,11 @@ function planWithStyle(
   const reach = phys.maxRange + Math.max(0, (y0 - targetY) * 1.6);
   if (d > reach) return;
   // Remembered flight times may sit outside a style's comfortable range: they were learned by throwing.
-  const [lo, hi] = trustExperience ? [.42, 3.4] as const : flightRange(style, kind);
+  const [lo, styleMax] = trustExperience ? [.42, 3.4] as const : flightRange(style, kind);
+  // Fire must reach its landing surface before the airborne expiry. Leave a physics tick
+  // for floor contact. A longer saved throw must be recalculated against today's geometry.
+  const hi = kind === 'incendiary' ? Math.min(styleMax, LIVE_UTILITY_FUSES.fireAirFuse - 1 / 30) : styleMax;
+  if (kind === 'incendiary' && rememberedFlight !== undefined && rememberedFlight > hi) return;
   const bands = readPath(from, aim, runtime);
   // y(s) = y0 + (targetY - y0)s + g T^2 s(1 - s) / 2, rising with flight time T at every s.
   // Each band forbids the flight times whose arc would pass through it at that s.
@@ -405,7 +409,9 @@ function planWithStyle(
   const speedAt = (t: number) => Math.hypot(d / t, (targetY - y0 + .5 * g * t * t) / t);
   const allowed = (t: number) => speedAt(t) <= phys.maxLaunchSpeed && (trustExperience || !forbidden.some(([a, b]) => t > a && t < b));
   // A flash should reach the spot as its fuse runs out, so it pops there in the air.
-  const preferred = Math.max(lo, Math.min(hi, rememberedFlight ?? (kind === 'flash' ? LIVE_UTILITY_FUSES.flashFuse : naturalFlight(style, d))));
+  // Start fire on the lowest available path and raise it only when the map requires it.
+  const defaultTime = kind === 'incendiary' ? lo : kind === 'flash' ? LIVE_UTILITY_FUSES.flashFuse : naturalFlight(style, d);
+  const preferred = Math.max(lo, Math.min(hi, rememberedFlight ?? defaultTime));
   let T: number | undefined;
   for (let step = 0; step <= Math.ceil((hi - lo) / .04); step++) {
     for (const t of step === 0 ? [preferred] : [preferred + step * .04, preferred - step * .04]) {

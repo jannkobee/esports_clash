@@ -70,10 +70,11 @@ export function FpsOfficialBroadcast({ matchId, session, initialRound, onExit }:
     const card = (p: FpsReplayHeader['players'][number]) => ({ id: p.id, name: p.name }) as unknown as PlayerCard;
     return { blue: source.header.players.filter(p => p.team === 'blue').map(card), red: source.header.players.filter(p => p.team === 'red').map(card) };
   }, [source]);
-  if (gone) return <div className="club-notice" role="status">
-    <strong>Replay no longer available.</strong> Broadcasts are kept on the match server for a limited time after they air. The result and match report remain on this page.
+  if (gone || !source || !cards || cards.blue.length !== 5 || cards.red.length !== 5) return <div>
+    {gone ? <p className="club-notice" role="status"><strong>Replay no longer available.</strong> The match report is still available.</p>
+      : <p className="club-help" role="status">{message}</p>}
+    <button type="button" className="cm-btn" onClick={onExit}>Exit replay</button>
   </div>;
-  if (!source || !cards || cards.blue.length !== 5 || cards.red.length !== 5) return <p className="club-help">{message}</p>;
   return <FpsLiveBroadcast mapId={source.header.mapId} blue={cards.blue} red={cards.red} seed={source.header.seed}
     identity={{ players: {}, teams: {} } as unknown as FpsIdentityExperiment} replay={source} onExit={onExit} />;
 }
