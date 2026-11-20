@@ -7,19 +7,22 @@ import {LIVE_WINDOW_FURNITURE} from './fpsMidWindowInterior.ts';
 export function buildMidWindowScenery(scene:Scene,{box,detail}:VillageBuilder):void {
   const front=16.84;
   const winMid=(w.windowMinX+w.windowMaxX)/2,winW=w.windowMaxX-w.windowMinX,winH=w.lintelY-w.sillY;
-  for(const x of [w.windowMinX+.05,w.windowMaxX-.05])box(`mid-window-stone-reveal-${x}`,x,(w.sillY+w.lintelY)/2,front,.13,winH,.12,'#dcc8a5');
+  // Jamb stones sit on the piers either side of the opening; inside it they were solid-looking but bullet-thin.
+  for(const x of [w.windowMinX-.06,w.windowMaxX+.06])box(`mid-window-stone-reveal-${x}`,x,(w.sillY+w.lintelY)/2,front,.13,winH,.12,'#dcc8a5');
   box('mid-window-stone-sill',winMid,w.sillY-.03,front,winW+.15,.12,.24,'#dfcaa8');
   box('mid-window-lintel-reveal',winMid,w.lintelY+.03,front,winW+.15,.14,.13,'#d7c3a1');
   // Ground-level open wooden doorway facing T-side lower Mid with upper shuttered window.
   // A normal street door: frame, header and an opened leaf hinged on its west jamb.
   const doorMid=(w.doorMinX+w.doorMaxX)/2,doorW=w.doorMaxX-w.doorMinX;
   for(const x of [w.doorMinX,w.doorMaxX]){
-    const px=x<doorMid?x+.05:x-.05,fz=front-.02;
-    box(`mid-window-t-door-plinth-${x}`,px,.16,fz,.16,.32,.18,'#b9aa90');
-    box(`mid-window-t-door-frame-${x}`,px,w.doorTopY/2,fz,.12,w.doorTopY,.14,'#d4c2a1');
+    // Frame posts and plinths stand on the jambs beside the opening, not 5-11 cm inside it.
+    const px=x<doorMid?x-.06:x+.06,fz=front+.04;
+    box(`mid-window-t-door-plinth-${x}`,px,.16,fz,.16,.32,.08,'#b9aa90');
+    box(`mid-window-t-door-frame-${x}`,px,w.doorTopY/2,fz,.12,w.doorTopY,.08,'#d4c2a1');
   }
-  box('mid-window-t-door-header',doorMid,w.doorTopY+.06,front-.02,doorW+.12,.18,.16,'#dcc8a5');
-  box('mid-window-t-door-cornice',doorMid,w.doorTopY+.2,front-.05,doorW+.28,.1,.2,'#c8b698');
+  // Header and cornice sit on the lintel within 5 cm of its face (they hung below and 20 cm in front of it).
+  box('mid-window-t-door-header',doorMid,w.doorTopY+.09,front+.04,doorW+.12,.18,.08,'#dcc8a5');
+  box('mid-window-t-door-cornice',doorMid,w.doorTopY+.23,front+.04,doorW+.28,.1,.1,'#c8b698');
   box('mid-window-t-open-door-board',w.doorMinX+.06,w.doorTopY/2-.02,17.17+doorW*.45,.07,w.doorTopY-.08,doorW*.9,'#6f4b2f');
   for(const y of [.6,1.7])box(`mid-window-t-door-crossbar-${y}`,w.doorMinX+.11,y,17.17+doorW*.45,.04,.1,doorW*.88,'#593a23');
   box('mid-window-t-door-handle',w.doorMinX+.12,1.02,17.17+doorW*.85,.05,.06,.14,'#c7a76c');
@@ -29,12 +32,11 @@ export function buildMidWindowScenery(scene:Scene,{box,detail}:VillageBuilder):v
     const x=winMid+side*(winW/2+.18+(row%3)*.18);
     box(`mid-window-brick-${side}-${row}`,x,2.82+row*.23,front,.26,.13,.035,row%3?'#ae8d70':'#c2a080');
   }
+  // The flat tile-coloured caps that sat on these roofs are replaced by pitched clay roofs (village architecture).
   for(const z of [18,21,24,26])box(`mid-window-house-beam-${z}`,0,5.34,z,8.75,.12,.16,'#74583d');
-  box('mid-window-house-tile-eave',0,5.66,21.75,9.65,.16,10.2,'#a96d4e');
-  box('mid-window-annex-tile-eave',-5.85,5.66,24.35,3.15,.16,4.75,'#a96d4e');
-  for(const z of [22.3,26.35])box(`mid-window-wide-door-frame-${z}`,-4.35,3.05,z,.12,2.5,.12,'#d4c2a1');
+  // Door posts sit on the wall ends at the edges of the side opening, not inside it.
+  for(const z of [22.14,26.44])box(`mid-window-wide-door-frame-${z}`,-4.47,3.05,z,.12,2.5,.12,'#d4c2a1');
   // Visible stair flights remain inside the house and civic wing behind street doors.
-  box('mid-window-civic-full-roof',-11.35,5.66,24.35,8.75,.16,4.75,'#a96d4e');
   for(const z of [22.55,26.05])box(`mid-window-civic-street-frame-${z}`,-15.65,1.3,z,.1,2.6,.1,'#dcc8a5');
   box('mid-window-civic-street-top',-15.65,2.65,24.3,.1,.14,3.65,'#dcc8a5');
   for(let i=0;i<12;i++){
@@ -55,13 +57,19 @@ export function buildMidWindowScenery(scene:Scene,{box,detail}:VillageBuilder):v
     box(`mid-window-rear-shutter-${x}`,x,4.2,w.maxZ+.19,1.12,1.15,.05,'#57716a');
   }
   // Italian masonry trim: corner quoins, belt course, doorway lantern, plaque and roof chimney.
-  for(const qx of [-4.54,4.54])for(const qz of [16.92,26.58])for(let idx=0,y=.52;y<5.15;y+=.52,idx++){
-    const nearDoor=y<3&&((qx<0&&qz<20)||(qx>0&&qz>20));
-    const qw=nearDoor?.22:(idx%2?.34:.24),qd=idx%2?.24:.34;
-    const cx=qx<0?-4.55-(qw-.22)*.5:4.55+(qw-.22)*.5,cz=qz<20?16.93:26.57;
-    box(`mid-window-quoin-${qx}-${qz}-${idx}`,cx,y,cz,qw,.22,qd,idx%2?'#d9ccb0':'#cdc0a2');
+  // Bonded quoins 3 cm proud of the house corners (they stood up to 16 cm out, where shots grazed through them).
+  // Beside the CT door (rear east corner) the return along the rear face stays short of the doorway.
+  const proud=.03,course=.44,step=.48;
+  for(const sx of [-1,1])for(const sz of [-1,1]){
+    const fx=sx*(w.maxX+.12),fz=sz<0?w.frontZ-.12:w.maxZ+.12;
+    for(let idx=0,y=.38+course/2;y<5.15;y+=step,idx++){
+      const nearDoor=y<2.9&&sx>0&&sz>0,alongX=nearDoor?.22:(idx%2===0?.42:.26),alongZ=idx%2===0?.26:.42;
+      const qw=alongX+proud,qd=alongZ+proud,qx=fx+sx*(proud-qw/2),qz=fz+sz*(proud-qd/2);
+      box(`mid-window-quoin-${sx}-${sz}-${idx}`,qx,y,qz,qw,course,qd,idx%2?'#d9ccb0':'#cdc0a2');
+    }
   }
-  box('mid-window-east-belt-course',3.78,2.66,front,1.62,.14,.16,'#d9ccb0');
+  // Belt course across the whole Mid facade under the window sill (it was a 1.6 m stub on the east end).
+  box('mid-window-east-belt-course',0,2.66,front,9.04,.14,.16,'#d9ccb0');
   box('mid-window-door-sconce-arm',-1.56,2.56,front-.08,.05,.05,.18,'#3d4541');
   box('mid-window-door-sconce-lantern',-1.56,2.42,front-.16,.14,.2,.14,'#e2b86b');
   box('mid-window-house-plaque',-1.56,1.52,front-.03,.24,.18,.03,'#e8dec2');

@@ -42,8 +42,9 @@ async function simulateLive(blue, red, plan) {
     }
   };
   const players = [...blue.map(p => ({ id: p.id, name: p.name, team: 'blue' })), ...red.map(p => ({ id: p.id, name: p.name, team: 'red' }))];
-  const header = (frames, chunks, final, broadcastSeconds) => JSON.stringify({ version: 1, mapId: plan.fps.map_id, seed: plan.seed,
-    frameSeconds: FPS_REPLAY_STEPS_PER_FRAME / 30, framesPerChunk: FPS_REPLAY_FRAMES_PER_CHUNK, frames, chunks, final, broadcastSeconds, players });
+  const header = (frames, chunks, final, broadcastSeconds, roundStartSeconds) => JSON.stringify({ version: 1, mapId: plan.fps.map_id, seed: plan.seed,
+    frameSeconds: FPS_REPLAY_STEPS_PER_FRAME / 30, framesPerChunk: FPS_REPLAY_FRAMES_PER_CHUNK, frames, chunks, final, broadcastSeconds,
+    ...(roundStartSeconds?.length ? { roundStartSeconds } : {}), players });
   // Viewers can follow a match while it is still being simulated: a provisional header after every chunk.
   const recorder = new FpsLiveReplayRecorder(chunk => {
     writeAtomic(`${String(chunk.index).padStart(5, '0')}.json.gz`, gzipSync(JSON.stringify(chunk)));
@@ -53,11 +54,14 @@ async function simulateLive(blue, red, plan) {
     catch (error) { console.error(`Provisional replay header not updated: ${error.message}`); }
   });
   let last;
+  const learning = plan.fps_learning ?? {};
   const report = simulateOfficialLiveMatch(blue, red, plan.seed, plan.fps.map_id, plan.fps_identity, {
     onTick: ({ sim, cues }) => { last = sim; recorder.tick(() => sim.snapshot(), cues); },
+    ...(learning.approved_bundle ? { approvedBundle: learning.approved_bundle } : {}),
+    ...(learning.team_playbooks ? { teamLearning: learning.team_playbooks } : {}),
   });
   const totals = recorder.finish(last.snapshot());
-  writeAtomic('header.json', header(totals.frames, totals.chunks, true, report.broadcastSeconds));
+  writeAtomic('header.json', header(totals.frames, totals.chunks, true, report.broadcastSeconds, report.roundStartSeconds));
   return report;
 }
 

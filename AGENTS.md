@@ -1,6 +1,92 @@
 # Repository handoff
 
-## Workspace information architecture: grouped by what the manager is doing (2026-11-18, latest)
+## FPS simulation polish: aim, gunplay, movement, lawful intelligence, retakes & anti-regression (2026-11-20, latest)
+
+Read [the record](docs/fps-gameplay-gunplay-aim-polish-20261120.md) before changing manual aim, recoil/cadence, counter-strafing, enemy economy reads, map-wide territory control, stealth creeping, CS timing, retakes, or multi-map anticipation/C4 physics.
+
+- **Aim (`fpsLiveGunplay.ts`, `fpsLiveSimulation.ts`).** Every shot remains strictly hand-moved (no snapping/head-locking). Keep `handleReactionWait` stepping `updateDuelAimAndFire` with perception anchored to `p.acquired` (never double-count reaction + manualAim delay, keeping parked-crosshair `passiveCrosshairHit` alive); never let `decide()` overwrite `p.reaction` while `p.target` is active; shift `toPitch`/`toYaw` in `applyLiveAimPunch` so settled crosshairs keep the kick; use `liveAimTargetSize(d, 'neck')` tight collar bounds so neck aim never triggers above the helmet; damp stale `velYaw`/`velPitch` on strafe reversals; clamp elevated `preAim` distance at `2.5 m` for non-route holds.
+- **Gunplay & movement (`fpsLiveMovement.ts`, `fpsLiveSimulation.ts`).** Crouching down into a spray never resets `stillSince` (only standing up/moving/jumping does); CS2 crouch-walk ("crab-walk") spraying is accurate for non-snipers (`LIVE_CROUCH_SPEED`), while snipers remain strict; combat counter-strafing and `liveShotSpeedLimit` use real `moveSkill(p)` (`movementControl`), keeping uniform braking out of combat for doorway routing; rifles honor `learnedCadence` across `16–30 m` and reset spray properly after deep sprays; non-auto pistols tap-pace past `18 m` and SMGs burst past `22 m`; `safeOpeningKnife` stops at `4.5 s` and stays off for opening push pairs.
+- **Tactical intelligence & multi-map (`fpsLiveEconomyRead.ts`, `fpsLiveTerritory.ts`, `fpsLiveTiming.ts`, `fpsLiveAnticipation.ts`, `fpsLiveBomb.ts`).**
+  - Lawful enemy economy reads use only public scoreboard/observed weapon hints (`attackTeam === 'blue'` on reset).
+  - `buildMapControlZones` derives 7 reachable zones spanning both halves on any map; `refreshTeamTerritoryZones` requires `cellClearedAt > roundLiveAt + 0.3` (never fake-clear on tick 1); `composeFreeDefenseTerritory` caps opening pushers at `<=2` (`<=1` on pistol unless `aggressivePair`); `freeFlow` pauses only for CTs in `order.responders` on `probe`/`rotate`/`reinforce`; `evaluateEmptySpaceExpansion` caps one expander per quiet lane with a live site guard.
+  - `shouldCreep` sprints across safe CT half before creeping near chokes/enemy half, and `move()` never self-locks sprinting via `lastExposedAt`.
+  - Retake defusers with `allies >= 2` and `defuseSlack > 10` stage briefly with rotating teammates; non-defuser CTs can `tradeSwing` during retakes; `anticipateLiveContact` and `liveC4Damage` take `this.map` (never hardcoded Fontessa globals).
+- **Anti-regression & checks.**
+  - New `src/fpsGunplayAimGameplayPolish20261120.test.mjs` (8/8) + `src/fpsEngineUpgrades20261119.test.mjs` (10/10) + `fpsLiveGunplay` (17/17) + `fpsOperativeHitbox` (4/4) + `fpsLiveRouting` (7/7) all pass; `tsc -b`, `npm run build` (2.96 s), and `dist-worker/fps-engine.mjs` pass.
+  - Dual-map 36-round audit (seeds 101/202/303): Fontessa `55.6% T / 44.4% CT` (was `77.8% T`), TTD `811 -> 715 ms`, Rifle HS `20.0 -> 26.4%`, `SettlingMidSpray 98 -> 19`; Spillway `52.8% T / 47.2% CT`, TTD `820 -> 630 ms`, Rifle HS `14.2 -> 18.2%`, `SettlingMidSpray 133 -> 29`.
+  - Coordination: 4 unrelated Fontessa geometry tests currently fail under a concurrent agent's new `FONTESSA_VISUAL_COLLIDERS` (`fpsVillageColliders.ts` / `fpsLiveMap.ts`); those visual collider files were left untouched.
+
+## Fontessa visual pass: Mercato gate, surface mapping, light balance, landmarks, grounded smoke (2026-11-20)
+
+Read [the record](docs/fps-fontessa-mercato-and-detail-pass-20261120.md) before changing Fontessa scenery, surface textures, the sun or shadows, roofs, or smoke shape.
+
+- **Surfaces.** Create every textured box with `wrap: LIVE_SURFACE_BOX_WRAP`. Babylon's default layout rotates and stretches the texture on the ±x, top and bottom faces.
+- **Light.** Fontessa's light balance and shadow casters live in the Fontessa branch of `fpsLiveViewer.ts`. Scenery outside the play area and sub-texel rods do not cast shadows; keep it that way, or the sun's shadow map stretches again.
+- **Mercato gate.** `fpsVillageMercato.ts` holds the gate, the terrace and the cheeks of all three canal stairwells. Gate dressing must stay overhead, flush with the floor, or within the actor radius of a wall (tested).
+- **Roofs.** Pitched roofs over flat cutaway slabs are tagged `cutawayRoof` and hide with the slabs.
+- **Draw cost.** New props bake their colour into vertex colours (`fpsVillageTint.ts`), so they share batches.
+- **Smoke.** `liveSmokeSettle` rests clouds under about 3 m radius on their floor. Bots and the renderer read the same lobes. Full-size smokes are unchanged.
+- **Preserved.** No collision, navigation or gameplay data changed. `fpsLiveMap.ts`, `fpsLiveTerrain.ts` and `fpsLiveSimulation.ts` were not edited. In `fpsLiveBrain.ts`, only the smoke lobes and the centre of the other agent's bounding-sphere reject changed.
+
+## Game feel: cards, tactics board, signing cards, X-style Wire, streaming Hexacast, logo and portraits (2026-11-19)
+
+Read [the record](docs/ui-game-feel-20261119.md) before changing Squad, Transfers, The Wire, Hexacast, Supporter studio, Hexapedia articles, the logo or portraits.
+
+- **Kit** (`src/components/game/`): `PlayerCard`, `HexRadar`, `PipMeter`, `TacticsBoard` and `positions.ts`. Use them for any player-facing screen. Rarity tiers on the 1–10 scale: Prospect, Pro, Star, Elite, Legend.
+- **Fit scores.** `positionFit` mirrors the server's `recommendedAssignments` weights. Keep the two in sync, and keep fit labelled as strength only.
+- **Screens.**
+  - Squad: team overview, five draggable flip cards, bench upgrade ribbons, a save bar shown only when the lineup changes.
+  - Tactics: a click or drag board where a taken position swaps the two players, gameplan tiles, and orders as rows.
+  - Transfers: impact verdicts against your own five, deltas, a radar overlay, countdowns and quick bids, with confetti on a successful bid.
+  - The Wire: X-style posts and threaded replies. The avatar and action bar bugs are fixed.
+  - Hexacast: channel rail, a stage drawn from club colours, thumbnails and an HLTV-style schedule.
+  - Supporter studio: membership card, tier cards, theme mock-ups, portrait studio.
+  - Hexapedia: navbox, team card, player card, latest transfers.
+- **Art.**
+  - New `HexatrickMark` and favicon.
+  - `WorldPlayerPortrait` is redrawn with the same props and override semantics. The hairstyle order is fixed by Supporter studio.
+- **Checks.**
+  - 605/605 tests; `vite build` passes.
+  - `tsc -b` errors are only in `src/fps/fpsLiveSimulation.ts`. Six `src/fps/` files were being edited elsewhere during this pass and were not touched by it.
+- **Open.**
+  - Live and recorded broadcasts were verified with a mock only.
+  - No touch drag and drop; tap to select instead.
+  - Light themes were not rendered.
+  - The HUD, Crown 2026, Competitions internals and Finances have no game-kit redesign.
+
+## Visual polish: restrained accent, finished controls, remaining screens (2026-11-19)
+
+Read [the record](docs/ui-visual-polish-20261119.md) before restyling anything.
+
+- **Rule.** The accent marks actions, the current place and live state. Panel headers, tabs and filter toggles stay neutral in every theme (`index.css`, `personal-theme.css`). Hexapedia headers keep a faint tint.
+- **Primitives.**
+  - Radius tokens are 5 / 8 / 12 px.
+  - New tokens: `--hx-accent-soft`, `--hx-focus-ring` and `--cm-surface-raised`.
+  - Focus rings on buttons.
+  - Styled range inputs: `--range-fill` sets the filled part.
+  - Body row headers (`tbody th`) are no longer uppercase.
+  - New `ui/Switch.tsx` for on/off settings.
+  - Table wrappers are positioning contexts.
+- **Screens.**
+  - Coach and tactical system is rebuilt as per-player cards (same requests and anchors).
+  - Settings and Practice moved out of `App.tsx` into `SettingsPage.tsx` and `PracticeLauncher.tsx`. Practice names who plays.
+  - Staff uses `FilterBar` and secondary sign buttons.
+  - Home's first-week checklist marks only the next step as primary.
+  - Owner operations is collapsed.
+  - Duplicate titles are removed on Finances, Supporter studio and Competitions.
+  - Top bar regrouped: shortcuts, then the account.
+- **Checks.**
+  - The real signed-in app was rendered against a fresh scratch backend (seeded world, stub worker) in headless Chrome at 1440 px and 390 px.
+  - 19 routes have no horizontal overflow at 390 px. A Squad overflow is fixed.
+  - `npm run check:game` 599/599; `npm run build` passes.
+- **Open.**
+  - Completed and live matches were not rendered (no worker).
+  - Light custom themes were not rendered.
+  - Transfers, Hexacast, The Wire, Crown and the HUD changed only through tokens.
+  - `Inter` is not loaded.
+  - `ui-harness/` is still to be deleted.
+
+## Workspace information architecture: grouped by what the manager is doing (2026-11-18)
 
 Read [the record](docs/ui-information-architecture-20261118.md) before changing navigation, Home, Matches or Squad.
 

@@ -1,4 +1,5 @@
 import type { FpsPrimaryRole, FpsGameplan } from './fpsIdentity.ts';
+import type { LiveEnemyEconomyRead } from './fpsLiveEconomyRead.ts';
 import type { FpsTendencyValues } from './fpsPlayerTendencies.ts';
 import { LIVE_WEAPONS, LIVE_WEAPON_TIERS, LIVE_SIDE_LOADOUTS, canBuyLiveWeapon, type LiveWeapon } from './fpsLiveWeapons.ts';
 export type LiveBuyMode='pistol'|'eco'|'half'|'force'|'full';
@@ -10,21 +11,26 @@ const pistol=(w:LiveWeapon)=>LIVE_WEAPONS[w].category==='pistol';
 export const liveUtilityCount=(p:Pick<LiveBuyPlayer,LiveUtilityItem>)=>(p.flash??0)+(p.smoke??0)+(p.incendiary??0)+(p.he??0);
 export const canCarryLiveUtility=(p:Pick<LiveBuyPlayer,LiveUtilityItem>,kind:LiveUtilityItem)=>liveUtilityCount(p)<4&&p[kind]<(kind==='flash'?2:1);
 /** Team policy owns buys. A donor pays the full price; surplus inventory is physical stock. */
-export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,round:number,lossStreak:number,mustContest:boolean,economyJudgment=.5,callerTendencies?:FpsTendencyValues):LiveBuyResult {
+export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,round:number,lossStreak:number,mustContest:boolean,economyJudgment=.5,callerTendencies?:FpsTendencyValues,enemyRead?:LiveEnemyEconomyRead):LiveBuyResult {
  const players:LiveBuyPlayer[]=input.map(({id,role,cash,weapon,sidearm,armor,kit,flash=0,smoke=0,incendiary=0,he=0,attacking,preferSniper,expectedRange,holdChoke,ammo,reserve,tendencies})=>({id,role,cash,weapon,sidearm,armor,kit,flash,smoke,incendiary,he,attacking,preferSniper,expectedRange,holdChoke,ammo,reserve,tendencies,utilityStock:[]}));
  const retainedPrimaries=new Set(players.filter(p=>!pistol(p.weapon)).map(p=>p.id));
  const judgment=Math.max(0,Math.min(1,economyJudgment));
  const cash=players.reduce((n,p)=>n+p.cash,0),n=players.length;
+ const attackingSide=players[0]?.attacking??false;
+ const sideRifleCost=LIVE_WEAPONS[LIVE_SIDE_LOADOUTS[attackingSide?'t':'ct'].rifle].cost;
+ const sideFullTarget=sideRifleCost+650+700+(attackingSide?0:160);
  const fullCost=players.reduce((sum,p)=>sum+(pistol(p.weapon)?LIVE_WEAPONS[LIVE_SIDE_LOADOUTS[p.attacking?'t':'ct'].rifle].cost:0)+(p.armor<50?650:0)+700,0);
  const armed=players.filter(p=>!pistol(p.weapon)).length;
  const avg=cash/Math.max(1,players.length);
  const callerForceBias=callerTendencies?((callerTendencies.riskCalling??50)-(callerTendencies.saveCalling??50))/400:0;
- const forceThreshold=Math.max(1050,Math.min(1450,Math.round(1200-callerForceBias*220)));
- const mode:LiveBuyMode=round===1||round===16?'pistol':cash>=fullCost?'full':mustContest||((plan.economy<.5||callerForceBias>.06)&&lossStreak>0&&cash>=players.length*forceThreshold)?'force':(armed>=2&&cash>=players.length*1100)||avg>=2700?'half':'eco';
- const income=Math.min(3050,1400+lossStreak*450);
- const nextLossIncome=Math.min(3050,1400+(lossStreak+1)*450);
- const ecoReserve=Math.max(1950,4150-nextLossIncome);
- const halfReserve=lossStreak===0?750:Math.max(1400,Math.round(3500+judgment*600-income));
+ // Avoid chained low-bank force buys that starve CTs out of full rifle rounds; require enough cash for armored force kits.
+ const forceThreshold=Math.max(1650,Math.min(2200,Math.round(1900-callerForceBias*300)));
+ const wantsForce=(plan.economy<.5||callerForceBias>.06)&&lossStreak===1&&cash>=players.length*forceThreshold;
+ const mode:LiveBuyMode=round===1||round===16?'pistol':cash>=fullCost?'full':mustContest||wantsForce?'force':(armed>=2&&cash>=players.length*1100)||avg>=2700?'half':'eco';
+ const income=Math.min(3400,1400+lossStreak*500);
+ const nextLossIncome=Math.min(3400,1400+(lossStreak+1)*500);
+ const ecoReserve=Math.max(1950,sideFullTarget-nextLossIncome);
+ const halfReserve=lossStreak===0?750:Math.max(1500,Math.round(sideFullTarget-150+judgment*500-income));
  const budgets=new Map(players.map(p=>[p.id,mode==='eco'?(p.cash<1900?Math.min(p.cash,200):Math.max(Math.min(p.cash,200),p.cash-ecoReserve)):mode==='half'?Math.max(0,p.cash-halfReserve):p.cash]));
  let spent=0;const gifts:LiveBuyResult['gifts']=[];
  const pay=(p:LiveBuyPlayer,cost:number)=>{if((budgets.get(p.id)??0)<cost||p.cash<cost)return false;p.cash-=cost;budgets.set(p.id,budgets.get(p.id)!-cost);spent+=cost;return true;};
@@ -51,7 +57,8 @@ export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,roun
   for(const [idx,p] of ordered.entries()){
    if(!pistol(p.weapon))continue;
    const avail=budgets.get(p.id)??0;
-   if(avail<300||p.cash<1900)continue;
+   const investWpn=(p.tendencies?.weaponInvestment??50)>=68;
+   if(avail<300||p.cash<(investWpn?1750:1900))continue;
    const sidePistol=sidePistolFor(p.attacking);
    const h=hashSeed(p,idx);
    const sniper=p.preferSniper||p.role==='sniper';
@@ -70,8 +77,12 @@ export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,roun
    const closeHold=receiver.holdChoke&&receiver.expectedRange!==undefined&&receiver.expectedRange<=11;
    const suppressiveHold=receiver.holdChoke&&receiver.expectedRange!==undefined&&receiver.expectedRange>11&&receiver.expectedRange<=22&&plan.aggression<.55;
    const highEconRisk=(receiver.tendencies?.economicRisk??50)>=62||(receiver.tendencies?.forceBuyPreference??50)>=65;
+   const antiEcoFarm=!!enemyRead?.antiEcoWindow&&mode==='full'&&avg<4600&&(receiver.role==='entry'||receiver.role==='trade'||receiver.role==='lurker')&&!sniper&&h%2===0;
+   const avoidGlassAwp=!!enemyRead?.antiEcoWindow&&sniper&&receiver.cash<5400&&mode==='full';
    const pistolPair:LiveWeapon[]=highEconRisk||h%3===0?['deagle',sidePistol,'cz75','p250']:[sidePistol,'deagle','cz75','p250'];
-   const options:LiveWeapon[]=sniper?['sniper','scout','deagle',l.rifle,l.budget,sidePistol,'p250']
+   const options:LiveWeapon[]=avoidGlassAwp?[l.rifle,l.budget,'scout',l.smg,sidePistol,'p250']
+    :sniper?['sniper','scout','deagle',l.rifle,l.budget,sidePistol,'p250']
+    :antiEcoFarm?[l.smg,l.budget,l.rifle,l.shotgun,'deagle',sidePistol]
     :mode!=='full'&&closeHold?[l.shotgun,l.smg,l.budget,...pistolPair]
     :mode==='force'&&suppressiveHold?[l.rifle,'negev',l.budget,l.smg,l.shotgun,...pistolPair]
     :forceRoleMix&&!(receiver.expectedRange!==undefined&&receiver.expectedRange>=22)?[...pistolPair,l.smg,l.budget,l.shotgun]
@@ -83,8 +94,9 @@ export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,roun
     const isPistol=LIVE_WEAPONS[weapon].category==='pistol';
     if(isPistol&&!improvesPistol(receiver,weapon))continue;
     // Prefer an armored close-range gun to spending the same bank on a naked rifle.
+    const armorPri=(receiver.tendencies?.armorPriority??50)>=62;
     const canAffordArmoredPrimary=(budgets.get(receiver.id)??0)>=LIVE_WEAPONS[l.smg].cost+650;
-    const reserveArmor=isPistol||receiver.armor>=50?0:(mode==='full'||canAffordArmoredPrimary?650:0);
+    const reserveArmor=isPistol||receiver.armor>=50?0:(mode==='full'||canAffordArmoredPrimary||armorPri?650:0);
     const donor=[...players].sort((a,b)=>Number(b===receiver)-Number(a===receiver)||((budgets.get(b.id)??0)+(b.tendencies?.teamEconomicSupport??50)*6)-((budgets.get(a.id)??0)+(a.tendencies?.teamEconomicSupport??50)*6)).find(p=>{
      if(p!==receiver&&LIVE_WEAPONS[weapon].category==='pistol')return false;
      const needsOwnPrimary=pistol(p.weapon)&&p!==receiver;
@@ -109,10 +121,10 @@ export function buyLiveTeam(input:readonly LiveBuyPlayer[],plan:FpsGameplan,roun
   if(defuser&&pay(defuser,400))defuser.kit=true;
  }
  // Carry at most four grenades, at most two flashes and one of each other type.
- for(const p of [...ordered].sort((a,b)=>Number(b.role==='support')-Number(a.role==='support'))){
+ for(const p of [...ordered].sort((a,b)=>Number(b.role==='support')-Number(a.role==='support')||((b.tendencies?.utilityInvestment??50)-(a.tendencies?.utilityInvestment??50)))){
   const support=p.role==='support'||p.role==='caller';
   const sniperRole=p.weapon==='sniper'||p.weapon==='scout'||p.preferSniper||p.role==='sniper';
-  const wanted:LiveUtilityItem[]=mode==='eco'?[]:mode==='pistol'?(support?['smoke','flash','flash']:['flash']):support?['smoke','flash','flash','incendiary']:sniperRole&&mode==='full'?['smoke','flash']:['smoke','flash','he','incendiary'];
+  const wanted:LiveUtilityItem[]=mode==='eco'?[]:mode==='pistol'?(support?['smoke','flash','flash']:['flash']):support?['smoke','flash','flash','incendiary']:sniperRole&&mode==='full'?['smoke','flash']:enemyRead?.awpLikely?['smoke','flash','flash','incendiary']:enemyRead?.antiEcoWindow?['flash','he','incendiary','smoke']:['smoke','flash','he','incendiary'];
   const bought:Record<LiveUtilityItem,number>={flash:0,smoke:0,incendiary:0,he:0};
   for(const kind of wanted)if(canCarryLiveUtility(p,kind)&&pay(p,LIVE_UTILITY_COST[kind])){p[kind]++;bought[kind]++;}
   if(!p.attacking&&!p.kit&&mode!=='eco'&&mode!=='pistol'&&players.filter(a=>a.kit).length<2&&pay(p,400))p.kit=true;

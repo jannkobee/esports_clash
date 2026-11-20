@@ -6,9 +6,9 @@
   --hx-font-sans: 'Inter', 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --hx-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --hx-radius-sm: 3px;
-  --hx-radius-md: 4px;
-  --hx-radius-lg: 6px;
+  --hx-radius-sm: 5px;
+  --hx-radius-md: 8px;
+  --hx-radius-lg: 12px;
 
   --cm-bg-canvas: var(--personal-background, #141416);
   --cm-bg-sidebar: color-mix(in srgb, var(--cm-bg-canvas) 82%, #000 18%);
@@ -39,8 +39,13 @@
   --hx-warning: #e0b96b;
   --hx-negative: #ef8a94;
 
-  --hx-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.28);
+  --hx-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24), 0 2px 8px rgba(0, 0, 0, 0.16);
   --hx-shadow-md: 0 12px 28px rgba(0, 0, 0, 0.44);
+
+  /* The accent marks actions, the current place and live state. Structure (headers, tabs) stays neutral. */
+  --hx-accent-soft: color-mix(in srgb, var(--hx-red) 14%, var(--cm-bg-panel));
+  --hx-focus-ring: 0 0 0 3px color-mix(in srgb, var(--hx-red) 34%, transparent);
+  --cm-surface-raised: color-mix(in srgb, var(--cm-bg-panel) 90%, var(--cm-text) 10%);
 
   --cm-emerald: var(--hx-red);
   --cm-emerald-bright: var(--hx-red-bright);
@@ -62,6 +67,7 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    accent-color: var(--hx-red);
   }
 
   *,
@@ -151,10 +157,10 @@
 
 .cm-brand {
   min-height: 62px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--cm-border);
-  background: var(--hx-red-deep);
-  color: var(--hx-on-accent);
+  background: transparent;
+  color: var(--cm-text);
 }
 
 .cm-brand-mark {
@@ -181,27 +187,27 @@
 .cm-brand-sub {
   margin-top: 2px;
   margin-left: 35px;
-  font-size: 10px;
-  color: color-mix(in srgb, var(--hx-on-accent) 78%, transparent);
-  letter-spacing: 0.02em;
+  font-size: 11px;
+  color: var(--cm-text-subtle);
+  letter-spacing: 0.01em;
 }
 
 .cm-brand-title {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 800;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.01em;
   text-transform: lowercase;
   text-decoration: none;
-  color: var(--hx-on-accent);
+  color: var(--cm-text);
 }
 
 .cm-brand-title svg {
   width: 26px;
   height: 28px;
-  color: color-mix(in srgb, var(--hx-on-accent) 88%, transparent);
+  color: var(--hx-red-bright);
   flex-shrink: 0;
 }
 
@@ -305,8 +311,9 @@
   z-index: 25;
   min-height: 54px;
   padding: 10px 24px;
-  background: var(--cm-bg-topbar);
-  border-bottom: 1px solid color-mix(in srgb, var(--hx-red) 32%, var(--cm-border));
+  background: color-mix(in srgb, var(--cm-bg-topbar) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--cm-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -412,17 +419,27 @@
   overflow: hidden;
 }
 
+/* Panel headers are structure, not emphasis: a neutral title row with an accent-coloured icon. */
 .cm-panel-header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
-  padding: 10px 16px;
-  background: var(--hx-red-deep);
-  border-bottom: 1px solid color-mix(in srgb, var(--hx-red) 45%, var(--cm-border));
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--hx-on-accent);
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  padding: 13px 16px;
+  background: transparent;
+  border-bottom: 1px solid var(--cm-border);
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: -0.005em;
+  color: var(--cm-text);
+}
+
+.cm-panel-header > svg,
+.cm-panel-header > .label-icon,
+.cm-panel-header > span:first-child > svg {
+  color: var(--hx-accent);
+  flex-shrink: 0;
 }
 
 .cm-panel-header h2,
@@ -445,13 +462,15 @@
 }
 
 .cm-panel-header > .cm-header-meta {
-  font-size: 11px;
-  color: color-mix(in srgb, var(--hx-on-accent) 78%, transparent);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cm-text-subtle);
 }
 
-.cm-panel-header a {
-  color: var(--hx-on-accent);
-  font-size: 11px;
+.cm-panel-header a:not(.cm-btn) {
+  color: var(--hx-link);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .cm-panel-sub {
@@ -502,17 +521,24 @@
   background: color-mix(in srgb, var(--cm-bg-panel) 84%, var(--cm-text) 6%);
   color: var(--cm-text);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.25;
+  white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease, transform 0.1s ease;
+  transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease, box-shadow 0.14s ease, transform 0.1s ease;
 }
 
 .cm-btn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--cm-bg-panel) 74%, var(--hx-red) 14%);
-  border-color: color-mix(in srgb, var(--hx-red) 45%, var(--cm-border-strong));
+  background: var(--cm-surface-raised);
+  border-color: color-mix(in srgb, var(--cm-text) 40%, var(--cm-bg-panel));
   color: var(--cm-text);
+}
+
+.cm-btn:focus-visible {
+  outline: none;
+  border-color: var(--hx-red-bright);
+  box-shadow: var(--hx-focus-ring);
 }
 
 .cm-btn:active:not(:disabled) {
@@ -528,6 +554,7 @@
   background: var(--hx-red);
   border-color: var(--hx-red-bright);
   color: var(--hx-on-accent);
+  box-shadow: 0 1px 0 color-mix(in srgb, #fff 14%, transparent) inset, 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .cm-btn-primary:hover:not(:disabled) {
@@ -592,7 +619,11 @@
   border: 1px solid var(--cm-border);
 }
 
+/* Tabs are a neutral segmented control, so they never compete with primary actions. */
 .cm-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 30px;
   padding: 6px 12px;
   border: 1px solid transparent;
@@ -600,9 +631,14 @@
   background: transparent;
   color: var(--cm-text-muted);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.cm-tab svg {
+  flex-shrink: 0;
+  color: var(--cm-text-subtle);
 }
 
 .cm-tab:hover {
@@ -610,10 +646,19 @@
   background: color-mix(in srgb, var(--cm-bg-panel) 65%, transparent);
 }
 
-.cm-tab.active {
-  background: var(--hx-red);
-  border-color: var(--hx-red-bright);
-  color: var(--hx-on-accent);
+.cm-tab.active,
+.cm-tab[aria-pressed='true'],
+.cm-tab[aria-current='page'] {
+  background: var(--cm-surface-raised);
+  border-color: var(--cm-border-strong);
+  color: var(--cm-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+.cm-tab.active svg,
+.cm-tab[aria-pressed='true'] svg,
+.cm-tab[aria-current='page'] svg {
+  color: var(--hx-accent);
 }
 
 /* ==========================================================================
@@ -674,8 +719,74 @@
   accent-color: var(--hx-red);
 }
 
+/* Range inputs: a thin neutral track, an accent fill up to the value (set --range-fill) and a ringed thumb. */
+.cm-shell input[type=range] {
+  --range-track: color-mix(in srgb, var(--cm-text) 16%, var(--cm-bg-input));
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cm-shell input[type=range]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--hx-red) var(--range-fill, 0%), var(--range-track) var(--range-fill, 0%));
+}
+
+.cm-shell input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  border: 3px solid var(--hx-red-bright);
+  background: var(--cm-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  transition: box-shadow 0.14s ease;
+}
+
+.cm-shell input[type=range]::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--range-track);
+}
+
+.cm-shell input[type=range]::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--hx-red);
+}
+
+.cm-shell input[type=range]::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 3px solid var(--hx-red-bright);
+  background: var(--cm-text);
+}
+
+.cm-shell input[type=range]:focus-visible {
+  outline: none;
+}
+
+.cm-shell input[type=range]:focus-visible::-webkit-slider-thumb {
+  box-shadow: var(--hx-focus-ring);
+}
+
+.cm-shell input[type=range]:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .cm-table-wrap,
 .pedia-table-scroll {
+  /* A positioning context, so absolutely placed content (sr-only labels) is clipped here instead of widening the page. */
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--cm-border);
   border-radius: var(--hx-radius-md);
@@ -706,6 +817,23 @@
   border-bottom: 1px solid var(--cm-border);
   color: var(--cm-text);
   vertical-align: middle;
+}
+
+/* Row headers (th in the body) name a row; they read like data, not like the uppercase column labels. */
+.cm-table tbody th {
+  background: transparent;
+  border-bottom: 1px solid var(--cm-border);
+  color: var(--cm-text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: normal;
+}
+
+.cm-table td,
+.cm-table tbody th {
+  font-variant-numeric: tabular-nums;
 }
 
 .cm-table tbody tr:hover {

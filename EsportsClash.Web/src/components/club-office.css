@@ -468,10 +468,13 @@
 .staff-philosophy dd small { color: var(--cm-text-muted); }
 .staff-candidate-philosophy { margin-top: 4px; color: var(--cm-text-muted); }
 
-.email-prefs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.email-prefs li { display: grid; gap: 2px; }
-.email-prefs small { color: var(--cm-text-muted); margin-left: 24px; }
 .verify-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 
 .season-budget.is-warn { border-left: 3px solid var(--hx-warning); }
 .season-budget.is-danger { border-left: 3px solid var(--hx-negative); }
+
+/* Staff appointments: terms as a short list, candidate role as a small label above the name. */
+.staff-terms { display: grid; gap: 4px; margin: 0 0 14px; padding-left: 18px; color: var(--cm-text-muted); font-size: 12px; line-height: 1.55; list-style: disc; }
+.staff-terms li::marker { color: var(--cm-text-subtle); }
+.staff-candidate-role { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--cm-text-subtle); }
+.staff-candidate-table th.cm-row-head .staff-candidate-name p { margin: 2px 0 4px; font-size: 15px; font-weight: 650; color: var(--cm-text); }

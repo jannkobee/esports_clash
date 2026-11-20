@@ -23,6 +23,8 @@ const STEP = 1 / 30;
 export interface FpsReplayHeader {
   version: 1; mapId: LiveMapId; seed: number; frameSeconds: number; framesPerChunk: number;
   frames: number; chunks: number; broadcastSeconds: number;
+  /** Optional broadcast timestamps (seconds) where each round's live phase started (for round-jump seeking). */
+  roundStartSeconds?: number[];
   players: { id: string; name: string; team: 'blue' | 'red' }[];
   /** Served headers: false while the broadcast is still being shown live (frames grow). */
   complete?: boolean;
@@ -209,12 +211,54 @@ export class FpsLiveReplaySource {
   }
   /** Seconds of the broadcast already shown. */
   get seconds(): number { return this.tick * STEP; }
+  /** Maximum currently available seek timestamp (respects the live-edge ceiling while on air). */
+  get maxSeekSeconds(): number {
+    const frameLimit = Math.max(0, (this.header.frames - 1) * this.header.frameSeconds);
+    if (this.header.complete === false && typeof this.header.liveSeconds === 'number') {
+      return Math.max(0, Math.min(frameLimit, this.header.liveSeconds));
+    }
+    return frameLimit;
+  }
   get buffering(): boolean { return !this.frameAt(this.frameIndex()); }
   get finished(): boolean { return this.header.complete !== false && this.frameIndex() >= this.header.frames - 1; }
+  /** Playback speed multiplier (0.5x – 4x) used by replay controls when advancing ticks. */
+  playbackRate = 1;
+  private rateCarry = 0;
   /** A live broadcast grows: accept the newer header (more frames and chunks) and keep playing. */
   updateHeader(header: FpsReplayHeader): void {
     if (header.frames < this.header.frames) return;
     this.header = header; this.prefetch();
+  }
+  /** Jump to any already-aired broadcast timestamp and load its chunk cleanly. */
+  async seek(seconds: number): Promise<boolean> {
+    if (this.unavailable || this.header.frames <= 0) return false;
+    const clamped = Math.max(0, Math.min(this.maxSeekSeconds, Number.isFinite(seconds) ? seconds : 0));
+    const targetFrame = Math.max(0, Math.min(this.header.frames - 1, Math.floor(clamped / this.header.frameSeconds)));
+    const targetChunk = Math.floor(targetFrame / this.header.framesPerChunk);
+    if (targetChunk >= this.header.chunks) return false;
+    this.tick = targetFrame * FPS_REPLAY_STEPS_PER_FRAME;
+    this.lastFrame = targetFrame;
+    this.pendingAudio = [];
+    this.rateCarry = 0;
+    this.prefetch();
+    if (!this.loaded.has(targetChunk)) {
+      let chunkData: FpsReplayChunk;
+      try { chunkData = await this.load(targetChunk); }
+      catch (error) { if (isReplayGone(error)) this.markUnavailable(); return false; }
+      if (!this.loaded.has(targetChunk)) {
+        this.loaded.set(targetChunk, decodeReplayChunk(chunkData));
+        this.audio.set(targetChunk, chunkData.audio);
+      }
+    }
+    return true;
+  }
+  /** Jump directly to the start of a 1-indexed round if its timestamp has aired. */
+  async seekToRound(roundNumber: number): Promise<boolean> {
+    const starts = this.header.roundStartSeconds;
+    if (!starts || roundNumber < 1 || roundNumber > starts.length) return false;
+    const at = starts[roundNumber - 1];
+    if (typeof at !== 'number' || at > this.maxSeekSeconds) return false;
+    return this.seek(at);
   }
   private frameIndex(): number { return Math.floor(this.tick / FPS_REPLAY_STEPS_PER_FRAME); }
   private frameAt(index: number): LiveSnapshot | undefined {
@@ -230,21 +274,33 @@ export class FpsLiveReplaySource {
       void this.load(index).then(chunk => { this.loaded.set(index, decodeReplayChunk(chunk)); this.audio.set(index, chunk.audio); })
         .catch(error => { if (isReplayGone(error)) this.markUnavailable(); else this.requested.delete(index); });
     }
-    for (const index of this.loaded.keys()) if (index < current - 1) { this.loaded.delete(index); this.audio.delete(index); }
+    // Evict distant chunks AND clear `requested` so seeking back reloads them cleanly.
+    for (const index of [...this.loaded.keys()]) {
+      if (index < current - 1 || index > current + 2) {
+        this.loaded.delete(index); this.audio.delete(index); this.requested.delete(index);
+      }
+    }
   }
   step(): void {
     this.prefetch();
-    const next = this.frameIndex() + 1;
-    // At the end of what is available: finished, or waiting for the live broadcast to continue.
-    if (next >= this.header.frames || !this.frameAt(next)) return;
-    this.tick++;
-    const frame = this.frameIndex();
-    if (frame !== this.lastFrame) {
-      for (let f = this.lastFrame + 1; f <= frame; f++) {
-        const chunk = Math.floor(f / this.header.framesPerChunk);
-        this.pendingAudio.push(...(this.audio.get(chunk)?.[f - chunk * this.header.framesPerChunk] ?? []));
+    const rate = Math.max(0.25, Math.min(4, this.playbackRate || 1));
+    this.rateCarry += rate;
+    const ticks = Math.floor(this.rateCarry + 1e-9);
+    if (ticks <= 0) return;
+    this.rateCarry -= ticks;
+    for (let s = 0; s < ticks; s++) {
+      const next = this.frameIndex() + 1;
+      // At the end of what is available: finished, or waiting for the live broadcast to continue.
+      if (next >= this.header.frames || !this.frameAt(next)) return;
+      this.tick++;
+      const frame = this.frameIndex();
+      if (frame !== this.lastFrame) {
+        for (let f = this.lastFrame + 1; f <= frame; f++) {
+          const chunk = Math.floor(f / this.header.framesPerChunk);
+          this.pendingAudio.push(...(this.audio.get(chunk)?.[f - chunk * this.header.framesPerChunk] ?? []));
+        }
+        this.lastFrame = frame;
       }
-      this.lastFrame = frame;
     }
   }
   snapshot(): LiveSnapshot {

@@ -1,4 +1,5 @@
 import type { FpsGameplan } from './fpsIdentity.ts';
+import type { LiveEnemyEconomyRead } from './fpsLiveEconomyRead.ts';
 import type { FpsPoint } from './fpsSpatialWorld.ts';
 import type { FpsTendencyValues } from './fpsPlayerTendencies.ts';
 
@@ -58,8 +59,9 @@ export function chooseLiveTactic(
   plan?:Partial<FpsGameplan>,
   enemyAggression?:{A:number;B:number;Mid:number},
   callerTendencies?:FpsTendencyValues,
+  enemyRead?:LiveEnemyEconomyRead,
 ):LiveTacticArchetype {
-  const choices=LIVE_TACTIC_CHOICES,weights=liveTacticWeights(history,team,pistol,plan,enemyAggression,callerTendencies);
+  const choices=LIVE_TACTIC_CHOICES,weights=liveTacticWeights(history,team,pistol,plan,enemyAggression,callerTendencies,enemyRead);
   let roll=random()*weights.reduce((a,b)=>a+b,0);
   return choices.find((_,index)=>(roll-=weights[index])<0)??choices[choices.length-1];
 }
@@ -67,7 +69,7 @@ export const LIVE_TACTIC_CHOICES:readonly LiveTacticArchetype[]=['rush_a','rush_
 /** Decision weights per archetype (gameplan, IGL tendencies, lawful enemy reads, recent repetition). */
 export function liveTacticWeights(
   history:readonly LiveRoundHistory[],team:'blue'|'red',pistol:boolean,plan?:Partial<FpsGameplan>,
-  enemyAggression?:{A:number;B:number;Mid:number},callerTendencies?:FpsTendencyValues,
+  enemyAggression?:{A:number;B:number;Mid:number},callerTendencies?:FpsTendencyValues,enemyRead?:LiveEnemyEconomyRead,
 ):number[] {
   const recent=history.filter(h=>h.attackTeam===team).slice(-5);
   const choices=LIVE_TACTIC_CHOICES;
@@ -86,6 +88,18 @@ export function liveTacticWeights(
       if(tactic==='rush_a'&&enemyAggression.A>=2)weight*=0.62;
       if(tactic==='rush_b'&&enemyAggression.B>=2)weight*=0.62;
       if((tactic==='mid_control'||tactic==='fake_execute')&&(enemyAggression.A+enemyAggression.B)>=3)weight*=1.25;
+    }
+    if(enemyRead&&!pistol){
+      if(enemyRead.stackLikely||enemyRead.tier==='broke_eco'||enemyRead.tier==='half_force'){
+        if(tactic==='rush_a'||tactic==='rush_b')weight*=0.68;
+        if(tactic==='default_pick'||tactic==='mid_control')weight*=1.28;
+        if(tactic==='split_a'||tactic==='split_b')weight*=1.15;
+      }
+      if(enemyRead.lowUtilityLikely&&(tactic==='split_a'||tactic==='split_b'))weight*=1.18;
+      if(enemyRead.awpLikely){
+        if(tactic==='fake_execute'||tactic==='split_a'||tactic==='split_b')weight*=1.14;
+        if(tactic==='mid_control')weight*=0.88;
+      }
     }
     for(const [index,round] of recent.entries())if(round.tactic===tactic){
       const recency=(index+1)/recent.length;
@@ -106,8 +120,9 @@ export function chooseLiveDefenseSetup(
   firstBloods?:{A:number;B:number;Mid:number},
   plan?:Partial<FpsGameplan>,
   callerTendencies?:FpsTendencyValues,
+  enemyRead?:LiveEnemyEconomyRead,
 ):LiveDefenseSetup {
-  const weighted=liveDefenseWeights(history,attackTeam,confirmedPlants,firstBloods,plan,callerTendencies);
+  const weighted=liveDefenseWeights(history,attackTeam,confirmedPlants,firstBloods,plan,callerTendencies,enemyRead);
   const total=weighted.reduce((sum,item)=>sum+item.weight,0);
   let roll=random()*total;
   return weighted.find(item=>(roll-=item.weight)<0)?.setup??weighted[0]?.setup??'standard';
@@ -116,7 +131,7 @@ export const LIVE_DEFENSE_CHOICES:readonly LiveDefenseSetup[]=['standard','stack
 /** Decision weights per setup; the previous round's setup is excluded (weight absent). */
 export function liveDefenseWeights(
   history:readonly LiveRoundHistory[],attackTeam:'blue'|'red',confirmedPlants:{A:number;B:number},
-  firstBloods?:{A:number;B:number;Mid:number},plan?:Partial<FpsGameplan>,callerTendencies?:FpsTendencyValues,
+  firstBloods?:{A:number;B:number;Mid:number},plan?:Partial<FpsGameplan>,callerTendencies?:FpsTendencyValues,enemyRead?:LiveEnemyEconomyRead,
 ):{setup:LiveDefenseSetup;weight:number}[] {
   const recent=history.filter(round=>round.attackTeam===attackTeam).slice(-5);
   const previous=recent.at(-1)?.defenseSetup;
@@ -132,6 +147,15 @@ export function liveDefenseWeights(
     if(setup==='mid_push')weight=(1.05+(firstBloods&&firstBloods.Mid>=1?.3:0))*(.85+aggression*.35)*(igl?.65+(tUnit('mapControlCalling')+tUnit('pickBasedCalling'))*.38+(tUnit('informationDemand')-.5)*.25:1);
     if(setup==='retake_setup')weight=.95*(.8+structure*.3+economy*.2)*(igl?.65+(tUnit('saveCalling')+tUnit('structuredCalling'))*.38+(tUnit('teamProtection')-.5)*.25:1);
     if(setup==='standard')weight*=(.9+structure*.3)*(igl?.7+tUnit('defaultPreference')*.6+(tUnit('teamProtection')-.5)*.25+(tUnit('sniperPriority')-.5)*.2:1);
+    if(enemyRead){
+      if(enemyRead.antiEcoWindow||enemyRead.tier==='broke_eco'){
+        if(setup==='standard')weight*=1.22;
+        if(setup==='retake_setup')weight*=1.12;
+        if(setup==='aggressive_banana')weight*=0.85;
+      }else if(enemyRead.tier==='half_force'&&setup==='mid_push'){
+        weight*=1.15;
+      }
+    }
     weight*=repeatCount===0?1:repeatCount===1?.38:.16;
     return {setup,weight};
   });

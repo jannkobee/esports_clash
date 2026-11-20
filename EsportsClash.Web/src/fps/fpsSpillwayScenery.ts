@@ -1,5 +1,5 @@
 import { Color3, DynamicTexture, Mesh, MeshBuilder, PointLight, StandardMaterial, Texture, Vector3, type Scene } from '@babylonjs/core';
-import { liveBoxSurfaceUV, LIVE_SURFACE_METRES, type LiveSurface, type LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
+import { liveBoxSurfaceUV, LIVE_SURFACE_BOX_WRAP, LIVE_SURFACE_METRES, type LiveSurface, type LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
 import { batchStaticLiveGeometry } from './fpsLiveRenderOptimization.ts';
 import { SPILLWAY_GROUND_PATCHES, SPILLWAY_SHALLOW_WATERS } from './fpsSpillwayTerrain.ts';
 
@@ -56,7 +56,7 @@ export function buildSpillwayScenery(
         width: w,
         height: h,
         depth: d,
-        ...(surface ? { faceUV: liveBoxSurfaceUV(w, h, d, LIVE_SURFACE_METRES[surface]) } : {}),
+        ...(surface ? { faceUV: liveBoxSurfaceUV(w, h, d, LIVE_SURFACE_METRES[surface]), wrap: LIVE_SURFACE_BOX_WRAP } : {}),
       },
       scene,
     );

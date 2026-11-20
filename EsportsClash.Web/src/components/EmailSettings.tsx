@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {Mail, MailCheck} from 'lucide-react';
 import {useAccount} from '../AccountContext';
 import {request} from '../cloudPersistence';
+import {Switch} from './ui/Switch';
 
 interface Prefs {preferences: Record<string, boolean>; categories: Record<string, [string, string]>; email: string; email_verified: boolean}
 
@@ -24,15 +25,15 @@ export function EmailSettings() {
       setData({...data, preferences: r.data.preferences}); setNotice('Email preferences saved.');
     } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
-  return <section className="cm-panel" id="email-settings"><h2 className="cm-panel-header"><Mail size={15} aria-hidden="true" /> Email</h2><div className="cm-panel-body space-y-3">
-    {error && <p role="alert">{error}</p>}{notice && <p role="status" className="club-notice">{notice}</p>}
-    {!data && !error && <p role="status">Loading email preferences…</p>}
+  return <section className="cm-panel" id="email-settings"><h2 className="cm-panel-header"><Mail size={15} aria-hidden="true" /> Email</h2><div className="cm-panel-body">
+    {error && <p role="alert" className="club-notice mb-3">{error}</p>}
+    {!data && !error && <p role="status" className="cm-muted">Loading email preferences…</p>}
     {data && <>
-      <p>We write to <b>{data.email}</b>{data.email_verified ? <> <MailCheck size={13} aria-hidden="true" /> confirmed.</> : ' (not confirmed yet).'} Emails about signing in, account recovery, billing and your club's future always arrive.</p>
-      <ul className="email-prefs">{Object.entries(data.categories).map(([key, [label, description]]) => <li key={key}>
-        <label><input type="checkbox" checked={data.preferences[key] ?? true} disabled={busy} onChange={e => void toggle(key, e.target.checked)} /> <b>{label}</b></label>
-        <small>{description}</small>
-      </li>)}</ul>
+      <p className="email-address">We write to <b>{data.email}</b>{data.email_verified ? <span className="email-address__state is-ok"><MailCheck size={13} aria-hidden="true" /> Confirmed</span> : <span className="email-address__state">Not confirmed yet</span>}</p>
+      <p className="email-always">Emails about signing in, account recovery, billing and your club's future always arrive.</p>
+      <div className="email-prefs" role="group" aria-label="Optional emails">{Object.entries(data.categories).map(([key, [label, description]]) =>
+        <Switch key={key} label={label} description={description} checked={data.preferences[key] ?? true} disabled={busy} onChange={on => void toggle(key, on)} />)}</div>
+      <p role="status" className="email-saved">{notice}</p>
     </>}
   </div></section>;
 }

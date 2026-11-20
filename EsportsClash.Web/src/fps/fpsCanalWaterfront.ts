@@ -2,6 +2,7 @@ import { MeshBuilder, type Scene } from '@babylonjs/core';
 import { LIVE_CANAL, LIVE_CANAL_CROSSINGS } from './fpsLiveTerrain.ts';
 import type { VillageBuilder } from './fpsVillageArchitecture.ts';
 import type { LiveSurfaceLibrary } from './fpsLiveGraphics.ts';
+import { buildMercatoGate } from './fpsVillageMercato.ts';
 
 /** Waterfront dressing stays on admitted masonry or outside the playable boundary.
  * Watercraft never become invisible cover in a playable lane. */
@@ -40,8 +41,9 @@ export function buildCanalWaterfront(scene:Scene,b:VillageBuilder,surfaces?:Live
     if(index===2||index===4)continue;
     const center=(crossing.minX+crossing.maxX)/2,w=crossing.maxX-crossing.minX;
     for(const side of [-1,1]){
-      const x=side<0?crossing.minX-.13:crossing.maxX+.13;
-      stone(`canal-footbridge-coping-${index}-${side}`,x,.9,.3,.34,.12,5.18);
+      const x=side<0?crossing.minX-.13:crossing.maxX+.13,parapetX=side<0?crossing.minX-.12:crossing.maxX+.12;
+      // Capping centred on the parapet collider and 1 cm proud of it; it stood 11 cm above, where bullets passed.
+      stone(`canal-footbridge-coping-${index}-${side}`,parapetX,.8,.3,.3,.12,5.06);
       for(let i=0;i<16;i++){
         const t=(i+.5)*Math.PI/16,z=.3-Math.cos(t)*2.5,y=-2.24+Math.sin(t)*2.07;
         stone(`canal-footbridge-arch-${index}-${side}-${i}`,x,y,z,.18,.26,.45,i%3?'#b8a487':'#d5c3a2').rotation.x=Math.atan2(-Math.cos(t)*2.07,Math.sin(t)*2.5);
@@ -78,23 +80,24 @@ export function buildCanalWaterfront(scene:Scene,b:VillageBuilder,surfaces?:Live
     for(const dx of [-.75,-.38,0,.38,.75])box(`b-canal-balcony-iron-${x}-${dx}`,x+dx,4.58,-1.99,.025,.85,.025,'#3d534d');
     box(`b-canal-balcony-rail-${x}`,x,5.02,-1.99,1.85,.04,.04,'#3d534d');
   }
-  // The low B sottoportego archway: dressed pilasters, timber rafters, stone arch rings and terraced market awning.
-  for(const z of [7.87,11.13]){
-    stone(`b-passage-lintel-${z}`,18.5,3.19,z,5,.28,.09);
-    stone(`b-passage-coping-${z}`,18.5,3.36,z,5.1,.08,.22,'#b56e50');
-    for(const px of [16.1,20.9]){
-      stone(`b-passage-pilaster-${z}-${px}`,px,1.52,z,.24,3.04,.22,'#cfc0a0');
-      stone(`b-passage-plinth-${z}-${px}`,px,.16,z,.32,.32,.28,'#b3a588');
-    }
-    for(let i=0;i<15;i++){
-      const t=(i+.5)/15*Math.PI,ax=18.5-Math.cos(t)*2.25,ay=2.42+Math.sin(t)*.62;
-      stone(`b-passage-arch-ring-${z}-${i}`,ax,ay,z,.32,.18,.12,i%2?'#d6c8aa':'#c4b595').rotation.z=Math.atan2(Math.cos(t)*.62,Math.sin(t)*2.25);
-    }
+  // The Mercato di Fontessa gate over the canal stair (stone portal, roof terrace, stairwell cheeks).
+  buildMercatoGate(scene,b,surfaces);
+  // Striped grocer's awning fixed to the market house under its first-floor sills and sized to the shop bay.
+  const wallZ=7.4,rootY=2.72,reach=.85,drop=.22,awningX=24.45,awningW=2.6,slope=Math.atan2(drop,reach),run=Math.hypot(reach,drop);
+  for(let s=0;s<10;s++){
+    const x=awningX-awningW/2+(s+.5)*awningW/10,color=s%2?'#e8dcc0':'#955a51';
+    box(`b-canal-shop-awning-${s}`,x,rootY-drop/2,wallZ-reach/2,awningW/10+.002,.02,run,color).rotation.x=-slope;
+    box(`b-canal-shop-valance-${s}`,x,rootY-drop-.07,wallZ-reach-.01,awningW/10+.002,.15,.015,color);
   }
-  for(const x of [16.25,17.3,18.5,19.7,20.75])box(`b-passage-ceiling-beam-${x}`,x,3.04,9.5,.1,.1,3.25,'#69533e');
-  for(const z of [8.25,8.85,9.5,10.15,10.75])box(`b-passage-ceiling-rafter-${z}`,18.5,3.0,z,4.85,.065,.075,'#82674c');
-  const awning=box('b-canal-shop-awning',24.5,2.82,6.76,6.7,.08,.56,'#955a51');awning.rotation.x=-.18;
-  for(let s=0;s<6;s++)box(`b-canal-awning-stripe-${s}`,21.8+s*1.08,2.86,6.76,.48,.015,.54,'#e8dcc0');
+  box('b-canal-shop-awning',awningX,rootY+.03,wallZ-.06,awningW+.1,.1,.1,'#69533e');
+  box('b-canal-shop-awning-front-bar',awningX,rootY-drop+.005,wallZ-reach,awningW+.04,.04,.04,'#3d4541');
+  // Folding arms: wall bracket 0.3 m under the roller, rising to the front bar.
+  const bracketY=rootY-.3,frontY=rootY-drop;
+  for(const ax of [awningX-awningW/2+.15,awningX+awningW/2-.15]){
+    const arm=box(`b-canal-shop-awning-arm-${ax.toFixed(1)}`,ax,(bracketY+frontY)/2,wallZ-reach/2,.025,.025,Math.hypot(reach,frontY-bracketY),'#3d4541');
+    arm.rotation.x=Math.atan2(frontY-bracketY,reach);
+    box(`b-canal-shop-awning-bracket-${ax.toFixed(1)}`,ax,bracketY,wallZ-.03,.06,.1,.06,'#3d4541');
+  }
 
   // Port beyond CT: continuous quay wall, landing pier, fenders, piles and working boats.
   stone('port-seawall',0,-1.5,44.5,230,3,.3,'#8c9686');

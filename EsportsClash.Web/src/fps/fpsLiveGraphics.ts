@@ -15,7 +15,13 @@ export const FONTESSA_SKY_ATMOSPHERE: LiveSkyAtmosphere = {
   cloudTint: 'rgba(255,250,232,0.23)',
 };
 
-/** Box face ordering follows Babylon's front/back/right/left/top/bottom UVs. */
+/**
+ * Box face ordering follows Babylon's front/back/right/left/top/bottom UVs. Always create the box with
+ * `wrap: true` (see `LIVE_SURFACE_BOX_WRAP`): Babylon's default box layout runs U along the height on the
+ * ±x faces and along the depth on the top and bottom faces, which rotated and stretched every surface there
+ * (stair treads and decks read as long planks, stone courses stood on end on east and west walls).
+ */
+export const LIVE_SURFACE_BOX_WRAP = true;
 export function liveBoxSurfaceUV(width: number, height: number, depth: number, metres: number): Vector4[] {
   return [[width, height], [width, height], [depth, height], [depth, height], [width, depth], [width, depth]]
     .map(([u, v]) => new Vector4(0, 0, u / metres, v / metres));
@@ -47,8 +53,9 @@ export class LiveSurfaceLibrary {
 
   constructor(scene: Scene) { this.scene = scene; }
 
-  material(kind: LiveSurface, hex: string): StandardMaterial {
-    const key = `${kind}:${hex}`, existing = this.materials.get(key);
+  /** `zOffset` lifts an overlay floor (indoor tiles, inlays) above the street paving's own polygon offset. */
+  material(kind: LiveSurface, hex: string, zOffset?: number): StandardMaterial {
+    const key = zOffset === undefined ? `${kind}:${hex}` : `${kind}:${hex}:z${zOffset}`, existing = this.materials.get(key);
     if (existing) return existing;
     let maps = this.maps.get(kind);
     if (!maps) { maps = this.createSurface(kind); this.maps.set(kind, maps); }
@@ -59,6 +66,7 @@ export class LiveSurfaceLibrary {
     material.specularColor = kind === 'metal' ? new Color3(.22, .24, .24) : new Color3(.035, .035, .03);
     material.specularPower = kind === 'metal' ? 42 : 18;
     if (kind === 'paving') material.zOffset = -0.6;
+    if (zOffset !== undefined) material.zOffset = zOffset;
     this.materials.set(key, material);
     return material;
   }
@@ -73,15 +81,24 @@ export class LiveSurfaceLibrary {
     for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
       const grain = noise(x, y, seed) - .5;
       const patch = mottling(x, y, 8, size, seed);
-      let shade = .88 + patch * .12 + grain * .07, height = .48 + patch * .06 + grain * .025;
+      let shade = .88 + patch * .12 + grain * .07, height = .48 + patch * .06 + grain * .025, tint = 0;
       if (kind === 'stone' || kind === 'paving' || kind === 'clay') {
         const cellW = kind === 'stone' ? 128 : 64, cellH = kind === 'clay' ? 32 : 64;
         const row = Math.floor(y / cellH), shiftedX = (x + row % 2 * cellW / 2) % size;
         const sx = shiftedX % cellW, sy = y % cellH;
         const edge = Math.min(sx, cellW - 1 - sx, sy, cellH - 1 - sy);
         const bevel = smooth(clamp((edge - 1) / 3));
-        const block = noise(Math.floor(shiftedX / cellW), row, seed);
-        shade = .67 + bevel * (.17 + block * .15) + grain * .045 + patch * .035;
+        const column = Math.floor(shiftedX / cellW), block = noise(column, row, seed);
+        if (kind === 'paving') {
+          // Sun-bleached pale setts clipped to near white; a lower, wider spread with a few worn and
+          // warmer or cooler stones keeps the street from reading as one glowing sheet.
+          const worn = noise(column, row, seed + 3) < .14 ? .9 : 1;
+          shade = (.66 + bevel * (.12 + block * .15) + grain * .04 + patch * .04) * worn;
+          tint = (noise(column, row, seed + 7) - .5) * .07;
+        } else {
+          shade = .67 + bevel * (.17 + block * .15) + grain * .045 + patch * .035;
+          if (kind === 'stone') tint = (noise(column, row, seed + 7) - .5) * .05;
+        }
         height = .12 + bevel * (.38 + block * .04) + grain * .018;
       } else if (kind === 'concrete') {
         const sx = x % 256, sy = y % 128;
@@ -106,8 +123,10 @@ export class LiveSurfaceLibrary {
         shade = .9 + rib * .045 + grain * .035 - Math.max(0, patch - .64) * .3;
         height = .5 + rib * .12 + grain * .008;
       }
-      const index = y * size + x, at = index * 4, value = Math.round(clamp(shade) * 255);
-      pixels.data[at] = value; pixels.data[at + 1] = value; pixels.data[at + 2] = value; pixels.data[at + 3] = 255;
+      const index = y * size + x, at = index * 4, value = clamp(shade);
+      pixels.data[at] = Math.round(clamp(value * (1 + tint)) * 255);
+      pixels.data[at + 1] = Math.round(value * 255);
+      pixels.data[at + 2] = Math.round(clamp(value * (1 - tint)) * 255); pixels.data[at + 3] = 255;
       heights[index] = height;
     }
     ctx.putImageData(pixels, 0, 0); color.update(false);

@@ -1,4 +1,5 @@
-import {distance,liveWalkable,liveSightline,LIVE_TACTICAL} from './fpsLiveMap.ts';
+import {distance,FONTESSA_MAP_RUNTIME} from './fpsLiveMap.ts';
+import type {LiveMapRuntime} from './fpsLiveMapTypes.ts';
 import {liveIntelBeliefs,liveIntelArea,type LiveIntelContact,type LiveIntelMemory} from './fpsLiveIntel.ts';
 import type {FpsPoint} from './fpsSpatialWorld.ts';
 
@@ -18,7 +19,7 @@ export function recordLiveMotion(samples:Map<string,LiveMotionObservation>,conta
 }
 
 /** Bounded hypotheses from initial information. No live-enemy collection is accepted here. */
-export function anticipateLiveContact(memory:LiveIntelMemory,motion:ReadonlyMap<string,LiveMotionObservation>,from:FpsPoint,now:number,reading:number,timing:number,judgment:number):LiveAnticipation|undefined {
+export function anticipateLiveContact(memory:LiveIntelMemory,motion:ReadonlyMap<string,LiveMotionObservation>,from:FpsPoint,now:number,reading:number,timing:number,judgment:number,runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME):LiveAnticipation|undefined {
   const beliefs=liveIntelBeliefs(memory,now).filter(contact=>contact.age<2.1&&contact.certainty>.4&&distance(from,contact)<30)
     .sort((a,b)=>b.certainty-a.certainty||a.age-b.age);
   for(const contact of beliefs){
@@ -26,7 +27,7 @@ export function anticipateLiveContact(memory:LiveIntelMemory,motion:ReadonlyMap<
     if(contact.source==='sight'&&sample&&sample.samples>=2&&Math.abs(sample.at-contact.observed)<.1&&Math.hypot(sample.vx,sample.vz)>.65){
       const horizon=Math.min(.8,contact.age+.12+timing*.25),length=Math.hypot(sample.vx,sample.vz)||1;
       const travel=Math.min(2.8,length*horizon),point={x:contact.x+sample.vx/length*travel,z:contact.z+sample.vz/length*travel,level:contact.level};
-      if(!liveWalkable(point)||!liveSightline(contact,point)||!liveSightline(from,point))continue;
+      if(!runtime.walkable(point)||!runtime.sightline(contact,point)||!runtime.sightline(from,point))continue;
       const confidence=contact.certainty*(.5+reading*.45)*Math.exp(-contact.age*.6),uncertainty=contact.uncertainty+contact.age*(1.4-reading*.7);
       return {...point,key:contact.key,observed:contact.observed,until:now+.55,confidence,uncertainty,
         prefire:reading>.45&&judgment>.4&&confidence>.55&&uncertainty<1.35&&contact.age>.08,
@@ -43,9 +44,9 @@ export function anticipateLiveContact(memory:LiveIntelMemory,motion:ReadonlyMap<
         reason:'Use the heard reload as a short timing window; clear the uncertain angle',shots:0};
     }
     if(contact.source==='footstep'||contact.source==='gunfire'){
-      const area=liveIntelArea(contact);if(area==='Mid'||reading<.35)continue;
-      const gate=[...LIVE_TACTICAL[area].entries].sort((a,b)=>distance(a,contact)-distance(b,contact))[0];
-      if(distance(gate,contact)>contact.radius+5||!liveSightline(from,gate))continue;
+      const area=liveIntelArea(contact,runtime.intelArea);if(area==='Mid'||reading<.35)continue;
+      const gate=[...runtime.definition.tactical[area].entries].sort((a,b)=>distance(a,contact)-distance(b,contact))[0];
+      if(!gate||distance(gate,contact)>contact.radius+5||!runtime.sightline(from,gate))continue;
       return {...gate,key:contact.key,observed:contact.observed,until:now+.65,confidence:contact.certainty*(.5+reading*.4),uncertainty:Math.max(2,contact.radius),prefire:false,
         reason:'Pre-aim the plausible entrance from the reported sound',shots:0};
     }

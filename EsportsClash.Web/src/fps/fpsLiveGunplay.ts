@@ -78,6 +78,9 @@ export function stepLiveManualAim(
   // After reaction, smooth pursuit combines a light ocular reflex with discrete-sampled hand velocity.
   let handYaw = 0, handPitch = 0;
   if (aim.adjustments > 0) {
+    // When a strafing target reverses direction, shed stale pan velocity so the hand doesn't keep overshooting.
+    if (dYaw * (aim.velYaw ?? 0) < -1e-5) aim.velYaw = (aim.velYaw ?? 0) * .35;
+    if (dPitch * (aim.velPitch ?? 0) < -1e-5) aim.velPitch = (aim.velPitch ?? 0) * .35;
     const follow = .04 + tracking * .1;
     const maxTrackStep = .018 + tracking * .024;
     const reflexYaw = Math.abs(dYaw) <= maxTrackStep ? dYaw * follow : Math.sign(dYaw) * maxTrackStep * follow;
@@ -146,9 +149,11 @@ export function stepLiveManualAim(
  * hit volumes in `fpsLiveBallistics.ts`: a skull-sized head (slightly inside its 0.09 x 0.113 m half-axes)
  * and the chest/abdomen block.
  */
-export function liveAimTargetSize(distance: number, head: boolean): {halfWidth: number; halfHeight: number} {
+export function liveAimTargetSize(distance: number, head: boolean | LiveAimZone): {halfWidth: number; halfHeight: number} {
   const d = Math.max(.5, distance);
-  return head ? {halfWidth: Math.atan(.085 / d), halfHeight: Math.atan(.105 / d)} : {halfWidth: Math.atan(.19 / d), halfHeight: Math.atan(.32 / d)};
+  if (head === true || head === 'head') return {halfWidth: Math.atan(.085 / d), halfHeight: Math.atan(.105 / d)};
+  if (head === 'neck') return {halfWidth: Math.atan(.135 / d), halfHeight: Math.atan(.145 / d)};
+  return {halfWidth: Math.atan(.19 / d), halfHeight: Math.atan(.32 / d)};
 }
 
 /** Where on the body a shooter means to put the crosshair. */
@@ -156,8 +161,8 @@ export type LiveAimZone = 'head' | 'neck' | 'body';
 
 /** Distance (m) inside which this weapon family can realistically one-tap a skull-sized head, at precision 1. */
 const HEAD_REACH: Partial<Record<LiveWeapon, number>> = {
-  deagle: 20, usp_s: 17, p250: 16, fiveseven: 16, glock: 11, pistol: 11, tec9: 11, cz75: 9,
-  ak47: 16, m4a1_s: 16, rifle: 15, budget_ct: 13, budget_t: 13, smg: 8, mp9: 8, mac10: 7.5, scout: 50,
+  deagle: 21, usp_s: 18, p250: 17, fiveseven: 17, glock: 12, pistol: 12, tec9: 12, cz75: 9.5,
+  ak47: 17, m4a1_s: 17, rifle: 16, budget_ct: 14, budget_t: 14, smg: 8, mp9: 8, mac10: 7.5, scout: 50,
 };
 
 /**
@@ -172,13 +177,13 @@ export function liveAimZone(input: {weapon: LiveWeapon; distance: number; precis
   if (!base) return 'body';
   const p = clamp01(input.precision);
   const sniper = input.weapon === 'scout';
-  // High-tier pros keep head-level crosshair discipline on first shots well past 20 m rather than
-  // pulling down to torso at mid-range; lower skill or sustained spray drops toward chest/neck.
-  const reachMult = sniper ? .45 + .55 * p : p <= .7 ? Math.max(0, p * 1.1 - .05) : .72 + Math.pow((p - .7) / .3, 1.35) * .92;
+  // Skilled/pro riflers (>0.65 precision) hold head-level first-shot discipline into mid-range (~17–25 m),
+  // while average shooters (<=0.55) or sustained sprays drop cleanly to chest/body.
+  const reachMult = sniper ? .45 + .55 * p : p <= .6 ? Math.max(0, p * 1.1 - .05) : .61 + Math.pow((p - .6) / .4, 1.15) * .99;
   let reach = base * reachMult;
-  if (input.spraying && !sniper) reach *= .55;
-  reach *= 1 - .35 * clamp01((input.targetSpeed ?? 0) / 2.5);
-  reach *= 1 - .25 * clamp01(input.pressure ?? 0);
+  if (input.spraying && !sniper) reach *= .52;
+  reach *= 1 - .32 * clamp01((input.targetSpeed ?? 0) / 2.5);
+  reach *= 1 - .22 * clamp01(input.pressure ?? 0);
   if (input.distance <= reach) return 'head';
   return input.distance <= reach * 2 + 3 ? 'neck' : 'body';
 }
@@ -320,9 +325,12 @@ export function applyLiveAimPunch(
   if (!input.isHeadshot && input.armor > 0 && input.damage < 42) return;
   const baseKick = input.isHeadshot ? (input.armor > 0 ? 0.016 : 0.028) : (input.armor > 0 ? 0.006 : 0.018) * Math.min(1.4, input.damage / 35);
   const kick = baseKick * (1.15 - clamp01(input.composure) * 0.55);
+  const yawKick = (random() - 0.5) * kick * 0.45;
   aim.errPitch -= kick;
   aim.fromPitch = aim.errPitch;
-  aim.errYaw += (random() - 0.5) * kick * 0.45;
+  aim.toPitch -= kick;
+  aim.errYaw += yawKick;
   aim.fromYaw = aim.errYaw;
+  aim.toYaw += yawKick;
   aim.nextAdjustAt = Math.max(aim.nextAdjustAt, aim.moveStart + 0.035);
 }

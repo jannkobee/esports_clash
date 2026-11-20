@@ -35,6 +35,9 @@ import { ClubCrest } from './ClubIdentityEditor';
 // Manager-facing 1–10 levels use the one owner-mandated conversion (fpsScale10).
 import {fpsScale10 as toScale10} from '../fps/fpsScale10';
 import './hexapedia.css';
+import {PlayerCard as GameCard} from './game/PlayerCard';
+import {HexRadar} from './game/HexRadar';
+import {ATTRIBUTES,rarityOf,scaledAttributes,type AttributeKey} from './game/positions';
 import { ReferenceIcon, ReferenceMark } from './ReferenceIcon';
 import { WorldActivity } from './WorldActivity';
 import { CompetitionHub } from './CompetitionHub';
@@ -153,16 +156,17 @@ function Hub({hub,onWatch}: {hub:PediaHub;onWatch:Props['onWatch']}) {
   const upcoming=hub.fixtures.filter(match=>!match.winner).sort((a,b)=>Date.parse(a.kickoff_at)-Date.parse(b.kickoff_at));
   const completed=hub.fixtures.filter(match=>match.winner).sort((a,b)=>Date.parse(b.kickoff_at)-Date.parse(a.kickoff_at));
   const events=hub.events.filter(event=>tier==='all'||event.tier===Number(tier));
-  return <div className="pedia-home"><section className="pedia-module"><h2>Tactical FPS reference</h2><p>Roles, personalities, weapons, equipment, maps and current match rules.</p><a className="cm-btn cm-btn-primary" href="#hexapedia/fps">Open FPS reference</a> <a className="cm-btn" href="#fps-simulation">Watch a simulation</a></section>
+  return <div className="pedia-home"><section className="pedia-module pedia-fps-callout" aria-labelledby="pedia-fps-callout"><header><h2 id="pedia-fps-callout">Tactical FPS reference</h2></header><div className="pedia-fps-callout__body"><p>Roles, personalities, weapons, equipment, maps and current match rules.</p><div className="pedia-fps-callout__actions"><a className="cm-btn cm-btn-primary" href="#hexapedia/fps">Open FPS reference</a><a className="cm-btn" href="#fps-simulation">Watch a simulation</a></div></div></section>
     <div className="pedia-welcome"><div><p className="pedia-eyebrow">Explore the world</p><h1>Clubs, competition &amp; Tactical FPS</h1><p>Explore the people, competitions, and game behind your next matchday. Connected records, straight from Hexatrick.</p></div><BookOpen size={64} strokeWidth={1}/></div>
     <nav className="pedia-portals" aria-label="Encyclopedia sections">{(['tournaments','teams','players','coaches'] as PediaKind[]).map(kind=><a href={pediaHref(kind)} key={kind}><ReferenceIcon kind={kind} size={23}/><strong>{hub.counts[kind]?.toLocaleString()??'—'}</strong><span>{PEDIA_LABELS[kind]}</span></a>)}</nav>
     <div className="pedia-home-grid">
       <section className="pedia-module"><header><h2><LabelIcon name="match"/>Match centre</h2><span>Manila · UTC+8</span></header><div className="pedia-segments"><button aria-pressed={matchesTab==='upcoming'} onClick={()=>setMatchesTab('upcoming')}>Upcoming & live</button><button aria-pressed={matchesTab==='completed'} onClick={()=>setMatchesTab('completed')}>Completed</button></div><label className="pedia-countdown"><input type="checkbox" checked={countdown} onChange={event=>setCountdown(event.target.checked)}/> Show countdowns</label><MatchList fixtures={(matchesTab==='upcoming'?upcoming:completed).slice(0,8)} onWatch={onWatch} countdown={countdown}/></section>
       <div className="pedia-home-right"><section className="pedia-module"><header><h2><LabelIcon name="tournaments"/>Tournaments</h2><a href={pediaHref('tournaments')}>All events <ChevronRight size={13}/></a></header><div className="pedia-filter"><label>Tier <select value={tier} onChange={event=>setTier(event.target.value)}><option value="all">All tiers</option>{[1,2,3,4,5].map(value=><option key={value} value={value}>Tier {value}</option>)}</select></label></div>{events.length?events.slice(0,6).map(event=><article className="pedia-event-summary" key={event.id}><TournamentLogo id={event.id} name={event.name} size={32}/><div><a className="tournament-entity" href={pediaHref('tournaments',event.id)}>{event.name}</a><p>{pediaTier(event.tier)} · {pediaStatus(event.status)}</p><p>{pediaTime(event.semifinals_at)} Manila</p></div></article>):<Empty>No published events match this tier.</Empty>}</section>
-      <section className="pedia-module pedia-guide-link"><header><h2><LabelIcon name="guide"/>New to Hexatrick?</h2></header><div><p>Learn the club essentials, from your first lineup to the annual circuit.</p><a href="#hexapedia/guide"><BookOpen size={16}/> Open the game guide <ArrowRight size={14}/></a></div></section></div>
+      <TransfersModule/><section className="pedia-module pedia-guide-link"><header><h2><LabelIcon name="guide"/>New to Hexatrick?</h2></header><div><p>Learn the club essentials, from your first lineup to the annual circuit.</p><a href="#hexapedia/guide"><BookOpen size={16}/> Open the game guide <ArrowRight size={14}/></a></div></section></div>
     </div>
     {hub.standings.map(league=><Section key={league.competition} id={`league-${league.competition}`} title={`${league.year} · ${league.competition}`}><div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Club</th><th>Wins</th><th>Losses</th></tr></thead><tbody>{league.clubs.map(club=><tr key={club.id}><th scope="row"><TeamLink team={club}/></th><td>{club.wins}</td><td>{club.losses}</td></tr>)}</tbody></table></div></Section>)}
     <WorldActivity onWatch={onWatch}/>
+    <Navbox route={{kind:null,page:null}}/>
     <p className="pedia-source-note">Profiles use the current catalog. Match records come from verified scheduled results. Private orders, account details, and balances remain in your club workspace.</p>
   </div>;
 }
@@ -251,8 +255,8 @@ function ArticleBody({article,onWatch,register,joining}: {article:PediaArticle;o
       <Section id="prizes" title="Prize pool"><p>{pediaMoney((r.champion_prize??0)+(r.runner_up_prize??0))} in published in-game rewards.</p><div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Place</th><th>Reward · PHP</th><th>Participant</th></tr></thead><tbody><tr><th scope="row">Champion</th><td>{pediaMoney(r.champion_prize??0)}</td><td>{r.champion?<TeamLink team={r.champion}/>:'To be decided'}</td></tr><tr><th scope="row">Runner-up</th><td>{pediaMoney(r.runner_up_prize??0)}</td><td>{(()=>{const final=r.fixtures?.find(match=>match.bracket_slot===3&&match.winner_id);return final?<TeamLink team={final.home.id===final.winner_id?final.away:final.home}/>:'To be decided';})()}</td></tr></tbody></table></div></Section>
       <Section id="rules" title="Tournament rules"><p>{r.rules}</p>{!r.definition_id&&<p>Tier {r.tier} clubs with a published club identity may register. The champion advances one tier when eligible. Interrupted or conflicting fixtures require organizer review.</p>}</Section>
     </>}
-    {kind==='teams'&&<><Section id="roster" title="Current roster">{r.roster?.length?<div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Player</th><th>Role</th><th>Overall</th><th>Training XP</th></tr></thead><tbody>{r.roster.map((slot,index)=><tr key={`${slot.player.id}:${index}`}><th scope="row"><a href={pediaHref('players',slot.player.id)}><WorldPlayerPortrait id={String(slot.player.id)} name={slot.player.name} appearance={slot.player.presentation?.appearance} size={35}/>{slot.player.name}</a></th><td><FpsPlayerRole stats={slot.player.stats}/></td><td>{slot.player.overall?`${toScale10(slot.player.overall)}/10`:'—'}</td><td>{slot.training_xp}</td></tr>)}</tbody></table></div>:<Empty>No current-catalog roster is published.</Empty>}<p className="pedia-muted">All contracted players are shown. Private match orders and locked starting selections are not published here.</p></Section><Section id="schedule" title="Fixtures & results"><TeamGameHistory id={Number(r.id)} onWatch={onWatch}/></Section><Section id="competitions" title="Tournament participation"><TournamentTable events={r.tournaments??[]}/></Section></>}
-    {kind==='players'&&<><PlayerDossier article={article} onWatch={onWatch}/>{r.presentation?.bio&&<Section id="biography" title="Player biography"><p className="whitespace-pre-wrap">{r.presentation.bio}</p><small className="pedia-muted">Player biography provided by their club.</small></Section>}<Section id="career" title="Career record"><PlayerCareerRecord career={r.career}/></Section><Section id="attributes" title="Player skills & personality"><PlayerAttributes stats={r.stats}/><>{r.fpsIdentity?<FpsIdentityMarks profile={r.fpsIdentity}/>:null}</></Section><Stats article={article}/><Section id="teams" title="Current clubs"><TeamCards teams={r.teams??[]}/></Section><Section id="schedule" title="Recent verified results"><MatchList fixtures={r.fixtures??[]} onWatch={onWatch}/></Section></>}
+    {kind==='teams'&&<><Section id="roster" title="Current roster">{r.roster?.length?<TeamCardRow roster={r.roster}/>:null}{r.roster?.length?<div className="pedia-table-scroll"><table className="pedia-table"><thead><tr><th>Player</th><th>Role</th><th>Overall</th><th>Training XP</th></tr></thead><tbody>{r.roster.map((slot,index)=><tr key={`${slot.player.id}:${index}`}><th scope="row"><a href={pediaHref('players',slot.player.id)}><WorldPlayerPortrait id={String(slot.player.id)} name={slot.player.name} appearance={slot.player.presentation?.appearance} size={35}/>{slot.player.name}</a></th><td><FpsPlayerRole stats={slot.player.stats}/></td><td>{slot.player.overall?`${toScale10(slot.player.overall)}/10`:'—'}</td><td>{slot.training_xp}</td></tr>)}</tbody></table></div>:<Empty>No current-catalog roster is published.</Empty>}<p className="pedia-muted">All contracted players are shown. Private match orders and locked starting selections are not published here.</p></Section><Section id="schedule" title="Fixtures & results"><TeamGameHistory id={Number(r.id)} onWatch={onWatch}/></Section><Section id="competitions" title="Tournament participation"><TournamentTable events={r.tournaments??[]}/></Section></>}
+    {kind==='players'&&<><Section id="player-card" title="Player card"><PlayerSpotlight record={r}/></Section><PlayerDossier article={article} onWatch={onWatch}/>{r.presentation?.bio&&<Section id="biography" title="Player biography"><p className="whitespace-pre-wrap">{r.presentation.bio}</p><small className="pedia-muted">Player biography provided by their club.</small></Section>}<Section id="career" title="Career record"><PlayerCareerRecord career={r.career}/></Section><Section id="attributes" title="Player skills & personality"><PlayerAttributes stats={r.stats}/><>{r.fpsIdentity?<FpsIdentityMarks profile={r.fpsIdentity}/>:null}</></Section><Stats article={article}/><Section id="teams" title="Current clubs"><TeamCards teams={r.teams??[]}/></Section><Section id="schedule" title="Recent verified results"><MatchList fixtures={r.fixtures??[]} onWatch={onWatch}/></Section></>}
     {kind==='coaches'&&<Section id="attributes" title="Published coaching attributes">{r.coachAttributes?<dl className="pedia-stat-grid">{Object.entries(r.coachAttributes).map(([key,value])=><div key={key}><dt>{key.replace(/([A-Z])/g,' $1')}</dt><dd>{value}/10</dd></div>)}</dl>:<Empty>No individual coaching attributes are published in this catalog.</Empty>}<dl className="pedia-provenance">{([['Chemistry bonus',r.chemistryBonus],['Playbook bonus',r.playbookBonus],['Extra bans',r.extraBans]] as const).filter(([,value])=>value!==undefined).map(([label,value])=><div key={label}><dt><LabelIcon name={label} size={12}/>{label}</dt><dd>{value}</dd></div>)}</dl></Section>}
     {(kind==='organizers'||kind==='sponsors')&&<Section id="competitions" title="Published tournaments"><TournamentTable events={r.tournaments??[]}/></Section>}
   </>;
@@ -270,6 +274,48 @@ function pediaGroups(route:{kind?:PediaKind|null;page?:string|null}):SectionNavG
       {key:'awards',label:'Laurels',href:'#hexapedia/awards',icon:'laurels' as IconKey,current:route.page==='awards'},
     ]},
   ];
+}
+
+/** Wiki navbox: every part of Hexapedia in one grouped box at the foot of the page. */
+function Navbox({route}:{route:{kind?:PediaKind|null;page?:string|null}}) {
+  return <nav className="pedia-navbox" aria-label="Hexapedia index"><header><BookOpen size={14} aria-hidden="true"/>Hexapedia</header>
+    {pediaGroups(route).map(group=><div className="pedia-navbox__row" key={group.id}><span className="pedia-navbox__group">{group.label}</span><span className="pedia-navbox__links">{group.items.map(item=><a key={item.key} href={item.href} aria-current={item.current?'page':undefined}>{item.label}</a>)}</span></div>)}
+  </nav>;
+}
+
+/** Team card: the roster as player cards with the team's combined shape, like a wiki team box. */
+function TeamCardRow({roster}:{roster:{player:PediaPlayer;training_xp:number}[]}) {
+  const players=roster.map(s=>s.player);
+  const average:Partial<Record<AttributeKey,number>>={};
+  for(const {key} of ATTRIBUTES){const values=players.map(p=>scaledAttributes(p.stats)[key]).filter((v):v is number=>v!=null);if(values.length)average[key]=values.reduce((a,b)=>a+b,0)/values.length;}
+  return <div className="pedia-team-card">
+    <div className="pedia-team-card__players">{players.slice(0,8).map(p=><a key={p.id} href={pediaHref('players',p.id)} className="pedia-team-card__link"><GameCard size="sm" player={{id:String(p.id),name:p.name,ovr:p.overall??0,stats:p.stats,nationality:p.nationality??undefined,appearance:p.presentation?.appearance}}/></a>)}</div>
+    {Object.keys(average).length>0&&<div className="pedia-team-card__shape"><HexRadar values={average} size={150} labels/><small>Roster average, 1–10</small></div>}
+  </div>;
+}
+
+/** The player's card and attribute shape at the top of their record. */
+function PlayerSpotlight({record:r}:{record:PediaArticle['record']}) {
+  const stats=r.stats,values=scaledAttributes(stats);
+  const best=ATTRIBUTES.filter(a=>values[a.key]!=null).sort((a,b)=>values[b.key]!-values[a.key]!).slice(0,2);
+  const nationality=(r as {nationality?:{code:string;name:string}|null}).nationality??undefined;
+  const presentation=(r as {presentation?:import('../supporter').PlayerPresentation|null}).presentation;
+  return <div className="pedia-player-spotlight">
+    <GameCard size="lg" player={{id:String(r.id),name:r.name,ovr:Number((r as {overall?:number|null}).overall??0),stats,nationality,appearance:presentation?.appearance}}/>
+    <div className="pedia-player-spotlight__shape"><HexRadar values={values} size={230} labels tone="rarity" className={'is-'+rarityOf(toScale10(Number((r as {overall?:number|null}).overall??0)))}/>
+      {best.length>0&&<p>Best at <strong>{best.map(b=>b.label).join(' and ')}</strong></p>}</div>
+  </div>;
+}
+
+interface MarketEvent {id:number;kind:string;message:string;occurred_at:string;actor:PediaTeam|null;payload:{player_id?:string;auction_id?:number;amount?:number}}
+/** Latest transfers on the main page: signings, sales and auctions from the world feed. */
+function TransfersModule() {
+  const [rows,setRows]=useState<MarketEvent[]|null>(null);
+  useEffect(()=>{if(!isCloudPersistenceConfigured())return;const c=new AbortController();void request<{data:{events:MarketEvent[]}}>('/avatarpedia/world',null,{signal:c.signal}).then(r=>setRows(apiRecords<MarketEvent>(r.data.events).filter(e=>['transfer','auction','recruitment'].includes(e.kind)).slice(0,6))).catch(()=>setRows([]));return()=>c.abort();},[]);
+  return <section className="pedia-module pedia-transfers"><header><h2><LabelIcon name="transfers"/>Latest transfers</h2><a href="#transfer-exchange">Transfer market <ChevronRight size={13}/></a></header>
+    {rows===null?<p className="pedia-empty">Loading transfers…</p>:rows.length?<ul>{rows.map(e=><li key={e.id}><time dateTime={e.occurred_at}>{new Date(e.occurred_at).toLocaleDateString('en-PH',{timeZone:'Asia/Manila',month:'short',day:'numeric'})}</time>{e.actor&&<ReferenceMark kind="teams" identity={e.actor.identity}/>}<span>{e.payload.player_id?<a href={pediaHref('players',e.payload.player_id)}>{e.message}</a>:e.message}</span>{typeof e.payload.amount==='number'&&<b>{pediaMoney(e.payload.amount)}</b>}</li>)}</ul>
+      :<p className="pedia-empty">No transfers recorded yet. Signings, sales and auctions appear here as clubs make them.</p>}
+  </section>;
 }
 
 export function Hexapedia({onWatch}:Props) {
@@ -314,6 +360,7 @@ export function Hexapedia({onWatch}:Props) {
       {notice&&<p className="pedia-notice" role="status">{notice}</p>}
       <details className="pedia-mobile-contents"><summary>On this page</summary><Contents sections={sections}/></details>
       <div className="pedia-article-grid"><aside className="pedia-toc"><h2>Contents</h2><Contents sections={sections}/></aside><article className="pedia-article-body"><ArticleBody article={article} onWatch={onWatch} register={()=>void register()} joining={joining}/><Section id="sources" title="Record sources"><p>Competition and club information comes from the club registry and tournament records. Player definitions use the active catalog. Statistics include completed scheduled matches only.</p><dl className="pedia-provenance"><dt>Current player catalog</dt><dd>{article.source.catalog_id?article.source.catalog_id.slice(0,16):'Unavailable'}</dd><dt>Game content revision</dt><dd>{article.source.content_hash.slice(0,16)}</dd><dt>Retrieved</dt><dd>{pediaTime(article.source.generated_at)} Manila</dd></dl></Section></article><InfoBox article={article}/></div>
+      <Navbox route={route}/>
     </>:<p role="status" className="pedia-empty">Loading article…</p>:route.kind?<Directory key={route.kind} kind={route.kind}/>:hub?<Hub hub={hub} onWatch={onWatch}/>:<p role="status" className="pedia-empty">Loading Hexapedia…</p>}
   </div>;
 }

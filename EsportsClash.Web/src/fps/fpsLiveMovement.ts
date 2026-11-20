@@ -40,12 +40,13 @@ export function advanceLiveVelocity(current:LiveVelocity,wish:FpsPoint,dt:number
   const step=Math.min(d,acceleration*dt);
   return d<1e-8?{vx:wish.x,vz:wish.z}:{vx:current.vx+dx/d*step,vz:current.vz+dz/d*step};
 }
-export function liveShotSpeedLimit(weapon:string,mechanics:number):number {
+export function liveShotSpeedLimit(weapon:string,mechanics:number,crouch=false):number {
   const category=LIVE_WEAPONS[weapon as LiveWeapon]?.category;
   if(category==='smg')return 2.1;
   if(weapon==='tec9')return 1.85;
-  if(category==='pistol'&&weapon!=='deagle')return 1.25;
-  return category==='sniper'?.28+(1-Math.max(0,Math.min(1,mechanics)))*.35:.3+(1-Math.max(0,Math.min(1,mechanics)))*.8;
+  if(category==='pistol'&&weapon!=='deagle')return crouch?Math.max(1.25,LIVE_CROUCH_SPEED+.05):1.25;
+  const base=category==='sniper'?.28+(1-Math.max(0,Math.min(1,mechanics)))*.35:.3+(1-Math.max(0,Math.min(1,mechanics)))*.8;
+  return crouch&&category!=='sniper'?Math.max(base,LIVE_CROUCH_SPEED+.05):base;
 }
 
 export const liveAccuracySettleTime=(crouch:boolean):number=>crouch?.08:.12;
@@ -55,5 +56,7 @@ export function liveAccurateShotReady(weapon:LiveWeapon,speed:number,airborne:bo
   const category=LIVE_WEAPONS[weapon].category;
   const precision=category==='rifle'||category==='sniper'||category==='heavy'||weapon==='deagle';
   if(!precision||range<=8)return true;
+  // Counter-Strike crouch-walking ("crab-walk" spraying) remains accurate for non-sniper weapons.
+  if(crouch&&category!=='sniper'&&!airborne&&speed<=LIVE_CROUCH_SPEED+.05)return true;
   return !airborne&&speed<=.12&&stillFor>=liveAccuracySettleTime(crouch);
 }

@@ -20,9 +20,23 @@ export function buildVillageMarket(scene:Scene,{box,detail}:VillageBuilder):void
         item.position.set(bx-.15+(fruit%3)*.15,1.23+Math.floor(fruit/9)*.075,z-.27+Math.floor(fruit%9/3)*.23);
       }
     }
-    if(id==='bread')for(let loaf=0;loaf<10;loaf++){
-      const item=detail(MeshBuilder.CreateCapsule(`market-bread-loaf-${loaf}`,{height:.35,radius:.055,tessellation:8},scene),'#c89d5e');
-      item.position.set(x-.5+(loaf%5)*.25,1.14,z-.19+Math.floor(loaf/5)*.38);item.rotation.z=Math.PI/2;
+    if(id==='bread'){
+      // Round loaves in a row, baguettes laid at an angle and a basket of rolls (the overlapping capsules
+      // used to fuse into two long bars).
+      for(let loaf=0;loaf<5;loaf++){
+        const item=detail(MeshBuilder.CreateSphere(`market-bread-loaf-${loaf}`,{diameter:.18,segments:8},scene),loaf%2?'#b98446':'#c89d5e');
+        item.position.set(x-.5+loaf*.25,1.13,z+.24);item.scaling.y=.58;
+      }
+      for(let stick=0;stick<4;stick++){
+        const item=detail(MeshBuilder.CreateCapsule(`market-baguette-${stick}`,{height:.56,radius:.034,tessellation:8},scene),'#d0a565');
+        item.position.set(x-.32+stick*.13,1.12,z-.12);item.rotation.set(0,.5,Math.PI/2);
+      }
+      const basket=detail(MeshBuilder.CreateCylinder('market-bread-basket',{height:.13,diameterTop:.38,diameterBottom:.3,tessellation:12},scene),'#977447');
+      basket.position.set(x+.48,1.145,z-.2);
+      for(let roll=0;roll<6;roll++){
+        const item=detail(MeshBuilder.CreateSphere(`market-bread-roll-${roll}`,{diameter:.09,segments:6},scene),'#c8975a');
+        item.position.set(x+.48+Math.cos(roll*1.05)*.09,1.225,z-.2+Math.sin(roll*1.05)*.09);
+      }
     }
     if(id==='fish'){
       box('market-fish-ice-tray',x,1.11,z,w-.15,.1,d-.12,'#c8d6ce');

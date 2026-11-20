@@ -1,3 +1,14 @@
+/**
+ * The Hexatrick mark: a faceted hexagon holding an italic H whose crossbar is a rising slash, the "trick".
+ * Drawn in currentColor so it takes the theme accent; the facets are tints of the same colour.
+ */
 export function HexatrickMark({className=''}: {className?:string}) {
-  return <svg className={className} width="26" height="28" viewBox="0 0 40 44" aria-hidden="true"><path d="M20 2L37 12V32L20 42L3 32V12Z" fill="currentColor" opacity=".13"/><path d="M20 2L37 12V32L20 42L3 32V12Z" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M12 12H17V19H23V12H28V32H23V24H17V32H12Z" fill="currentColor"/></svg>;
+  return <svg className={className} width="26" height="28" viewBox="0 0 40 44" aria-hidden="true">
+    <path d="M20 1.6 37.6 11.8v20.4L20 42.4 2.4 32.2V11.8Z" fill="currentColor" opacity=".12"/>
+    <path d="M20 1.6 37.6 11.8 20 22Z" fill="currentColor" opacity=".14"/>
+    <path d="M2.4 32.2 20 22v20.4Z" fill="currentColor" opacity=".08"/>
+    <path d="M20 1.6 37.6 11.8v20.4L20 42.4 2.4 32.2V11.8Z" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round"/>
+    <path d="M15.2 11h5.1l-5.6 22H9.6Zm11.2 0h5.1l-5.6 22h-5.1Z" fill="currentColor"/>
+    <path d="M11.4 25.9 29.6 17l-1.2 4.8-18.2 8.9Z" fill="currentColor"/>
+  </svg>;
 }

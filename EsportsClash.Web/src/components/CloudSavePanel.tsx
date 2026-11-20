@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Archive } from 'lucide-react';
 import type { PlayerCard } from '../types';
 import type { ClubSnapshot } from '../cloudPersistence';
 import {
@@ -68,13 +69,12 @@ export function CloudSavePanel({
 
   return (
     <section className="cm-panel">
-      <div className="cm-panel-header">
-        <span>Practice roster backup</span>
-        {session && <span className="text-xs cm-muted">{session.user.name}</span>}
-      </div>
-      <div className="cm-panel-body space-y-3 text-xs">
+      <h2 className="cm-panel-header">
+        <Archive size={15} aria-hidden="true" /> Practice roster backup
+      </h2>
+      <div className="cm-panel-body space-y-3">
         <p className="cm-muted">
-          Save or restore your practice collection with your account. Your official club roster is managed in Matchday.
+          Practice matches use a separate practice collection saved in this browser. Back it up to your account, or restore it on another device. Your official squad is managed in <a href="#squad">Squad</a>.
         </p>
         {!session ? <button type="button" className="cm-btn" onClick={() => openAuthentication('sign-in', 'settings')}>Go to sign-in</button> : <div className="flex flex-wrap gap-2">
           <button type="button" disabled={busy} onClick={() => void upload()} className="cm-btn cm-btn-primary">Save practice roster</button>

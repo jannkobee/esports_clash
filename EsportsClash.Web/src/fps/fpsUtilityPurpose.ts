@@ -137,7 +137,7 @@ export function judgeFpsUtilityOutcome(intent: FpsUtilityIntent, o: Omit<FpsUtil
   let achieved: boolean;
   switch (intent.grenade) {
     case 'smoke': achieved = (o.landingError ?? 0) <= 3.8; break;
-    case 'flash': achieved = (o.enemiesBlinded ?? 0) > 0 || (o.enemiesTurnedAway ?? 0) > 0 || ((intent.primary === 'INFORMATION_GATHERING' || intent.primary === 'EXECUTE_SUPPORT' || intent.primary === 'RETAKE_SUPPORT' || (intent.primary === 'RETREAT_PROTECTION' && (o.enemiesDisplaced ?? 0) > 0)) && (o.alliesBlinded ?? 0) === 0 && (o.landingError ?? 0) <= 3.5); break;
+    case 'flash': achieved = (o.enemiesBlinded ?? 0) > 0 || (o.enemiesTurnedAway ?? 0) > 0 || ((intent.primary === 'RETREAT_PROTECTION' || intent.primary === 'INFORMATION_GATHERING') && (o.enemiesDisplaced ?? 0) > 0 && (o.alliesBlinded ?? 0) === 0 && (o.landingError ?? 0) <= 3.0); break;
     case 'incendiary': achieved = !!o.ignited && (o.landingError ?? 0) <= 3.5; break;
     default: achieved = intent.primary === 'SMOKE_CLEARING' || (o.enemyDamage ?? 0) >= 12 || (o.enemiesDisplaced ?? 0) > 0;
   }

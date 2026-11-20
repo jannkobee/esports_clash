@@ -185,7 +185,7 @@ export function createLiveTerrainRuntime(spec: LiveTerrainSpec): LiveTerrainRunt
   const patchesAt = (point: FpsPoint): readonly GroundPatch[] => {
     const x = Math.floor((point.x - spec.bounds.minX) / cellSize);
     const z = Math.floor((point.z - spec.bounds.minZ) / cellSize);
-    if (x < 0 || x >= cols || z < 0 || z >= rows) return [];
+    if (!(x >= 0 && x < cols && z >= 0 && z < rows)) return [];
     return patchCells[z * cols + x];
   };
 

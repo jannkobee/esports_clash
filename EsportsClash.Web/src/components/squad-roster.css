@@ -1,6 +1,6 @@
 /* Squad roster: readiness → starting five → roster grouped into starters and reserves. */
 
-.squad-desk { display: grid; gap: 18px; }
+.squad-desk { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 .squad-section-head { display: grid; gap: 2px; margin: 0 0 10px; }
 .squad-section-head h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; font-weight: 700; color: var(--cm-text); }
 .squad-section-head p { margin: 0; font-size: 12px; color: var(--cm-text-muted); }
@@ -10,24 +10,89 @@
 }
 .squad-muted { color: var(--cm-text-subtle); }
 
-/* ---- Readiness ------------------------------------------------------------- */
-.squad-ready {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px;
-  padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--hx-warning) 45%, var(--cm-border));
-  border-left: 3px solid var(--hx-warning); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel);
+/* ---- Team overview: rating ring, shape, readiness ---------------------------- */
+.team-hero {
+  position: relative; overflow: hidden; display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(220px, 300px); align-items: center; gap: 20px 32px;
+  padding: 20px 24px; border: 1px solid color-mix(in srgb, var(--rarity) 35%, var(--cm-border)); border-radius: 16px;
+  background:
+    radial-gradient(ellipse 60% 120% at 0% 50%, color-mix(in srgb, var(--rarity) 16%, transparent), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48' viewBox='0 0 28 48'%3E%3Cpath d='M14 0 28 8v16l-14 8L0 24V8Zm0 32v16' fill='none' stroke='%23ffffff' stroke-opacity='.04'/%3E%3C/svg%3E"),
+    var(--cm-bg-panel);
 }
-.squad-ready.is-ready { border-color: color-mix(in srgb, var(--hx-positive) 40%, var(--cm-border)); border-left-color: var(--hx-positive); }
-.squad-ready__summary { display: flex; align-items: flex-start; gap: 10px; flex: 1 1 320px; }
-.squad-ready__summary > svg { flex-shrink: 0; margin-top: 1px; color: var(--hx-warning); }
-.squad-ready.is-ready .squad-ready__summary > svg { color: var(--hx-positive); }
-.squad-ready h3 { margin: 0; font-size: 14px; font-weight: 700; color: var(--cm-text); }
-.squad-ready p { margin: 2px 0 0; font-size: 12px; color: var(--cm-text-muted); }
-.squad-ready__checks { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 12px; }
-.squad-ready__checks li { display: flex; align-items: center; gap: 7px; color: var(--cm-text-muted); }
-.squad-ready__checks li.is-ok svg { color: var(--hx-positive); }
-.squad-ready__checks li.is-todo { color: var(--cm-text); }
-.squad-ready__checks li.is-todo svg { color: var(--hx-warning); }
-.squad-ready__checks a { margin-left: 4px; font-weight: 700; }
+.team-hero__rating { position: relative; display: grid; justify-items: center; width: 112px; }
+.team-hero__rating svg { transform: rotate(-90deg); }
+.team-hero__track { fill: none; stroke: color-mix(in srgb, var(--cm-text) 10%, transparent); stroke-width: 7; }
+.team-hero__progress { fill: none; stroke: var(--rarity); stroke-width: 7; stroke-linecap: round; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--rarity) 60%, transparent)); transition: stroke-dasharray 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); animation: ring-in 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes ring-in { from { stroke-dasharray: 0 400; } }
+.team-hero__rating > div { position: absolute; top: 0; left: 0; width: 112px; height: 112px; display: grid; place-content: center; text-align: center; }
+.team-hero__rating b { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--cm-text); font-variant-numeric: tabular-nums; }
+.team-hero__rating small { margin-top: 3px; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cm-text-subtle); }
+.team-hero__tier { margin-top: 8px; padding: 2px 9px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rarity); border: 1px solid color-mix(in srgb, var(--rarity) 40%, transparent); background: color-mix(in srgb, var(--rarity) 10%, transparent); white-space: nowrap; }
+.team-hero__shape { display: flex; align-items: center; justify-content: center; gap: 18px; min-width: 0; }
+.team-hero__shape p { margin: 0; max-width: 120px; font-size: 12px; color: var(--cm-text-muted); }
+.team-hero__shape p strong { display: block; font-size: 15px; color: var(--cm-text); }
+.team-hero__ready { display: grid; gap: 10px; }
+.team-hero__status { display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--hx-warning); background: color-mix(in srgb, var(--hx-warning) 12%, transparent); border: 1px solid color-mix(in srgb, var(--hx-warning) 40%, transparent); }
+.team-hero__status.is-ready { color: var(--hx-positive); background: color-mix(in srgb, var(--hx-positive) 12%, transparent); border-color: color-mix(in srgb, var(--hx-positive) 40%, transparent); }
+.team-hero__ready > .cm-btn { justify-self: start; }
+
+/* ---- Starting five and bench ------------------------------------------------- */
+.squad-section-head--row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; }
+.squad-hint { font-size: 12px !important; }
+.squad-hint strong { color: var(--cm-text); }
+.squad-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; }
+.squad-five__cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; justify-items: center; padding: 6px 2px 4px; }
+.squad-five__slot { display: grid; justify-items: center; gap: 6px; width: 100%; animation: slot-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes slot-in { from { opacity: 0; transform: translateY(14px); } }
+.squad-five__slot .player-card { --card-w: 100%; max-width: 200px; }
+.squad-five__order { display: flex; gap: 6px; opacity: 0.55; transition: opacity 0.15s ease; }
+.squad-five__slot:hover .squad-five__order, .squad-five__order:focus-within { opacity: 1; }
+.squad-five__order button {
+  display: inline-grid; place-items: center; width: 28px; height: 24px; padding: 0; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--cm-border); background: var(--cm-bg-panel); color: var(--cm-text-muted);
+}
+.squad-five__order button:hover:not(:disabled) { color: var(--cm-text); border-color: var(--cm-border-strong); }
+.squad-five__order button:disabled { opacity: 0.35; cursor: default; }
+.squad-empty-slot {
+  display: grid; place-content: center; gap: 4px; width: 100%; max-width: 200px; min-height: 300px; border-radius: 14px; cursor: pointer;
+  border: 2px dashed var(--cm-border-strong); background: transparent; color: var(--cm-text-muted); font-weight: 600;
+}
+.squad-empty-slot span { font-size: 22px; font-weight: 800; color: var(--cm-text-subtle); }
+.squad-empty-slot.is-selected { border-color: var(--hx-red-bright); color: var(--cm-text); }
+
+.squad-bench__cards { display: flex; gap: 12px; overflow-x: auto; padding: 6px 2px 10px; scroll-snap-type: x proximity; }
+.squad-bench__cards > .player-card { scroll-snap-align: start; }
+.squad-sub { width: 100%; position: relative; z-index: 3; }
+.squad-bench__empty {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 16px 18px;
+  border: 1px dashed var(--cm-border-strong); border-radius: var(--hx-radius-md); background: color-mix(in srgb, var(--cm-bg-panel) 60%, transparent);
+}
+.squad-bench__empty p { margin: 0; font-size: 13px; color: var(--cm-text-muted); }
+.squad-bench__empty strong { color: var(--cm-text); }
+
+/* ---- Card back -------------------------------------------------------------- */
+.card-back { display: grid; gap: 10px; align-content: start; }
+.card-back__persona { margin: 0; font-size: 12px; font-weight: 600; line-height: 1.45; color: var(--cm-text); }
+.card-back__tends { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.card-back__tends li { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; color: var(--cm-text-muted); }
+.card-back__tends b { color: var(--cm-text); }
+.card-back__facts { display: grid; gap: 4px; margin: 0; }
+.card-back__facts > div { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; }
+.card-back__facts dt { color: var(--cm-text-subtle); }
+.card-back__facts dd { margin: 0; color: var(--cm-text); }
+.card-back__links { display: flex; gap: 12px; font-size: 12px; font-weight: 600; }
+.squad-detail-row .card-back { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px 28px; }
+
+/* ---- Roster list (collapsed) --------------------------------------------------- */
+.squad-list { border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel); }
+.squad-list > summary { display: flex; align-items: center; gap: 8px; padding: 12px 16px; cursor: pointer; list-style: none; font-size: 14px; font-weight: 650; }
+.squad-list > summary::-webkit-details-marker { display: none; }
+.squad-list > summary svg { color: var(--cm-text-subtle); transform: rotate(-90deg); transition: transform 0.15s ease; }
+.squad-list[open] > summary svg { transform: none; }
+.squad-list > summary small { margin-left: auto; font-size: 12px; font-weight: 500; color: var(--cm-text-subtle); }
+.squad-list[open] > summary { border-bottom: 1px solid var(--cm-border); }
+.squad-list > .ui-filter-bar { margin: 12px 12px 10px; }
+.squad-list > .cm-table-wrap { margin: 0 12px 12px; }
 
 /* ---- Roster table ---------------------------------------------------------- */
 .cm-shell .squad-table { min-width: 0; }
@@ -59,27 +124,39 @@
 .squad-toggle svg { transition: transform 0.15s ease; }
 .squad-toggle[aria-expanded='true'] svg { transform: rotate(180deg); }
 
-/* ---- Player details (expanded row) -------------------------------------------- */
-.squad-detail-row > td { padding: 4px 16px 16px 56px !important; background: color-mix(in srgb, var(--cm-bg-panel-alt) 55%, var(--cm-bg-panel)); }
-.squad-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px 28px; }
-.squad-details h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--cm-text-subtle); }
-.squad-details__lead { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--cm-text); }
-.squad-details__list { display: grid; gap: 3px; margin: 0; padding-left: 16px; font-size: 12px; color: var(--cm-text-muted); }
-.squad-details__pairs, .squad-details__bars { display: grid; gap: 6px; margin: 0; }
-.squad-details__pairs > div, .squad-details__bars > div { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 10px; font-size: 12px; }
-.squad-details__pairs dt, .squad-details__bars dt { color: var(--cm-text-muted); }
-.squad-details__pairs dd, .squad-details__bars dd { margin: 0; color: var(--cm-text); }
-.squad-details__bars dd { display: flex; align-items: center; gap: 8px; }
-.squad-details__bars dd small { color: var(--cm-text-subtle); margin-left: -6px; }
-.squad-bar { position: relative; flex: 1; max-width: 140px; height: 6px; border-radius: 3px; background: var(--cm-bg-input); overflow: hidden; }
-.squad-bar > span { position: absolute; inset: 0 auto 0 0; border-radius: 3px; background: var(--hx-accent); }
+/* ---- Expanded roster row ------------------------------------------------------ */
+.squad-detail-row > td { padding: 6px 16px 16px 56px !important; background: color-mix(in srgb, var(--cm-bg-panel-alt) 55%, var(--cm-bg-panel)); }
 .squad-detail-foot { margin: 12px 0 0; font-size: 12px; }
 
-.squad-save { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; padding: 0; }
-.squad-save > span { margin-right: auto; font-size: 12px; color: var(--cm-text-muted); }
+.squad-save {
+  position: sticky; bottom: 12px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px;
+  justify-self: center; width: min(560px, 100%); padding: 10px 12px 10px 18px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--hx-red) 45%, var(--cm-border-strong)); background: color-mix(in srgb, var(--cm-bg-panel) 92%, transparent);
+  backdrop-filter: blur(10px); box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+  transform: translateY(20px); opacity: 0; pointer-events: none; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease;
+}
+.squad-save.is-visible { transform: none; opacity: 1; pointer-events: auto; }
+.squad-save > span { margin-right: auto; font-size: 13px; font-weight: 700; color: var(--cm-text); }
+.squad-save .cm-btn { border-radius: 999px; }
 
+@media (max-width: 1180px) {
+  .team-hero { grid-template-columns: auto minmax(0, 1fr); }
+  .team-hero__ready { grid-column: 1 / -1; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; }
+  .squad-five__cards { display: flex; overflow-x: auto; justify-content: flex-start; padding-bottom: 10px; scroll-snap-type: x mandatory; }
+  .squad-five__slot { flex: 0 0 190px; scroll-snap-align: start; }
+}
+@media (max-width: 640px) {
+  .team-hero { grid-template-columns: 1fr; justify-items: center; padding: 16px; }
+  .team-hero__shape { flex-direction: column; }
+  .team-hero__shape p { max-width: none; text-align: center; }
+  .team-hero__ready { width: 100%; grid-template-columns: 1fr; }
+  .squad-five__slot { flex-basis: 172px; }
+  .squad-save { border-radius: 14px; }
+}
 @media (max-width: 900px) {
   .cm-shell .squad-table { min-width: 760px; }
   .squad-detail-row > td { padding-left: 16px !important; }
 }
 .training-focus-cell { font-weight: 800; color: var(--cm-text); background: color-mix(in srgb, var(--hx-positive) 12%, transparent); }
+.squad-sub.is-upgrade { border-color: color-mix(in srgb, var(--hx-positive) 55%, var(--cm-border-strong)); color: color-mix(in srgb, var(--hx-positive) 85%, var(--cm-text)); }
+.squad-sub.is-upgrade:hover:not(:disabled) { background: color-mix(in srgb, var(--hx-positive) 14%, var(--cm-bg-panel)); border-color: var(--hx-positive); }

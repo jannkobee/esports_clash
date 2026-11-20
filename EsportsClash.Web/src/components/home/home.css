@@ -96,9 +96,22 @@
 
 /* First week checklist */
 .first-week .home-section__head small { font-weight: 400; color: var(--cm-text-muted); margin-left: 8px; font-size: 12px; }
-.first-week__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.first-week__steps li { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: start; padding: 8px 10px; border: 1px solid var(--cm-border); border-radius: 6px; }
-.first-week__steps li p { margin: 2px 0 0; font-size: 12px; color: var(--cm-text-muted); }
-.first-week__steps li.is-done { color: var(--cm-text-muted); }
-.first-week__steps li.is-done svg { color: var(--hx-positive); }
-@media (max-width: 640px) { .first-week__steps li { grid-template-columns: 18px 1fr; } .first-week__steps li > .cm-btn { grid-column: 2; justify-self: start; } }
+/* First week: one panel, a progress bar, done steps condensed, and the next step carries the primary action. */
+.first-week__panel { border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel); overflow: hidden; }
+.first-week__progress { height: 3px; background: var(--cm-bg-input); }
+.first-week__progress > span { display: block; height: 100%; background: var(--hx-positive); transition: width 0.3s ease; }
+.first-week__steps { list-style: none; margin: 0; padding: 0; }
+.first-week__steps li { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; align-items: start; padding: 11px 14px; }
+.first-week__steps li + li { border-top: 1px solid var(--cm-border); }
+.first-week__steps li strong { font-size: 13px; font-weight: 600; }
+.first-week__steps li p { margin: 2px 0 0; font-size: 12px; color: var(--cm-text-muted); max-width: 80ch; }
+.first-week__mark {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--cm-border-strong); font-size: 11px; font-weight: 700; color: var(--cm-text-muted);
+}
+.first-week__steps li.is-done { padding-block: 7px; color: var(--cm-text-muted); }
+.first-week__steps li.is-done strong { font-weight: 500; }
+.first-week__steps li.is-done .first-week__mark { border-color: color-mix(in srgb, var(--hx-positive) 50%, transparent); background: color-mix(in srgb, var(--hx-positive) 14%, transparent); color: var(--hx-positive); }
+.first-week__steps li.is-next { background: color-mix(in srgb, var(--hx-red) 7%, var(--cm-bg-panel)); box-shadow: inset 3px 0 0 var(--hx-red-bright); }
+.first-week__steps li.is-next .first-week__mark { border-color: var(--hx-red-bright); color: var(--hx-accent); }
+@media (max-width: 640px) { .first-week__steps li { grid-template-columns: 22px 1fr; } .first-week__steps li > .cm-btn { grid-column: 2; justify-self: start; } }

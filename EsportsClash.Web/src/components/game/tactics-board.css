@@ -1,0 +1,125 @@
+/* Tactics board: a schematic field with five position nodes per side and a picker beside it. */
+.tactics-board { display: grid; gap: 12px; }
+.tactics-board__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.tactics-board__sides { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; border: 1px solid var(--cm-border); background: var(--cm-bg-input); }
+.tactics-board__sides button {
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 9px; border: 1px solid transparent; cursor: pointer;
+  background: transparent; color: var(--cm-text-muted); font-size: 13px; font-weight: 700;
+}
+.tactics-board__sides button b { padding: 0 7px; border-radius: 999px; font-size: 11px; background: color-mix(in srgb, var(--cm-text) 10%, transparent); color: var(--cm-text-muted); }
+.tactics-board__sides button b.is-full { background: color-mix(in srgb, var(--hx-positive) 20%, transparent); color: var(--hx-positive); }
+.tactics-board__sides button[aria-selected='true'] {
+  color: var(--cm-text); border-color: color-mix(in srgb, var(--side) 55%, transparent);
+  background: color-mix(in srgb, var(--side) 16%, var(--cm-bg-panel)); box-shadow: 0 0 18px color-mix(in srgb, var(--side) 22%, transparent);
+}
+.tactics-board__sides button[aria-selected='true'] svg { color: var(--side); }
+
+.tactics-board__stage { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px; }
+.tactics-board__field {
+  position: relative; min-height: 420px; border-radius: 16px; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--side) 30%, var(--cm-border));
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 100%, color-mix(in srgb, var(--side) 14%, transparent), transparent 70%),
+    linear-gradient(color-mix(in srgb, var(--cm-text) 4%, transparent) 1px, transparent 1px) 0 0 / 100% 10%,
+    linear-gradient(90deg, color-mix(in srgb, var(--cm-text) 4%, transparent) 1px, transparent 1px) 0 0 / 10% 100%,
+    color-mix(in srgb, var(--cm-bg-canvas) 70%, var(--cm-bg-panel));
+}
+.tactics-board.is-side-ct .tactics-board__field { background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, color-mix(in srgb, var(--side) 16%, transparent), transparent 70%),
+    linear-gradient(color-mix(in srgb, var(--cm-text) 4%, transparent) 1px, transparent 1px) 0 0 / 100% 10%,
+    linear-gradient(90deg, color-mix(in srgb, var(--cm-text) 4%, transparent) 1px, transparent 1px) 0 0 / 10% 100%,
+    color-mix(in srgb, var(--cm-bg-canvas) 70%, var(--cm-bg-panel)); }
+.tactics-board__map { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tactics-board__map .site { fill: color-mix(in srgb, var(--cm-text) 5%, transparent); stroke: color-mix(in srgb, var(--cm-text) 18%, transparent); stroke-width: 0.3; stroke-dasharray: 1.2 0.8; }
+.tactics-board__map .lane { fill: none; stroke: color-mix(in srgb, var(--side) 35%, transparent); stroke-width: 0.5; stroke-dasharray: 1.6 1.2; vector-effect: non-scaling-stroke; }
+.tactics-board__map .lane--mid { stroke: color-mix(in srgb, var(--cm-text) 16%, transparent); }
+.tactics-board__map .lane--link { stroke: color-mix(in srgb, var(--cm-text) 12%, transparent); }
+
+.board-label { position: absolute; transform: translate(-50%, -50%); pointer-events: none; font-weight: 800; text-transform: uppercase; line-height: 1; }
+.board-label--site { font-size: 44px; color: color-mix(in srgb, var(--cm-text) 14%, transparent); }
+.board-label--mid { font-size: 11px; letter-spacing: 0.3em; color: color-mix(in srgb, var(--cm-text) 22%, transparent); }
+.board-label--spawn { font-size: 10px; letter-spacing: 0.24em; color: color-mix(in srgb, var(--side) 70%, transparent); }
+.board-node {
+  position: absolute; z-index: 1; display: grid; justify-items: center; gap: 3px; width: 112px; padding: 0; transform: translate(-50%, -50%);
+  border: 0; background: transparent; color: var(--cm-text); cursor: pointer; animation: node-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes node-in { from { opacity: 0; transform: translate(-50%, -30%) scale(0.8); } }
+.board-node__ring {
+  position: relative; display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; overflow: visible;
+  border: 2px dashed color-mix(in srgb, var(--side) 55%, transparent); background: color-mix(in srgb, var(--side) 10%, var(--cm-bg-panel));
+  color: color-mix(in srgb, var(--side) 80%, var(--cm-text)); transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.board-node:not(.is-filled) .board-node__ring { animation: node-pulse 2.2s ease-in-out infinite; }
+@keyframes node-pulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--side) 12%, transparent); } }
+.board-node.is-filled .board-node__ring {
+  border: 2px solid var(--side); background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--side) 24%, var(--cm-bg-panel)), var(--cm-bg-panel));
+  box-shadow: 0 0 18px color-mix(in srgb, var(--side) 30%, transparent);
+}
+.board-node__ring > svg.world-player-portrait { width: 50px; height: auto; margin-top: 6px; border-radius: 0 0 26px 26px; clip-path: circle(28px at 50% 40%); }
+.board-node__icon {
+  position: absolute; left: -4px; bottom: -2px; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--side); color: #10141a; border: 2px solid var(--cm-bg-panel);
+}
+.board-node__fit {
+  position: absolute; right: -6px; top: -4px; min-width: 22px; height: 20px; padding: 0 5px; border-radius: 999px; display: inline-grid; place-items: center;
+  font-size: 11px; font-weight: 800; background: var(--cm-bg-panel); border: 1px solid var(--cm-border-strong); color: var(--cm-text);
+}
+.board-node__fit.is-high { color: var(--hx-positive); border-color: color-mix(in srgb, var(--hx-positive) 55%, transparent); }
+.board-node__fit.is-low { color: var(--hx-warning); border-color: color-mix(in srgb, var(--hx-warning) 55%, transparent); }
+.board-node__label {
+  padding: 1px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+  background: color-mix(in srgb, var(--side) 20%, rgba(0, 0, 0, 0.45)); color: color-mix(in srgb, var(--side) 85%, #fff);
+}
+.board-node__name { max-width: 112px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 700; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
+.board-node:not(.is-filled) .board-node__name { color: var(--cm-text-subtle); font-weight: 600; }
+.board-node:hover .board-node__ring { transform: scale(1.07); }
+.board-node.is-picking .board-node__ring, .board-node.is-over .board-node__ring {
+  transform: scale(1.1); border-style: solid; border-color: var(--hx-red-bright);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--hx-red) 30%, transparent), 0 0 24px color-mix(in srgb, var(--hx-red) 40%, transparent);
+}
+.board-node:focus-visible { outline: none; }
+.board-node:focus-visible .board-node__ring { box-shadow: var(--hx-focus-ring); }
+
+.tactics-board__panel { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; border: 1px solid var(--cm-border); background: var(--cm-bg-panel); }
+.tactics-board__panel header { display: flex; align-items: flex-start; gap: 10px; }
+.tactics-board__panel header > div { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.tactics-board__panel header strong { font-size: 15px; font-weight: 750; }
+.tactics-board__panel header small { font-size: 12px; color: var(--cm-text-muted); }
+.board-panel__icon { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; background: color-mix(in srgb, var(--side) 18%, transparent); color: var(--side); }
+.board-panel__close { display: inline-grid; place-items: center; width: 28px; height: 28px; padding: 0; border-radius: 8px; border: 1px solid var(--cm-border); background: transparent; color: var(--cm-text-muted); cursor: pointer; }
+.board-panel__note, .board-panel__done { margin: 0; font-size: 11.5px; color: var(--cm-text-subtle); }
+.board-pick { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.board-pick button {
+  display: grid; grid-template-columns: 30px minmax(0, 1fr) 86px; align-items: center; gap: 10px; width: 100%; padding: 7px 9px; border-radius: 10px; cursor: pointer; text-align: left;
+  border: 1px solid var(--cm-border); background: var(--cm-bg-input); color: var(--cm-text); transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+.board-pick button:hover:not(:disabled) { border-color: color-mix(in srgb, var(--side) 55%, var(--cm-border)); background: color-mix(in srgb, var(--side) 8%, var(--cm-bg-input)); transform: translateX(2px); }
+.board-pick button.is-here { border-color: color-mix(in srgb, var(--side) 55%, transparent); cursor: default; }
+.board-pick button svg.world-player-portrait { width: 30px; height: auto; border-radius: 50%; background: var(--cm-bg-panel); }
+.board-pick__who { display: grid; min-width: 0; }
+.board-pick__who b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.board-pick__who small { font-size: 11px; color: var(--cm-text-subtle); }
+.board-pick__fit { display: flex; align-items: center; gap: 6px; }
+.board-pick__fit > span { flex: 1; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--cm-text) 10%, transparent); overflow: hidden; }
+.board-pick__fit i { display: block; height: 100%; border-radius: 999px; background: color-mix(in srgb, var(--side) 80%, var(--cm-text)); }
+.board-pick__fit i.is-best { background: var(--hx-positive); box-shadow: 0 0 8px color-mix(in srgb, var(--hx-positive) 60%, transparent); }
+.board-pick__fit b { min-width: 16px; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; }
+.board-tray { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.board-tray li {
+  display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; cursor: grab;
+  border: 1px dashed color-mix(in srgb, var(--side) 45%, var(--cm-border)); background: var(--cm-bg-input); font-size: 13px;
+}
+.board-tray li svg.world-player-portrait { width: 30px; height: auto; border-radius: 50%; background: var(--cm-bg-panel); }
+.board-tray li:active { cursor: grabbing; }
+
+@media (max-width: 1100px) {
+  .tactics-board__stage { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .tactics-board__field { min-height: 380px; }
+  .board-node { width: 78px; }
+  .board-node__ring { width: 50px; height: 50px; }
+  .board-node__ring > svg.world-player-portrait { width: 40px; clip-path: circle(22px at 50% 40%); }
+  .board-node__name { max-width: 78px; font-size: 11px; }
+  .tactics-board__sides button { padding: 7px 10px; font-size: 12px; }
+}

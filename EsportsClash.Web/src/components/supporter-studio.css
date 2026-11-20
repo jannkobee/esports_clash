@@ -1,0 +1,96 @@
+/* Supporter studio as a cosmetics shop: membership card, tier cards, theme mock-ups and a portrait studio. */
+.studio-hero { display: grid; grid-template-columns: 340px minmax(0, 1fr); align-items: center; gap: 22px 32px; margin-bottom: 22px; }
+.studio-eyebrow { margin: 0 0 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hx-accent); }
+.studio-hero__text h2 { margin: 0 0 6px; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.studio-hero__text p { margin: 0 0 6px; color: var(--cm-text-muted); font-size: 14px; line-height: 1.6; }
+
+.member-card {
+  --tier-a: #5a6577; --tier-b: #2b313b; --tier-ink: #e8ecf2;
+  position: relative; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; gap: 10px; aspect-ratio: 1.6; padding: 18px 20px; border-radius: 18px;
+  color: var(--tier-ink); background: linear-gradient(135deg, var(--tier-a), var(--tier-b) 70%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset, 0 18px 40px rgba(0, 0, 0, 0.45);
+  transform: perspective(900px) rotateY(-8deg) rotateX(4deg); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.member-card:hover { transform: perspective(900px) rotateY(0) rotateX(0); }
+.member-card.is-signal { --tier-a: #3b7bd6; --tier-b: #142a4d; }
+.member-card.is-beacon { --tier-a: #e0a43a; --tier-b: #4a2a12; --tier-ink: #fff6e4; }
+.member-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0.35; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48' viewBox='0 0 28 48'%3E%3Cpath d='M14 0 28 8v16l-14 8L0 24V8Zm0 32v16' fill='none' stroke='%23ffffff' stroke-opacity='.25'/%3E%3C/svg%3E");
+  mask-image: linear-gradient(120deg, transparent 20%, #000 80%);
+}
+.member-card__shine {
+  position: absolute; inset: -40%; pointer-events: none;
+  background: conic-gradient(from 200deg at 50% 50%, transparent 0deg, rgba(255, 255, 255, 0.0) 40deg, rgba(255, 255, 255, 0.28) 70deg, rgba(160, 230, 255, 0.18) 95deg, rgba(255, 180, 240, 0.14) 120deg, transparent 160deg);
+  animation: card-shine 7s linear infinite;
+}
+@keyframes card-shine { to { transform: rotate(360deg); } }
+.member-card__top { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+.member-card__mark { width: 34px; height: 36px; color: var(--tier-ink); }
+.member-card__name { position: relative; align-self: end; font-size: 22px; font-weight: 800; letter-spacing: 0.02em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); }
+.member-card__foot { position: relative; display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+
+/* Tier cards */
+.supporter-plans .tier-card { position: relative; overflow: hidden; padding: 18px; border-radius: 16px; border: 1px solid var(--cm-border); background: var(--cm-bg-canvas); }
+.tier-card header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.tier-card header h3 { margin: 0; font-size: 20px; font-weight: 800; }
+.tier-card__icon { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; color: #fff; }
+.tier-card.is-signal .tier-card__icon { background: linear-gradient(135deg, #3b7bd6, #1d3d70); }
+.tier-card.is-beacon .tier-card__icon { background: linear-gradient(135deg, #e0a43a, #7a4416); }
+.tier-card.is-signal { background: linear-gradient(160deg, color-mix(in srgb, #3b7bd6 14%, var(--cm-bg-canvas)), var(--cm-bg-canvas) 60%); }
+.tier-card.is-beacon { background: linear-gradient(160deg, color-mix(in srgb, #e0a43a 14%, var(--cm-bg-canvas)), var(--cm-bg-canvas) 60%); }
+.tier-card.is-current { border-color: var(--hx-red-bright); box-shadow: 0 0 0 1px var(--hx-red-bright), 0 10px 30px color-mix(in srgb, var(--hx-red) 18%, transparent); }
+.tier-card.is-beacon.is-current { border-color: #e0a43a; box-shadow: 0 0 0 1px #e0a43a, 0 10px 30px rgba(224, 164, 58, 0.2); }
+.tier-card__ribbon { position: absolute; top: 14px; right: -34px; transform: rotate(35deg); width: 130px; padding: 3px 0; text-align: center; font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #1a1208; background: #e0a43a; }
+.tier-card.is-signal .tier-card__ribbon { background: #6ea6ff; color: #08162b; }
+
+/* Theme presets as tiny app mock-ups */
+.studio-presets > button { flex-direction: column; align-items: stretch; gap: 8px; padding: 8px; border-radius: 14px; transition: transform 0.15s ease, border-color 0.15s ease; }
+.studio-presets > button:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--cm-border-strong); }
+.studio-presets > button[aria-pressed='true'] { outline: 2px solid var(--hx-red-bright); outline-offset: 0; }
+.theme-mock { display: grid; grid-template-columns: 26% 1fr; gap: 5px; height: 92px; padding: 6px; border-radius: 10px; overflow: hidden; }
+.theme-mock i { display: block; font-style: normal; }
+.theme-mock__side { display: grid; align-content: start; gap: 5px; padding: 6px 5px; border-radius: 6px; }
+.theme-mock__side b { display: block; height: 5px; border-radius: 3px; background: currentColor; opacity: 0.3; }
+.theme-mock__side b:first-child { opacity: 1; height: 7px; }
+.theme-mock__main { display: grid; grid-template-rows: 10px 1fr auto; gap: 5px; }
+.theme-mock__bar { border-radius: 4px; }
+.theme-mock__panel { display: grid; align-content: start; gap: 4px; padding: 6px; border-radius: 6px; }
+.theme-mock__panel b { display: block; height: 4px; width: 80%; border-radius: 2px; background: currentColor; opacity: 0.35; }
+.theme-mock__panel b + b { width: 55%; }
+.theme-mock__panel em { display: block; width: 38%; height: 9px; margin-top: 2px; border-radius: 4px; }
+.theme-mock__panel.is-half { height: 18px; }
+.studio-presets__name { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 2px; }
+.studio-presets__on { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; color: var(--hx-positive); }
+
+/* Portrait studio */
+.portrait-stage { display: grid; justify-items: center; align-content: start; gap: 8px !important; }
+.portrait-stage__frame {
+  display: grid; place-items: end center; width: 200px; height: 220px; overflow: hidden; border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--hx-red) 40%, var(--cm-border));
+  background:
+    radial-gradient(ellipse 70% 70% at 50% 100%, color-mix(in srgb, var(--hx-red) 35%, transparent), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48' viewBox='0 0 28 48'%3E%3Cpath d='M14 0 28 8v16l-14 8L0 24V8Zm0 32v16' fill='none' stroke='%23ffffff' stroke-opacity='.07'/%3E%3C/svg%3E"),
+    var(--cm-bg-panel);
+}
+.portrait-stage__frame svg { margin-bottom: -10px; animation: card-pop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.45)); }
+.portrait-stage__name { font-size: 18px; font-weight: 800; }
+.portrait-stage__note { font-size: 12px; color: var(--cm-text-subtle); }
+.look-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.look-grid--small { grid-template-columns: repeat(3, 72px); }
+.look-option {
+  display: grid; justify-items: center; gap: 4px; padding: 6px 4px 6px; border-radius: 12px; cursor: pointer; overflow: hidden;
+  border: 1px solid var(--cm-border); background: var(--cm-bg-panel); color: var(--cm-text-muted); font-size: 11px; font-weight: 700;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.look-option svg { height: 46px !important; width: auto !important; margin-bottom: -4px; }
+.look-option:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--cm-border-strong); color: var(--cm-text); }
+.look-option[aria-pressed='true'] { border-color: var(--hx-red-bright); color: var(--cm-text); box-shadow: 0 0 0 1px var(--hx-red-bright); }
+.look-toggles { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.studio-palette-options .portrait-swatch { width: 30px !important; height: 30px !important; transition: transform 0.15s ease; }
+.studio-palette-options .portrait-swatch:hover { transform: scale(1.12); }
+
+@media (max-width: 900px) {
+  .studio-hero { grid-template-columns: 1fr; }
+  .member-card { max-width: 360px; transform: none; }
+}

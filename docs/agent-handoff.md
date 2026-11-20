@@ -1,3 +1,27 @@
+## Current: FPS aim, gunplay, movement, lawful tactical intelligence & anti-regression polish (20 November 2026)
+
+Owner requested a full simulation upgrade across performance, competitive balance, lawful tactical intelligence (enemy economy reads, map-wide CT territory control, stealth creeping/man-advantage discipline, CS timing), and a follow-up deep polish on aim, gunplay, movement, retakes, and multi-map correctness with permanent anti-regression documentation. Read [the record](fps-gameplay-gunplay-aim-polish-20261120.md).
+
+- **Aim & gunplay fixes.** Eliminated double-counted reaction + `manualAim` perception delay (keeping parked-crosshair walk-in shots live in `duelMicroTree`), preserved active duel reaction in `decide()`, fixed `applyLiveAimPunch` persistence across settled ticks, tightened `'neck'` trigger bounds and competitive first-shot head reach, added strafe-reversal velocity damping, fixed elevated `preAim` pitch, stopped crouching down from resetting `stillSince` mid-spray, enabled CS2 crouch-walk ("crab-walk") accuracy for non-snipers, wired real `movementControl` skill (`moveSkill`) into combat counter-strafing, added mid-range rifle cadence + real spray reset pauses + long-range pistol/SMG tap pacing, and tightened opening knife discipline.
+- **Gameplay & multi-map fixes.** Fixed Track 7 fake round-start zone clears (`roundLiveAt` gate), `freeFlow` non-responder deadlock, Spillway cross-Mid zone anchors, opening pusher cap (`<=2`, `<=1` pistol), and single-expander-per-lane guards; added retake defuser cohesion staging and retake `tradeSwing`; threaded `this.map` into `anticipateLiveContact` (`fpsLiveAnticipation.ts`) and `liveC4Damage` (`fpsLiveBomb.ts`).
+- **Measured (36 rounds/map, seeds 101/202/303).** Fontessa: `77.8% T -> 55.6% T / 44.4% CT`, TTD `811 -> 715 ms`, Rifle HS `20.0% -> 26.4%`, `SettlingMidSpray 98 -> 19`, `LongWhiff 263 -> 194`. Spillway: `55.6% T -> 52.8% T / 47.2% CT`, TTD `820 -> 630 ms`, Rifle HS `14.2% -> 18.2%`, `SettlingMidSpray 133 -> 29`, `LongWhiff 559 -> 417`.
+- **Checks.** Dedicated anti-regression suite `fpsGunplayAimGameplayPolish20261120.test.mjs` (**8/8**), `fpsEngineUpgrades20261119.test.mjs` (**10/10**), `fpsLiveGunplay.test.mjs` (**17/17**), `fpsOperativeHitbox.test.mjs` (**4/4**), and `fpsLiveRouting.test.mjs` (**7/7**) all pass; `tsc -b`, Vite `npm run build` (2.96 s), and `dist-worker/fps-engine.mjs` pass. Four unrelated Fontessa geometry tests fail under a concurrent agent's `FONTESSA_VISUAL_COLLIDERS` edits in `fpsLiveMap.ts` (untouched by this pass). No GPU FPS measured.
+
+## Current: Fontessa visual pass, Mercato di Fontessa, unfinished details and grounded smoke (20 November 2026)
+
+Owner reported that the Mercato di Fontessa passage looked wrong and "glowing", asked for unfinished map details to be finished and more added, then reported a smoke puff floating at chest height. Read [the record](fps-fontessa-mercato-and-detail-pass-20261120.md).
+
+- **Root causes.**
+  - Babylon's default box layout rotated and stretched textures on the ±x, top and bottom faces.
+  - The sky term made pale floors about 1.5 times as bright as facades.
+  - Out-of-area casters stretched the sun's shadow map, so thin rafters aliased into hatching.
+  - The gate itself was unfinished.
+  - Small (blooming, dissipating or HE-cut) smokes hung at the full-size centre height.
+- **Fixed and added.** Surface mapping, light balance, shadow casters, the Mercato gate and terrace, stairwell cheeks, landmark detail (campanile, palazzo, compass rose, roofs, Mid lookout), interiors and street dressing, and grounded small smokes.
+- **Draw cost.** Village scenery batches fell from 551 to 467.
+- **Checks.** `npm run check:game` passes 614/614 (design validation and `tsc -b` included). `npm run build` passes. Rendered in headless Chrome (SwiftShader); GPU frame rate was not measured.
+- **Coordination.** Another agent was actively editing `fpsLiveSimulation.ts` during this pass. This pass did not edit it, nor `fpsLiveMap.ts` or `fpsLiveTerrain.ts`. In the shared `fpsLiveBrain.ts` it changed only the smoke lobes (`liveSmokeSettle`, `LIVE_SMOKE_FLOOR_DROP`) and the centre of the existing bounding-sphere reject in `liveSmokeDepth`. Scenery claims are released.
+
 ## Current: Decision-making, buying, IGL, utility and smoke-fire polish (14 November 2026)
 
 Owner requested a broad simulation polish beyond the named weapon/lineup/IGL/smoke examples. `/root` owns integration and final verification; delegated economy, caller, utility and physics-reference work is recorded in [the decision-making pass](fps-decision-making-polish-20261114.md). Added own-lane range-aware purchases, armor/kit reserves, conserved survivor upgrades/restocking/gifts, per-gun holstered cooldowns and useful backup swaps. IGL calls respect fresh bomb evidence, reported alternate pressure, carrier travel/plant time and known opponent coverage. Utility now handles Mid, uncertainty, pending teammate throws, ready peekers, known smoke/fire and urgent defusers. Opening lineups need useful setup time; executes retain a feasible threat-aware order, distinguish skips from actual releases and stop collecting unnecessary spare smokes. Speculative fire uses bounded evidence-led bursts, actual height, ammunition reserves, objective priority and full-ray allied safety without following hidden bodies or learning invented target IDs.

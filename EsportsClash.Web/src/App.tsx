@@ -1,4 +1,3 @@
-import {backendPageUrl} from './cloudPersistence';
 import {useGameModes} from './gameModes';
 import {canonicalRoute,sectionHref,workspacePath} from './frontendRoutes';
 import {ClubMatchHistory} from './components/ClubMatchHistory';
@@ -7,7 +6,6 @@ import {SupporterBadge} from './components/SupporterBadge';
 import {CommunityCups} from './components/CommunityCups';
 import {ClubFinances} from './components/ClubFinances';
 import {ClubInboxLink} from './components/ClubOfficeDesk';
-import {LabelIcon} from './components/LabelIcon';
 import {AppIcon} from './components/ui/AppIcon';
 import {PageHeader} from './components/ui/PageHeader';
 import {WORKSPACE_NAV, activeNavKey, areaHeading, navTrail} from './components/ui/navigation';
@@ -20,20 +18,19 @@ import {
 } from './mockData';
 import { loadStartingFive, persistClubRoster, reconcileClubRoster } from './clubRosterPersistence';
 import type { PlayerCard } from './types';
-import { CloudSavePanel } from './components/CloudSavePanel';
 import { OnlineNormalView } from './components/OnlineNormalView';
 import { Hexapedia } from './components/Hexapedia';
 import { CompetitionHub } from './components/CompetitionHub';
 import { ClubTrainingView } from './components/ClubTrainingView';
-import { EmailSettings, VerifyEmailBanner } from './components/EmailSettings';
+import { VerifyEmailBanner } from './components/EmailSettings';
+import { SettingsPage } from './components/SettingsPage';
+import { PracticeLauncher } from './components/PracticeLauncher';
 import { ClubStaffRoom } from './components/ClubStaffRoom';
 import { HexatrickMark } from './components/HexatrickBrand';
 import { ClubHome } from './components/ClubHome';
 import { FpsMatchView } from './components/FpsMatchView';
 import { FpsLiveBroadcast } from './components/FpsLiveBroadcast';
 import { simulateFpsMatch } from './fps';
-import { FPS_MAPS } from './fps/fpsMaps';
-import { listLiveMaps } from './fps/fpsLiveMapRegistry';
 import type { LiveMapId } from './fps/fpsLiveMapTypes';
 import { createFpsIdentityContext } from './fps/fpsIdentityMatch';
 import { fpsSkillProfileFromAttributes, type FpsSkillProfile } from './fps/fpsSkillProfile';
@@ -46,9 +43,6 @@ import {
   ClipboardList,
   Dumbbell,
   GraduationCap,
-  Globe,
-  Volume2,
-  VolumeX,
   Clock,
   LogOut
 } from 'lucide-react';
@@ -91,7 +85,6 @@ export function App() {
     const match = new URLSearchParams(workspacePath(window.location.hash).split('?')[1] ?? '').get('match');
     return match && /^[a-f0-9-]{36}$/i.test(match) ? match : undefined;
   });
-  const [showOnlineNormalSandbox, setShowOnlineNormalSandbox] = useState(false);
 
   const setActiveSection = (section: MainSection) => {
     setActiveSectionState(section);
@@ -132,8 +125,6 @@ export function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  const [musicEnabled, setMusicEnabled] = useState(() => sound.isMusicEnabled());
-  const [audioMuted, setAudioMuted] = useState(() => sound.isMuted());
   const [inBattle, setInBattle] = useState<boolean>(false);
   const modes = useGameModes();
   const [fpsMapSelection, setFpsMapSelection] = useState<FpsMapId>('breakwater');
@@ -273,8 +264,7 @@ export function App() {
         <header className="cm-topbar">
           <div className="cm-breadcrumb" title={sectionTitle[activeSection]}>{navTrail(navKey)[0]} <span aria-hidden="true">/</span> <strong>{navTrail(navKey)[1]}</strong> <span>Manila · UTC+8</span></div>
 
-          <div className="cm-topbar-stats">{accountSession?.user.supporter?.active && <SupporterBadge trial={accountSession.user.supporter.kind === 'trial'} level={accountSession.user.supporter.level} unlimited={accountSession.user.supporter.unlimited}/>}<ClubInboxLink/>
-            <span className="hidden lg:inline text-xs cm-muted max-w-36 truncate" title={accountSession?.user.email}>{accountSession?.user.name}</span>
+          <div className="cm-topbar-stats">
             <button
               type="button"
               onClick={() => {
@@ -283,16 +273,22 @@ export function App() {
                 setPlaySubTab('split');
                 setInBattle(false);
               }}
-              className="cm-btn cm-topbar-calendar"
-              title="Open the fixture calendar"
+              className="cm-btn cm-btn-ghost cm-topbar-calendar"
+              title="Open your fixtures"
             >
-              <Clock className="w-3.5 h-3.5" aria-hidden="true" /> Fixture calendar
+              <Clock size={14} aria-hidden="true" /><span className="cm-topbar-label">Fixtures</span>
             </button>
-
-            <button type="button" className="cm-btn py-1 px-2 text-xs" disabled={accountBusy} aria-label="Sign out of your account" title="Sign out" onClick={async () => {
+            <ClubInboxLink/>
+            <span className="cm-topbar-divider" aria-hidden="true" />
+            <div className="cm-account" title={accountSession?.user.email}>
+              <span className="cm-account__avatar" aria-hidden="true">{(accountSession?.user.name ?? '?').trim().charAt(0).toUpperCase()}</span>
+              <span className="cm-account__name">{accountSession?.user.name}</span>
+              {accountSession?.user.supporter?.active && <SupporterBadge trial={accountSession.user.supporter.kind === 'trial'} level={accountSession.user.supporter.level} unlimited={accountSession.user.supporter.unlimited}/>}
+            </div>
+            <button type="button" className="cm-btn cm-btn-ghost cm-topbar-signout" disabled={accountBusy} aria-label="Sign out of your account" title="Sign out" onClick={async () => {
               setAccountBusy(true); setAccountError('');
               try { await signOut(); } catch (error) { setAccountError((error as Error).message); } finally { setAccountBusy(false); }
-            }}><LogOut className="w-3.5 h-3.5" /><span className="hidden sm:inline">{accountBusy ? 'Signing out…' : 'Sign out'}</span></button>
+            }}><LogOut size={14} aria-hidden="true" /><span className="hidden sm:inline">{accountBusy ? 'Signing out…' : 'Sign out'}</span></button>
           </div>
         </header>
 
@@ -327,7 +323,7 @@ export function App() {
                   }}
                   className={`cm-tab ${squadSubTab === 'lineup' ? 'active' : ''}`}
                 >
-                  <ClipboardList className="w-3.5 h-3.5 inline mr-1.5" />
+                  <ClipboardList size={14} aria-hidden="true" />
                   Lineup &amp; reserves
                 </button>
                 <button
@@ -339,7 +335,7 @@ export function App() {
                   }}
                   className={`cm-tab ${squadSubTab === 'training' ? 'active' : ''}`}
                 >
-                  <Dumbbell className="w-3.5 h-3.5 inline mr-1.5" />
+                  <Dumbbell size={14} aria-hidden="true" />
                   Practice training
                 </button>
                 <button
@@ -351,7 +347,7 @@ export function App() {
                   }}
                   className={`cm-tab ${squadSubTab === 'staff' ? 'active' : ''}`}
                 >
-                  <GraduationCap className="w-3.5 h-3.5 inline mr-1.5" />
+                  <GraduationCap size={14} aria-hidden="true" />
                   Staff
                 </button>
               </div>
@@ -374,72 +370,17 @@ export function App() {
               {(playSubTab === 'modes' || inBattle) && (
                 <div>
                   {!inBattle ? (
-                    <div className="space-y-4 max-w-5xl">
-                      {practiceError && <p role="alert" className="text-xs cm-error-text">{practiceError}</p>}
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div className="cm-panel flex flex-col justify-between">
-                          <div className="cm-panel-header">
-                            <span>Live 3D Practice Broadcast</span>
-                            <span className="cm-badge cm-badge-blue">3D · AI Sim</span>
-                          </div>
-                          <div className="cm-panel-body flex-1 flex flex-col justify-between space-y-3">
-                            <div>
-                              <h2 className="text-base font-extrabold">Real-Time 3D Scrimmage</h2>
-                              <p className="text-xs cm-muted mt-1.5 leading-relaxed">
-                                Watch your starting five, with your positions and gameplan, play a live 3D scrimmage on Fontessa or Spillway. Follow any player or let the director pick the action. Practice changes nothing in your career or finances.
-                              </p>
-                            </div>
-                            <label className="text-xs font-bold cm-muted">
-                              3D Battlefield
-                              <select
-                                aria-label="Live 3D practice map"
-                                className="cm-select mt-1 w-full"
-                                value={liveMapSelection}
-                                onChange={event => setLiveMapSelection(event.target.value as LiveMapId)}
-                              >
-                                {listLiveMaps().map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
-                              </select>
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                              <button type="button" onClick={launchLive3dPractice} className="cm-btn cm-btn-primary flex-1">
-                                Launch 3D Broadcast ▸
-                              </button>
-                              <a className="cm-btn" href="#fps-simulation">Open 3D Lab</a>
-                              <a className="cm-btn" href="#hexapedia/liveSimulation">3D &amp; AI Guide</a>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="cm-panel flex flex-col justify-between">
-                          <div className="cm-panel-header">
-                            <span>Recorded Tactical Match</span>
-                            <span className="cm-badge cm-badge-navy">MR15 · 2D Replay</span>
-                          </div>
-                          <div className="cm-panel-body flex-1 flex flex-col justify-between space-y-3">
-                            <div>
-                              <h2 className="text-base font-extrabold">Deterministic 2D Exhibition</h2>
-                              <p className="text-xs cm-muted mt-1.5 leading-relaxed">
-                                Run a deterministic local 2D exhibition across the five league maps to inspect round logs, economy decisions, and role assignments without changing schedules or careers.
-                              </p>
-                            </div>
-                            <label className="text-xs font-bold cm-muted">
-                              Competitive Map
-                              <select
-                                aria-label="FPS exhibition map"
-                                className="cm-select mt-1 w-full"
-                                value={fpsMapSelection}
-                                onChange={event => setFpsMapSelection(event.target.value as FpsMapId)}
-                              >
-                                {Object.values(FPS_MAPS).map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
-                              </select>
-                            </label>
-                            <button type="button" onClick={launchFpsExhibition} className="cm-btn w-full">
-                              Run 2D Recorded Exhibition ▸
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <PracticeLauncher
+                      five={startingFive.slice(0, 5)}
+                      opponents={roster.filter(player => !startingFive.slice(0, 5).some(starter => starter.id === player.id)).slice(0, 5)}
+                      liveMap={liveMapSelection}
+                      onLiveMap={setLiveMapSelection}
+                      recordedMap={fpsMapSelection}
+                      onRecordedMap={setFpsMapSelection}
+                      onLaunchLive={launchLive3dPractice}
+                      onLaunchRecorded={launchFpsExhibition}
+                      error={practiceError}
+                    />
                   ) : livePracticeMatch ? (
                     <FpsLiveBroadcast
                       mapId={livePracticeMatch.mapId}
@@ -484,92 +425,22 @@ export function App() {
           )}
 
           {activeSection === 'supporter' && <SupporterStudio/>}
-          {activeSection === 'settings' && <section className="cm-panel mb-4"><h2 className="cm-panel-header"><AppIcon name="broadcastLab" size={15}/> 3D Simulation &amp; Broadcast Lab</h2><div className="cm-panel-body space-y-3"><p>Watch real-time 3D exhibitions on Fontessa and 3-level Spillway with 4-slot weapons, Influence Maps, Blackboards, Behavior Trees, lawful death-callout trading, and prewarmed 1P, 3P, Free, PiP, and Auto Director cameras. Exhibition matches do not change club records.</p><div className="flex flex-wrap gap-3"><a className="cm-btn cm-btn-primary" href="#fps-simulation">Open FPS broadcast room</a><a className="cm-btn" href="#match-centre?tool=practice">Club 3D Practice</a><a className="cm-btn" href="#hexapedia/liveSimulation">3D &amp; AI Guide</a><a className="cm-btn" href="#hexapedia/fps">FPS reference</a>{accountSession?.user.is_evolution_admin && <a className="cm-btn" href={backendPageUrl('/evolution/game-modes')}>Game-mode settings</a>}</div><p className="club-help">Current format: Tactical FPS ({modes.fps_enabled ? 'active' : 'configured'}).</p></div></section>}
-          {activeSection === 'settings' && (
-            <div className="space-y-4 max-w-5xl">
-              <EmailSettings/>
-              <div className="cm-panel">
-                <div className="cm-panel-header">
-                  <span>Audio &amp; Broadcast Preferences</span>
-                </div>
-                <div className="cm-panel-body flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    aria-label={audioMuted ? 'Enable all sounds' : 'Mute all sounds'}
-                    aria-pressed={!audioMuted}
-                    onClick={() => setAudioMuted(sound.toggleMuted())}
-                    className="cm-btn"
-                  >
-                    {audioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                    <span>Master Sound: {audioMuted ? 'Off' : 'On'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    disabled={audioMuted}
-                    aria-label={
-                      audioMuted
-                        ? 'Background music muted'
-                        : musicEnabled
-                        ? 'Mute background music'
-                        : 'Enable background music'
-                    }
-                    aria-pressed={musicEnabled && !audioMuted}
-                    onClick={() => {
-                      setMusicEnabled(sound.toggleMusic());
-                      sound.playClick();
-                    }}
-                    className="cm-btn"
-                  >
-                    {musicEnabled && !audioMuted ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                    <span>Background Music: {musicEnabled && !audioMuted ? 'On' : 'Off'}</span>
-                  </button>
-                </div>
-              </div>
-
-              <CloudSavePanel
-                roster={roster}
-                startingFive={startingFive}
-                onRestore={(snapshot) => {
-                  const restoredRoster = reconcileClubRoster(snapshot.roster, [KOVI_PLAYER_CARD]);
-                  const restoredStarters = snapshot.starting_five
-                    .map((id) => restoredRoster.find((card) => card.id === id))
-                    .filter((card): card is PlayerCard => !!card);
-                  if (restoredStarters.length !== 5) return false;
-                  setRoster(restoredRoster);
-                  setStartingFive(restoredStarters);
-                  return true;
-                }}
-              />
-
-              <div className="cm-panel">
-                <div className="cm-panel-header">
-                  <span>Simulation status</span>
-                  <span className="cm-badge cm-badge-blue">Tactical FPS</span>
-                </div>
-                <div className="cm-panel-body space-y-3 text-xs">
-                  <p className="cm-muted leading-relaxed">
-                    Hexatrick uses the deterministic tactical FPS simulator. Skills, equipment, personality preferences and the round situation inform decisions.
-                  </p>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowOnlineNormalSandbox((v) => !v)}
-                      className="cm-btn"
-                    >
-                      <Globe className="w-4 h-4" />
-                      <span>{showOnlineNormalSandbox ? 'Hide Online Normal Sandbox' : 'Open Online Normal Sandbox'}</span>
-                    </button>
-                  </div>
-                  {showOnlineNormalSandbox && (
-                    <div className="pt-3 border-t border-[var(--cm-border)]">
-                      <OnlineNormalView />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+          {activeSection === 'settings' && <SettingsPage
+            roster={roster}
+            startingFive={startingFive}
+            isAdmin={Boolean(accountSession?.user.is_evolution_admin)}
+            fpsEnabled={modes.fps_enabled}
+            onRestore={(snapshot) => {
+              const restoredRoster = reconcileClubRoster(snapshot.roster, [KOVI_PLAYER_CARD]);
+              const restoredStarters = snapshot.starting_five
+                .map((id) => restoredRoster.find((card) => card.id === id))
+                .filter((card): card is PlayerCard => !!card);
+              if (restoredStarters.length !== 5) return false;
+              setRoster(restoredRoster);
+              setStartingFive(restoredStarters);
+              return true;
+            }}
+          />}
         </main>
       </div>
     </div>

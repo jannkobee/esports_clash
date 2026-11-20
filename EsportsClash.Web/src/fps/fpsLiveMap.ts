@@ -17,6 +17,7 @@ import { LIVE_AUTHORED_SMOKE_LINEUPS, type LiveSmokeLineup } from './fpsSmokeLin
 import { LIVE_WINDOW_FURNITURE } from './fpsMidWindowInterior.ts';
 import { createLiveGeometryIndex } from './fpsStaticGeometry.ts';
 import { FONTESSA_SKY_ATMOSPHERE } from './fpsLiveGraphics.ts';
+import { buildFontessaVisualColliders } from './fpsVillageColliders.ts';
 import type {
   LiveElevationDrop,
   LiveJumpablePerch,
@@ -104,6 +105,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
   const walls = definition.solids;
   const movementSolids = definition.movementSolids ?? definition.solids;
   const collisionSolids = definition.collisionSolids ?? [...definition.solids, ...terrain.terrainSolids];
+  const wallsAt = createLiveGeometryIndex(walls);
   const movementSolidsAt = createLiveGeometryIndex(movementSolids);
   const collisionSolidsAt = createLiveGeometryIndex(collisionSolids);
   const wallLookup = new Map<string, LiveSolid>(collisionSolids.map(w => [w.id, w]));
@@ -114,7 +116,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     const climbFloor = crouchJump
       ? Math.max(feetY, floor + Math.min(LIVE_MAX_CROUCH_JUMP_STEP, feetY - floor + .26))
       : feetY;
-    return movementSolids.filter(w => {
+    return movementSolidsAt(point, point, 1.2).filter(w => {
       if (w.height <= feetY + .01 || (w.baseY ?? 0) >= feetY + height) return false;
       if (crouchJump && w.height <= climbFloor + .01 && w.height - floor <= LIVE_MAX_CROUCH_JUMP_STEP && !w.id.includes('bridge')) return false;
       return true;
@@ -124,7 +126,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
   const supportHeight = (point: FpsPoint, feetY: number, crouchJump = false): number => {
     let floor = terrain.groundHeight(point);
     const reach = crouchJump ? feetY + .24 : feetY;
-    for (const wall of movementSolids) {
+    for (const wall of movementSolidsAt(point, point, LIVE_ACTOR_RADIUS)) {
       if (wall.height <= floor) continue;
       if (crouchJump && wall.height > floor + LIVE_MAX_CROUCH_JUMP_STEP) continue;
       if (wall.height <= reach + .015 && segmentHitsWall(point, point, wall, LIVE_ACTOR_RADIUS - .001)) floor = wall.height;
@@ -329,6 +331,9 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
         Math.abs(cx - bounds.navMaxX), Math.abs(cx - bounds.navMinX),
         Math.abs(cz - bounds.navMaxZ), Math.abs(cz - bounds.navMinZ),
       ) / step);
+      // Cap swept-clearance ring expansion to a local neighborhood; scanning every ring across the
+      // entire map when an actor sits flush against cover/perch geometry caused >100 ms single-call spikes.
+      const maxClearRing = Math.min(limit, Math.ceil(10 / step));
       const consider = (x: number, z: number) => {
         const index = grid.get(gridKey({ ...p, x, z }));
         if (index === undefined) return;
@@ -342,7 +347,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
         const rx = Math.round(p.x), rz = Math.round(p.z);
         for (let ox = -1; ox <= 1; ox++) for (let oz = -1; oz <= 1; oz++) consider(rx + ox, rz + oz);
       }
-      for (let ring = 0; ring <= limit; ring++) {
+      for (let ring = 0; ring <= maxClearRing; ring++) {
         if (ring === 0) consider(cx, cz);
         else {
           for (let x = cx - ring * step; x <= cx + ring * step; x += step) {
@@ -382,6 +387,16 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     return result;
   };
 
+  // Reusable A* scratch buffers + static node-to-node path cache to avoid per-query allocations.
+  const astarParent = new Int32Array(nodes.length);
+  const astarCost = new Float64Array(nodes.length);
+  const astarSeen = new Int32Array(nodes.length);
+  const astarClosed = new Int32Array(nodes.length);
+  const astarExpGen = new Int32Array(nodes.length);
+  const astarExpVal = new Float64Array(nodes.length);
+  let astarGen = 0;
+  const nodePathCache = new Map<number, number[]>();
+
   const findPath = (
     from: FpsPoint, destination: FpsPoint, threats: readonly FpsPoint[] = [], caution = 0, heatAt?: (point: FpsPoint) => number,
   ): FpsPoint[] => {
@@ -389,7 +404,8 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     const fromHasMargin = walkable(from);
     const departureClear = departureCheck(from, fromHasMargin);
     if (departureClear(to) && !threats.length && !heatAt) return [{ ...to }];
-    const pathKey = (threats.length || heatAt) ? '' : `${gridKey(from)}>${gridKey(to)}`;
+    const isStatic = !threats.length && !heatAt;
+    const pathKey = isStatic ? `${gridKey(from)}>${gridKey(to)}` : '';
     const cached = pathKey ? staticPathCache.get(pathKey) : undefined;
     if (cached) return cached.map(point => ({ ...point }));
     const nearest = (p: FpsPoint, departing = false) => nearestNode(p, departing, fromHasMargin, departureClear);
@@ -399,56 +415,97 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     const remaining = goalDistances(end);
     if (remaining[start] < 0) { if (pathKey) rememberBounded(staticPathCache, pathKey, [], 256); return []; }
 
-    const parent = new Int32Array(nodes.length).fill(-1);
-    const cost = new Float64Array(nodes.length).fill(Infinity);
-    const open: { node: number; score: number }[] = [];
-    const compare = (a: { node: number; score: number }, b: { node: number; score: number }) =>
-      a.score - b.score || remaining[a.node] - remaining[b.node] || a.node - b.node;
-    const push = (item: { node: number; score: number }) => {
-      let i = open.length; open.push(item);
-      while (i > 0) { const p = (i - 1) >> 1; if (compare(open[p], item) <= 0) break; open[i] = open[p]; i = p; }
-      open[i] = item;
-    };
-    const pop = () => {
-      const result = open[0], last = open.pop()!;
-      if (open.length) {
-        let i = 0;
-        while (i * 2 + 1 < open.length) {
-          let c = i * 2 + 1;
-          if (c + 1 < open.length && compare(open[c + 1], open[c]) < 0) c++;
-          if (compare(open[c], last) >= 0) break;
-          open[i] = open[c]; i = c;
-        }
-        open[i] = last;
+    const nodePairKey = isStatic ? start * nodes.length + end : -1;
+    if (isStatic) {
+      const cachedNodes = nodePathCache.get(nodePairKey);
+      if (cachedNodes) {
+        const path: FpsPoint[] = cachedNodes.map(idx => nodes[idx]);
+        path.push({ ...to });
+        const result = smoothPath(from, path, departureClear, false);
+        rememberBounded(staticPathCache, pathKey, result.map(point => ({ ...point })), 256);
+        return result;
       }
-      return result;
+    }
+
+    const gen = ++astarGen;
+    if (gen === 0x7fffffff) { astarSeen.fill(0); astarClosed.fill(0); astarExpGen.fill(0); astarGen = 1; }
+    const curGen = astarGen;
+    const heapNode: number[] = [], heapScore: number[] = [];
+    const less = (i: number, j: number) =>
+      heapScore[i] < heapScore[j]
+      || (heapScore[i] === heapScore[j] && (remaining[heapNode[i]] < remaining[heapNode[j]] || (remaining[heapNode[i]] === remaining[heapNode[j]] && heapNode[i] < heapNode[j])));
+    const push = (node: number, score: number) => {
+      let i = heapNode.length; heapNode.push(node); heapScore.push(score);
+      while (i > 0) {
+        const p = (i - 1) >> 1;
+        if (!less(i, p)) break;
+        const tn = heapNode[p], ts = heapScore[p];
+        heapNode[p] = heapNode[i]; heapScore[p] = heapScore[i];
+        heapNode[i] = tn; heapScore[i] = ts;
+        i = p;
+      }
     };
-    const closed = new Set<number>(), exposure = new Map<number, number>();
-    cost[start] = 0; parent[start] = start; push({ node: start, score: distance(nodes[start], nodes[end]) });
-    while (open.length) {
-      const { node } = pop();
-      if (closed.has(node)) continue;
-      if (node === end) break;
-      closed.add(node);
-      for (const next of neighbors[node]) {
-        if (closed.has(next) || remaining[next] < 0) continue;
-        if (!exposure.has(next)) {
-          const sightExposure = threats.reduce((sum, t) =>
-            sum + (distance(t, nodes[next]) < 45 && sightline(t, nodes[next]) ? Math.max(0, caution) * 3 : 0), 0);
-          const dynamicHeat = heatAt ? Math.min(8, Math.max(0, heatAt(nodes[next])) * (1.2 + Math.max(0, caution) * 2.5)) : 0;
-          exposure.set(next, sightExposure + dynamicHeat);
+    const pop = (): number => {
+      const top = heapNode[0], lastNode = heapNode.pop()!, lastScore = heapScore.pop()!;
+      if (heapNode.length) {
+        heapNode[0] = lastNode; heapScore[0] = lastScore;
+        let i = 0;
+        for (;;) {
+          const l = i * 2 + 1, r = l + 1; let m = i;
+          if (l < heapNode.length && less(l, m)) m = l;
+          if (r < heapNode.length && less(r, m)) m = r;
+          if (m === i) break;
+          const tn = heapNode[i], ts = heapScore[i];
+          heapNode[i] = heapNode[m]; heapScore[i] = heapScore[m];
+          heapNode[m] = tn; heapScore[m] = ts;
+          i = m;
         }
-        const value = cost[node] + distance(nodes[node], nodes[next]) + exposure.get(next)!;
-        if (value < cost[next]) {
-          cost[next] = value; parent[next] = node;
-          push({ node: next, score: value + distance(nodes[next], nodes[end]) });
+      }
+      return top;
+    };
+    astarSeen[start] = curGen; astarCost[start] = 0; astarParent[start] = start;
+    push(start, distance(nodes[start], nodes[end]));
+    while (heapNode.length) {
+      const node = pop();
+      if (astarClosed[node] === curGen) continue;
+      if (node === end) break;
+      astarClosed[node] = curGen;
+      const baseCost = astarCost[node];
+      const nodePt = nodes[node];
+      for (const next of neighbors[node]) {
+        if (astarClosed[next] === curGen || remaining[next] < 0) continue;
+        let exp = 0;
+        if (!isStatic) {
+          if (astarExpGen[next] !== curGen) {
+            let sightExposure = 0;
+            const nextPt = nodes[next];
+            for (let ti = 0; ti < threats.length; ti++) {
+              const t = threats[ti];
+              if (distance(t, nextPt) < 45 && sightline(t, nextPt)) sightExposure += Math.max(0, caution) * 3;
+            }
+            const dynamicHeat = heatAt ? Math.min(8, Math.max(0, heatAt(nextPt)) * (1.2 + Math.max(0, caution) * 2.5)) : 0;
+            astarExpVal[next] = sightExposure + dynamicHeat;
+            astarExpGen[next] = curGen;
+          }
+          exp = astarExpVal[next];
+        }
+        const value = baseCost + distance(nodePt, nodes[next]) + exp;
+        if (astarSeen[next] !== curGen || value < astarCost[next]) {
+          astarSeen[next] = curGen; astarCost[next] = value; astarParent[next] = node;
+          push(next, value + distance(nodes[next], nodes[end]));
         }
       }
     }
-    if (parent[end] < 0) { if (pathKey) rememberBounded(staticPathCache, pathKey, [], 256); return []; }
-    const path: FpsPoint[] = [{ ...to }];
-    for (let at = end; at !== start; at = parent[at]) path.push(nodes[at]);
-    path.push(nodes[start]); path.reverse();
+    if (astarSeen[end] !== curGen) { if (pathKey) rememberBounded(staticPathCache, pathKey, [], 256); return []; }
+    const nodeSeq: number[] = [];
+    for (let at = end; at !== start; at = astarParent[at]) nodeSeq.push(at);
+    nodeSeq.push(start); nodeSeq.reverse();
+    if (isStatic) {
+      if (nodePathCache.size >= 1024) nodePathCache.delete(nodePathCache.keys().next().value!);
+      nodePathCache.set(nodePairKey, nodeSeq);
+    }
+    const path: FpsPoint[] = nodeSeq.map(idx => nodes[idx]);
+    path.push({ ...to });
     const result = smoothPath(from, path, departureClear, threats.length > 0);
     if (pathKey) rememberBounded(staticPathCache, pathKey, result.map(point => ({ ...point })), 256);
     return result;
@@ -567,7 +624,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
     from: FpsPoint, threat: FpsPoint, allies: readonly FpsPoint[], quality?: number, knownThreats: readonly FpsPoint[] = [], heatAt?: (point: FpsPoint) => number,
   ): FpsPoint | undefined => {
     const fromFloor = terrain.groundHeight(from);
-    const candidates = walls
+    const candidates = wallsAt(from, from, 13.5)
       .filter(w => !w.id.endsWith('wall') && (w.baseY ?? 0) <= fromFloor + 1.5 && w.height >= fromFloor + .45)
       .flatMap(w => [
         { x: w.minX - .9, z: w.minZ - .9 }, { x: w.maxX + .9, z: w.minZ - .9 },
@@ -601,7 +658,7 @@ export function createLiveMapRuntime(definition: LiveMapDefinition, existingTerr
   const clearAngles = (from: FpsPoint, toward: FpsPoint): { id: string; point: FpsPoint }[] => {
     const dx = toward.x - from.x, dz = toward.z - from.z, len = Math.hypot(dx, dz) || 1;
     const fromFloor = terrain.groundHeight(from);
-    return walls
+    return wallsAt(from, from, 8.5)
       .filter(w => !w.id.endsWith('wall') && (w.baseY ?? 0) <= fromFloor + 1.5 && w.height >= fromFloor + .45)
       .flatMap(w => [
         { id: `${w.id}:sw`, point: { x: w.minX - .65, z: w.minZ - .65 } },
@@ -768,9 +825,11 @@ const fontessaSolids: LiveSolid[] = [
   // West face meets the bridge's south stair like the houses opposite (no dead strip beside the bridge).
   fontessaSolid('customs-warehouse-east', 8, -10, 12, 16, 8, '#98aaa8'),
   fontessaSolid('freight-office-east', 10.3, 14, 11.4, 16, 7, '#90a6ac'),
-  fontessaSolid('b-logs', 14, -11, 3, 4, 1.8, '#a36f50', .42),
+  // Opaque: penetration ignores thickness, so a "penetrable" 3 x 4 m log stack let bullets through 4 m of wood.
+  fontessaSolid('b-logs', 14, -11, 3, 4, 1.8, '#a36f50'),
   fontessaSolid('b-car', 18, -14.5, 4, 3, 2.4, '#537778'),
-  fontessaSolid('west-container', -25, 11, 6, 8, 3, '#537778', .28),
+  // The carpentry workshop is a 6 x 8 m building; as "penetrable" it let bullets cross up to 9.6 m of house.
+  fontessaSolid('west-container', -25, 11, 6, 8, 3, '#537778'),
   fontessaSolid('east-container', 24.5, 11.1, 7, 7.4, 8.4, '#a36f50'),
   fontessaSolid('west-outer-gate', -35, 5.5, 2, 4.2, 3.5, '#9e9682'),
   fontessaSolid('east-outer-gate', 35, -11, 2, 8, 3.5, '#8da1a8'),
@@ -798,7 +857,8 @@ const fontessaSolids: LiveSolid[] = [
   fontessaSolid('b-market-west-house', 14.2, 19.1, 4.4, 6.2, 8.8, '#c18777'),
   { ...fontessaSolid('b-sottoportego', 18.5, 9.5, 5, 3.4, 3.3, '#c6b99d'), baseY: 3.05 },
   fontessaSolid('b-fountain', 23, 21, 4.6, 4.6, 1.5, '#6e807e'),
-  fontessaSolid('b-coffins', 14.6, 25, 2.8, 2.6, 2.8, '#a77a55', .38),
+  // The flower kiosk is a walled, roofed building, not a wooden counter.
+  fontessaSolid('b-coffins', 14.6, 25, 2.8, 2.6, 2.8, '#a77a55'),
   fontessaSolid('b-screen', 17, 28, 5, 3, 7.8, '#b5a36d'),
   fontessaSolid('b-dark-wall', 30, 24, 4, 3, 7.6, '#a99267'),
   fontessaSolid('b-retake-cover', 27, 34, 4, 3, 6.4, '#8b927f'),
@@ -1018,6 +1078,8 @@ const fontessaFineLinks: [FpsPoint, FpsPoint][] = [
   [{ x: 28, z: 6 }, { x: 29, z: 8 }],
 ];
 
+const FONTESSA_VISUAL_COLLIDERS = buildFontessaVisualColliders(LIVE_FPS_MAP.solids);
+
 export const FONTESSA_MAP_DEFINITION: LiveMapDefinition = {
   id: 'fontessa',
   runtimeId: LIVE_FPS_MAP.id,
@@ -1033,8 +1095,10 @@ export const FONTESSA_MAP_DEFINITION: LiveMapDefinition = {
   spawns: LIVE_FPS_MAP.spawns,
   sites: LIVE_FPS_MAP.sites,
   solids: LIVE_FPS_MAP.solids,
-  movementSolids: [...LIVE_FPS_MAP.solids, ...LIVE_BRIDGE_VAULTS, ...LIVE_TERRAIN_SOLIDS.filter(w => w.id.includes('-cheek-'))],
-  collisionSolids: [...LIVE_FPS_MAP.solids, ...LIVE_TERRAIN_SOLIDS],
+  // Drawn roofs, arches, belfry and gate masonry collide like they look (fpsVillageColliders.ts); only the
+  // Mercato gate piers also take part in movement.
+  movementSolids: [...LIVE_FPS_MAP.solids, ...LIVE_BRIDGE_VAULTS, ...LIVE_TERRAIN_SOLIDS.filter(w => w.id.includes('-cheek-')), ...FONTESSA_VISUAL_COLLIDERS.filter(c => c.blocksMovement)],
+  collisionSolids: [...LIVE_FPS_MAP.solids, ...LIVE_TERRAIN_SOLIDS, ...FONTESSA_VISUAL_COLLIDERS],
   terrainSpec: {
     id: 'fontessa',
     bounds: { minX: -36, maxX: 36, minZ: -46, maxZ: 50, cellSize: 4 },

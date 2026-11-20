@@ -6,39 +6,58 @@ import { FpsLiveReplaySource, isReplayGone, type FpsReplayChunk, type FpsReplayH
 import { FpsLiveBroadcast } from './FpsLiveBroadcast';
 import { visibleInterval } from '../worldLive';
 
-interface Props { matchId: string; session: ApiSession; onExit: () => void }
+interface Props { matchId: string; session: ApiSession; initialRound?: number; onExit: () => void }
 
 /**
  * An official match on the live 3D engine. The server simulated it (often ahead of kickoff) and serves
  * the broadcast in 10-second chunks as it airs; nothing here simulates or can see past the broadcast.
  */
-export function FpsOfficialBroadcast({ matchId, session, onExit }: Props) {
+export function FpsOfficialBroadcast({ matchId, session, initialRound, onExit }: Props) {
   const [source, setSource] = useState<FpsLiveReplaySource | null>(null);
   const [message, setMessage] = useState('Loading the broadcast…');
   // Old replays are removed from the match server after a retention period (HTTP 410); the result stays.
   const [gone, setGone] = useState(false);
   useEffect(() => {
     let cancelled = false;
-    const header = () => request<{ data: FpsReplayHeader }>(`/online/matches/${matchId}/live-replay`, session).then(r => r.data);
-    const chunk = (index: number) => request<FpsReplayChunk>(`/online/matches/${matchId}/live-replay/${index}`, session);
-    void (async () => {
+    let loading = false;
+    const fetchHeader = () => request<{ data: FpsReplayHeader }>(`/online/matches/${matchId}/live-replay`, session).then(r => r.data);
+    const fetchChunk = (index: number) => request<FpsReplayChunk>(`/online/matches/${matchId}/live-replay/${index}`, session);
+    const tryStart = async (): Promise<boolean> => {
+      if (cancelled || loading) return false;
+      loading = true;
       try {
-        const first = await header();
-        if (cancelled) return;
-        if (!first.chunks) { setMessage('The broadcast starts shortly.'); return; }
-        // Live viewers join near the live edge; finished matches start from the beginning.
-        const start = first.complete ? 0 : Math.max(0, first.chunks * first.framesPerChunk * first.frameSeconds - 20);
-        const replay = new FpsLiveReplaySource(first, chunk, start, () => { if (!cancelled) setGone(true); });
+        const first = await fetchHeader();
+        if (cancelled) return true;
+        if (!first.chunks) { setMessage('The broadcast starts shortly.'); return false; }
+        // Live viewers join near the live edge; finished matches start from the beginning (or requested round).
+        const requestedRoundAt = initialRound && first.roundStartSeconds?.[initialRound - 1];
+        const liveStart = Math.max(0, first.chunks * first.framesPerChunk * first.frameSeconds - 20);
+        const start = typeof requestedRoundAt === 'number'
+          ? (first.complete ? requestedRoundAt : Math.min(requestedRoundAt, liveStart))
+          : (first.complete ? 0 : liveStart);
+        const replay = new FpsLiveReplaySource(first, fetchChunk, start, () => { if (!cancelled) setGone(true); });
         await replay.ready();
         if (!cancelled) setSource(replay);
+        return true;
       } catch (problem) {
-        if (cancelled) return;
-        if (isReplayGone(problem)) setGone(true);
-        else setMessage((problem as Error).message || 'The broadcast is not available yet.');
+        if (cancelled) return true;
+        if (isReplayGone(problem)) { setGone(true); return true; }
+        setMessage((problem as Error).message || 'The broadcast is not available yet.');
+        return false;
+      } finally {
+        loading = false;
       }
-    })();
-    return () => { cancelled = true; };
-  }, [matchId, session]);
+    };
+    let stopWaiting: (() => void) | undefined;
+    void tryStart().then(started => {
+      if (cancelled || started) return;
+      // Keep polling at kickoff when chunk 0 has not aired yet so viewers do not have to reload.
+      stopWaiting = visibleInterval(() => {
+        void tryStart().then(done => { if (done) stopWaiting?.(); });
+      }, 4_000);
+    });
+    return () => { cancelled = true; stopWaiting?.(); };
+  }, [matchId, session, initialRound]);
   // While the match is on air, newer chunks become available every ten seconds.
   useEffect(() => {
     if (!source || source.header.complete || gone) return;

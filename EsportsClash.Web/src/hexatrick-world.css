@@ -251,12 +251,12 @@
   align-items: center;
   gap: 15px;
   padding: 13px 18px;
-  background: var(--hx-red-deep);
-  border-bottom: 1px solid color-mix(in srgb, var(--hx-red) 48%, transparent);
+  background: color-mix(in srgb, var(--hx-red) 10%, var(--cm-bg-panel-alt));
+  border-bottom: 1px solid var(--cm-border);
   font-size: 9px;
   letter-spacing: 0.08em;
   font-weight: 700;
-  color: var(--hx-on-accent);
+  color: var(--cm-text);
 }
 
 .hx-stage-header > span {

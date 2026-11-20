@@ -193,6 +193,23 @@ a.cm-tab { display: inline-flex; align-items: center; gap: 6px; }
 .cm-breadcrumb > span[aria-hidden] { margin: 0 4px; color: var(--cm-text-subtle); }
 .matches-nav { margin: 0 0 16px; }
 
+/* ---- Top bar: shortcuts, then the account ---------------------------------- */
+.cm-topbar-stats { gap: 8px; }
+.cm-topbar-divider { width: 1px; height: 22px; background: var(--cm-border); }
+.cm-account { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.cm-account__avatar {
+  display: inline-grid; place-items: center; flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--hx-accent-soft); border: 1px solid color-mix(in srgb, var(--hx-red) 35%, var(--cm-border));
+  color: var(--hx-accent); font-size: 12px; font-weight: 700;
+}
+.cm-account__name { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; color: var(--cm-text); }
+.cm-account .supporter-pill { border-radius: 999px; text-decoration: none; }
+@media (max-width: 760px) {
+  .cm-account__name, .cm-topbar-divider, .cm-topbar-label, .cm-account .supporter-pill { display: none; }
+  .cm-topbar-stats { flex-wrap: nowrap; }
+  .cm-breadcrumb > span:last-child { display: none; }
+}
+
 /* ---- Small screens: the workspace menu collapses behind a toggle -------------- */
 .cm-nav-toggle { display: none; }
 @media (max-width: 1024px) {
@@ -200,10 +217,11 @@ a.cm-tab { display: inline-flex; align-items: center; gap: 6px; }
   .cm-brand-sub { display: none; }
   .cm-nav-toggle {
     display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px;
-    border: 1px solid color-mix(in srgb, var(--hx-on-accent) 35%, transparent); border-radius: var(--hx-radius-sm);
-    background: color-mix(in srgb, #000 18%, transparent); color: var(--hx-on-accent); font-size: 13px; font-weight: 700; cursor: pointer;
+    border: 1px solid var(--cm-border-strong); border-radius: var(--hx-radius-sm);
+    background: var(--cm-bg-panel); color: var(--cm-text); font-size: 13px; font-weight: 600; cursor: pointer;
   }
-  .cm-nav-toggle:focus-visible { outline: 2px solid var(--hx-on-accent); outline-offset: 2px; }
+  .cm-nav-toggle:hover { background: var(--cm-surface-raised); }
+  .cm-nav-toggle:focus-visible { outline: none; border-color: var(--hx-red-bright); box-shadow: var(--hx-focus-ring); }
   .cm-nav { display: none; }
   .cm-nav.is-open {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); align-items: start;
@@ -214,3 +232,25 @@ a.cm-tab { display: inline-flex; align-items: center; gap: 6px; }
   .cm-nav.is-open .cm-nav-btn.active { border-left-color: var(--hx-red-bright); }
   .cm-sidebar-footer { display: none; }
 }
+
+/* ---- Switch: one on/off setting per row --------------------------------------- */
+.ui-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+.ui-switch-row + .ui-switch-row { border-top: 1px solid var(--cm-border); }
+.ui-switch-row__text { display: grid; gap: 2px; min-width: 0; }
+.ui-switch-row__label { font-size: 13px; font-weight: 600; color: var(--cm-text); }
+.ui-switch-row__desc { font-size: 12px; line-height: 1.5; color: var(--cm-text-muted); }
+.ui-switch-row.is-disabled .ui-switch-row__label { color: var(--cm-text-muted); }
+.ui-switch {
+  position: relative; flex-shrink: 0; width: 38px; height: 22px; padding: 0;
+  border: 1px solid var(--cm-border-strong); border-radius: 999px; background: var(--cm-bg-input);
+  cursor: pointer; transition: background-color 0.16s ease, border-color 0.16s ease;
+}
+.ui-switch__thumb {
+  position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cm-text-muted); transition: transform 0.16s ease, background-color 0.16s ease;
+}
+.ui-switch[aria-checked='true'] { background: var(--hx-red); border-color: var(--hx-red-bright); }
+.ui-switch[aria-checked='true'] .ui-switch__thumb { transform: translateX(16px); background: var(--hx-on-accent); }
+.ui-switch:hover:not(:disabled) { border-color: color-mix(in srgb, var(--cm-text) 42%, var(--cm-bg-panel)); }
+.ui-switch:disabled { opacity: 0.5; cursor: not-allowed; }
+.ui-switch:focus-visible { outline: none; box-shadow: var(--hx-focus-ring); }

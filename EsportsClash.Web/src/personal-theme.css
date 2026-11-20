@@ -49,16 +49,24 @@ html[data-hx-theme] :is(
   border-color: var(--cm-border);
 }
 
-html[data-hx-theme] :is(.cm-brand, .cm-panel-header, .pedia-panel > header, .pedia-panel h2, .pedia-panel-header, .pedia-infobox h2, .pedia-infobox h3, .competition-circuit > header) {
-  background: var(--hx-red-deep);
-  color: var(--hx-on-accent);
-  border-color: color-mix(in srgb, var(--hx-red) 45%, var(--cm-border));
+/* Structure stays neutral in every theme; the accent is kept for actions, the current place and live state. */
+html[data-hx-theme] :is(.cm-brand, .cm-panel-header) {
+  background: transparent;
+  color: var(--cm-text);
+  border-color: var(--cm-border);
+}
+
+/* Reference (wiki) headers keep a faint accent tint so records still read as Hexapedia. */
+html[data-hx-theme] :is(.pedia-panel > header, .pedia-panel h2, .pedia-panel-header, .pedia-infobox h2, .pedia-infobox h3, .competition-circuit > header) {
+  background: color-mix(in srgb, var(--hx-red) 10%, var(--cm-bg-panel-alt));
+  color: var(--cm-text);
+  border-color: var(--cm-border);
 }
 
 html[data-hx-theme] .cm-topbar {
-  background: var(--cm-bg-topbar);
+  background: color-mix(in srgb, var(--cm-bg-topbar) 88%, transparent);
   color: var(--cm-text);
-  border-bottom: 1px solid color-mix(in srgb, var(--hx-red) 34%, var(--cm-border));
+  border-bottom: 1px solid var(--cm-border);
 }
 
 html[data-hx-theme] .public-header {
@@ -103,6 +111,10 @@ html[data-hx-theme] :is(.pedia-masthead, .pedia-navigation, .pedia-table th, .cm
   background: var(--cm-bg-panel-alt);
   color: var(--cm-text);
   border-color: var(--cm-border);
+}
+
+html[data-hx-theme] .cm-table tbody th {
+  background: transparent;
 }
 
 html[data-hx-theme] :is(.pedia-table, .cm-table) tbody tr:nth-child(even) {
@@ -166,6 +178,11 @@ html[data-hx-density="compact"] .wire-post {
   font-size: 22px;
   font-weight: 800;
   margin: 0 0 6px;
+}
+
+.supporter-tagline {
+  margin: 0;
+  font-size: 14px;
 }
 
 .supporter-heading p,

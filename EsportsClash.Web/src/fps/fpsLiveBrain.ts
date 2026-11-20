@@ -141,12 +141,21 @@ export function shouldFakeLiveDefuse(remaining:number,kit:boolean,covered:boolea
 
 export interface LiveSmokeVolume extends FpsPoint {id?:number;y:number;radius:number;expires:number;startedAt?:number;disturbance?:number}
 export interface LiveSmokeCloudLobe {x:number;y:number;z:number;scaleX:number;scaleY:number;scaleZ:number}
+/** The smoke floor sits this far below `smoke.y`; both sight tests and the renderer clip the cloud there. */
+export const LIVE_SMOKE_FLOOR_DROP=1.42;
+/**
+ * How far the cloud body sits below `smoke.y`. `smoke.y` is the full-size centre, but the radius grows from
+ * zero while the smoke blooms, shrinks while it dissipates and is cut by HE; anchored there, a small cloud hung
+ * at chest height like a floating cotton ball. Its lowest lobes reach about 0.46r below the body, so a cloud
+ * under ~3 m radius rests on its floor instead. Zero at full size, so a bloomed smoke is unchanged.
+ */
+export function liveSmokeSettle(radius:number):number {return Math.min(0,radius*.46+.02-LIVE_SMOKE_FLOOR_DROP);}
 const smokeLobeCache=new Map<string,LiveSmokeCloudLobe[]>();
 /** The viewer renders these exact ellipsoids; AI sight tests the same animated volume. */
 export function liveSmokeCloudLobes(smoke:LiveSmokeVolume,now:number):LiveSmokeCloudLobe[] {
   const key=`${smoke.id??0}:${smoke.radius}:${now}`,cached=smokeLobeCache.get(key);
   if(cached)return cached;
-  const result:LiveSmokeCloudLobe[]=[];
+  const result:LiveSmokeCloudLobe[]=[],settle=liveSmokeSettle(smoke.radius);
   for(let i=0;i<15;i++){
     const phase=((smoke.id??0)*2.399+i*4.17)%(Math.PI*2),angle=phase+now*.045;
     const wobble=Math.sin(now*.28+phase);
@@ -154,7 +163,7 @@ export function liveSmokeCloudLobes(smoke:LiveSmokeVolume,now:number):LiveSmokeC
       const width=smoke.radius*1.35;
       result.push({
         x:Math.sin(now*.37+phase)*smoke.radius*.025,
-        y:smoke.radius*.02+wobble*smoke.radius*.01,
+        y:settle+smoke.radius*.02+wobble*smoke.radius*.01,
         z:Math.cos(now*.31+phase)*smoke.radius*.025,
         scaleX:width,scaleY:Math.min(3.65,smoke.radius*.94),scaleZ:width,
       });
@@ -163,7 +172,7 @@ export function liveSmokeCloudLobes(smoke:LiveSmokeVolume,now:number):LiveSmokeC
       const spread=.28+(i%4)*.045,width=smoke.radius*(.94+(i%3)*.045);
       result.push({
         x:Math.cos(angle)*smoke.radius*spread+Math.sin(now*.37+phase)*smoke.radius*.022,
-        y:-smoke.radius*.06+(i%3)*smoke.radius*.035+wobble*smoke.radius*.012,
+        y:settle-smoke.radius*.06+(i%3)*smoke.radius*.035+wobble*smoke.radius*.012,
         z:Math.sin(angle)*smoke.radius*spread+Math.cos(now*.31+phase)*smoke.radius*.022,
         scaleX:width,scaleY:Math.min(3.25,smoke.radius*(.78+(i%3)*.04)),scaleZ:width,
       });
@@ -172,7 +181,7 @@ export function liveSmokeCloudLobes(smoke:LiveSmokeVolume,now:number):LiveSmokeC
       const spread=.20+(i%3)*.05,width=smoke.radius*(.88+(i%2)*.05);
       result.push({
         x:Math.cos(angle)*smoke.radius*spread+Math.sin(now*.37+phase)*smoke.radius*.022,
-        y:smoke.radius*(.04+(i%3)*.03)+wobble*smoke.radius*.012,
+        y:settle+smoke.radius*(.04+(i%3)*.03)+wobble*smoke.radius*.012,
         z:Math.sin(angle)*smoke.radius*spread+Math.cos(now*.31+phase)*smoke.radius*.022,
         scaleX:width,scaleY:Math.min(3.65,smoke.radius*(.92+(i%2)*.04)),scaleZ:width,
       });
@@ -182,7 +191,7 @@ export function liveSmokeCloudLobes(smoke:LiveSmokeVolume,now:number):LiveSmokeC
   return result;
 }
 function segmentSmokeLobeContribution(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,lobe:LiveSmokeCloudLobe):{chord:number;optical:number} {
-  const floorY=smoke.y-1.42,dyWorld=toY-fromY;
+  const floorY=smoke.y-LIVE_SMOKE_FLOOR_DROP,dyWorld=toY-fromY;
   let minT=0,maxT=1;
   if(Math.abs(dyWorld)<1e-6){
     if(fromY<floorY)return {chord:0,optical:0};
@@ -208,6 +217,14 @@ function segmentSmokeLobeContribution(from:FpsPoint,to:FpsPoint,fromY:number,toY
 }
 export function liveSmokeDepth(from:FpsPoint,to:FpsPoint,fromY:number,toY:number,smoke:LiveSmokeVolume,now=smoke.startedAt??0):number {
   if(smoke.expires<=now||smoke.radius<=.02)return 0;
+  // Exact bounding-sphere reject before evaluating 15 animated ellipsoids.
+  // Widest lobe center offset (0.415r + 0.022r) + half-width (0.5 * 1.35r = 0.675r) < 1.15r; 1.45r is safely conservative.
+  const bound=smoke.radius*1.45,bodyY=smoke.y+liveSmokeSettle(smoke.radius);
+  const sdx=to.x-from.x,sdy=toY-fromY,sdz=to.z-from.z;
+  const segLenSq=sdx*sdx+sdy*sdy+sdz*sdz;
+  const t=segLenSq>1e-12?Math.max(0,Math.min(1,((smoke.x-from.x)*sdx+(bodyY-fromY)*sdy+(smoke.z-from.z)*sdz)/segLenSq)):0;
+  const cx=from.x+sdx*t-smoke.x,cy=fromY+sdy*t-bodyY,cz=from.z+sdz*t-smoke.z;
+  if(cx*cx+cy*cy+cz*cz>bound*bound)return 0;
   const fade=Math.min(1,Math.max(0,(smoke.expires-now)/1.2));
   let opticalSum=0;
   for(const lobe of liveSmokeCloudLobes(smoke,now)){

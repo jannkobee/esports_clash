@@ -1,0 +1,128 @@
+/* The Wire as a social timeline: avatar column, one header line, quote cards, an icon action bar and threaded replies. */
+.wire { --wire-reply: #4ea8ff; --wire-share: #56d08a; --wire-hover: color-mix(in srgb, var(--cm-text) 4%, transparent); }
+
+/* ---- Composer ---------------------------------------------------------------- */
+.wire-composer { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 14px 16px 12px; border-bottom: 1px solid var(--wire-line, var(--cm-border)); }
+.wire-composer > .person-portrait, .wire-composer > .wire-desk-mark { align-self: start; }
+.wire-composer form { display: grid; gap: 8px; min-width: 0; }
+.wire-composer textarea, .wire-reply-composer textarea {
+  width: 100%; min-height: 0 !important; padding: 8px 0 !important; resize: none; border: 0 !important; border-radius: 0 !important;
+  background: transparent !important; color: var(--cm-text); font-size: 17px !important; line-height: 1.45; box-shadow: none !important;
+}
+.wire-composer textarea::placeholder, .wire-reply-composer textarea::placeholder { color: var(--cm-text-subtle); }
+.wire-composer textarea:focus-visible, .wire-reply-composer textarea:focus-visible { outline: none; }
+.wire-composer form > footer, .wire-reply-composer footer {
+  display: flex; align-items: center; gap: 12px; padding-top: 10px; border-top: 1px solid var(--wire-line, var(--cm-border));
+}
+.wire-composer__hint { display: inline-flex; align-items: center; gap: 6px; margin-right: auto; font-size: 12.5px; font-weight: 600; color: var(--wire-reply); }
+.wire-composer__as select { min-height: 30px !important; padding: 4px 28px 4px 12px !important; border-radius: 999px !important; font-size: 12px !important; font-weight: 700; color: var(--wire-reply) !important; border-color: color-mix(in srgb, var(--wire-reply) 45%, transparent) !important; background: transparent !important; justify-self: start; }
+
+.wire-pill {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+  border: 0; background: var(--cm-text); color: var(--cm-bg-canvas); font-size: 14px; font-weight: 800; transition: opacity 0.15s ease, transform 0.1s ease;
+}
+.wire-pill:hover:not(:disabled) { opacity: 0.9; }
+.wire-pill:active:not(:disabled) { transform: scale(0.97); }
+.wire-pill:disabled { opacity: 0.45; cursor: default; }
+.wire-pill--ghost { background: transparent; color: var(--cm-text); border: 1px solid var(--cm-border-strong); justify-self: start; }
+
+.wire-ring { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: var(--cm-text-muted); }
+.wire-ring svg { transform: rotate(-90deg); }
+.wire-ring__track { fill: none; stroke: color-mix(in srgb, var(--cm-text) 16%, transparent); stroke-width: 2.5; }
+.wire-ring__fill { fill: none; stroke: var(--wire-reply); stroke-width: 2.5; stroke-linecap: round; transition: stroke-dasharray 0.15s ease; }
+.wire-ring.is-near .wire-ring__fill { stroke: var(--hx-warning); }
+.wire-ring.is-near small { color: var(--hx-warning); }
+.wire-ring.is-over .wire-ring__fill { stroke: var(--hx-negative); }
+.wire-ring.is-over small { color: var(--hx-negative); }
+
+/* ---- Post -------------------------------------------------------------------- */
+.wire-post { position: relative; display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 12px 16px 6px; border-bottom: 1px solid var(--wire-line, var(--cm-border)); transition: background-color 0.15s ease; }
+.wire-post:hover { background: var(--wire-hover); }
+.wire-post__avatar { align-self: start; display: grid; justify-items: center; position: relative; z-index: 1; }
+/* Round avatars crop the illustrated bust to the face. */
+.wire-post__avatar .person-portrait, .wire-composer > .person-portrait, .wire-reply-composer > .person-portrait {
+  position: relative; z-index: 1; width: var(--avatar, 42px); height: var(--avatar, 42px); align-items: center; justify-content: center;
+  border-radius: 50%; overflow: hidden; background: color-mix(in srgb, var(--cm-text) 8%, var(--cm-bg-panel)); box-shadow: 0 0 0 2px var(--cm-bg-panel);
+}
+.wire-post__avatar .person-portrait svg, .wire-composer > .person-portrait svg, .wire-reply-composer > .person-portrait svg { transform: scale(1.55) translateY(9%); transform-origin: 50% 40%; }
+.wire-reply .wire-post__avatar, .wire-reply-composer { --avatar: 36px; }
+.wire-post__avatar .person-portrait, .wire-post__avatar .wire-account-mark, .wire-reply-composer > .person-portrait { border-radius: 50%; overflow: hidden; background: var(--cm-bg-input); align-self: start; }
+.wire-post__main { min-width: 0; }
+.wire-post__head { display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; min-width: 0; font-size: 14px; line-height: 1.3; color: var(--cm-text-subtle); }
+.wire-post__head > strong { flex-shrink: 0; max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 750; color: var(--cm-text); }
+.wire-post__head > strong a, .wire-post__head > strong span { color: inherit; text-decoration: none; }
+.wire-post__head > strong a:hover { text-decoration: underline; }
+.wire-verified { display: inline-flex; color: var(--wire-reply); flex-shrink: 0; }
+.wire-post__head .wire-handle { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--cm-text-subtle); font-size: 14px; }
+.wire-post__head .wire-time, .wire-post__head time { flex-shrink: 0; color: var(--cm-text-subtle); text-decoration: none; font-size: 14px; }
+.wire-post__head .wire-time:hover { text-decoration: underline; }
+.wire-post__head .wire-story-options { margin-left: auto; background: transparent; }
+.wire-post .wire-author-kind { display: block; margin: 1px 0 2px; font-size: 12px; color: var(--cm-text-subtle); }
+.wire-post__lead { margin: 4px 0 2px; font-size: 15px; font-weight: 750; line-height: 1.35; color: var(--cm-text); }
+.wire-post__text { margin: 3px 0 0; font-size: 15px; line-height: 1.5; color: var(--cm-text); white-space: pre-wrap; overflow-wrap: anywhere; }
+.wire-post .wire-provenance { display: inline-block; margin: 4px 6px 0 0; }
+.wire-post .wire-expand { margin-top: 2px; color: var(--wire-reply); }
+
+.wire-quote {
+  display: grid; gap: 4px; margin: 10px 0 2px; padding: 10px 14px; border-radius: 16px; text-decoration: none;
+  border: 1px solid var(--cm-border-strong); color: var(--cm-text); transition: background-color 0.15s ease;
+}
+.wire-quote:hover { background: var(--wire-hover); }
+.wire-quote__head { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--cm-text-subtle); }
+.wire-quote__text { font-size: 14px; line-height: 1.45; color: var(--cm-text); }
+
+.wire-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.wire-chips:empty { display: none; }
+.wire-chips a, .wire-chips button {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--cm-border); background: transparent; color: var(--cm-text-muted); font-size: 12px; font-weight: 600; text-decoration: none;
+}
+.wire-chips a:hover, .wire-chips button:hover { color: var(--cm-text); border-color: var(--cm-border-strong); }
+.wire-chips .is-live { color: #ff5b6b; border-color: color-mix(in srgb, #ff5b6b 50%, transparent); background: color-mix(in srgb, #ff5b6b 10%, transparent); }
+
+/* ---- Action bar --------------------------------------------------------------- */
+.wire-actions { display: flex; align-items: center; gap: 28px; margin: 4px 0 0 -8px; }
+.wire-action {
+  display: inline-flex; align-items: center; gap: 2px; min-height: 34px; padding: 0 8px 0 0; border: 0; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--cm-text-subtle); font-size: 13px; font-weight: 500; text-decoration: none; font-variant-numeric: tabular-nums;
+}
+.wire-action svg { box-sizing: content-box; padding: 8px; border-radius: 50%; transition: background-color 0.15s ease, color 0.15s ease; }
+.wire-action.is-reply:hover, .wire-action.is-reply[aria-expanded='true'] { color: var(--wire-reply); }
+.wire-action.is-reply:hover svg, .wire-action.is-reply[aria-expanded='true'] svg { background: color-mix(in srgb, var(--wire-reply) 14%, transparent); }
+.wire-action.is-share:hover, .wire-action.is-share.is-done { color: var(--wire-share); }
+.wire-action.is-share:hover svg { background: color-mix(in srgb, var(--wire-share) 14%, transparent); }
+.wire-action.is-open:hover { color: var(--cm-text); }
+.wire-action.is-open:hover svg { background: var(--wire-hover); }
+.wire-action.is-danger:hover { color: var(--hx-negative); }
+.wire-actions--small { gap: 14px; margin-top: 0; }
+.wire-actions--small .wire-action span { font-size: 12px; }
+.wire-actions .news-content-report > .cm-btn {
+  min-height: 30px; padding: 0 8px; border: 0; background: transparent; color: var(--cm-text-subtle); font-size: 12px; font-weight: 500;
+}
+.wire-actions .news-content-report > .cm-btn:hover { color: var(--hx-warning); background: transparent; }
+
+/* ---- Thread ------------------------------------------------------------------------ */
+.wire-post.is-open > .wire-post__avatar::after {
+  content: ''; position: absolute; top: 62px; bottom: 0; left: 36px; width: 2px; border-radius: 2px; background: var(--cm-border-strong);
+}
+.wire-thread { display: grid; margin: 6px 0 0 -54px; padding-left: 0; }
+.wire-reply-composer { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 10px 0 10px 0; }
+.wire-reply-composer > .person-portrait { justify-self: center; }
+.wire-reply-composer > div { display: grid; gap: 2px; min-width: 0; }
+.wire-reply-composer footer { justify-content: flex-end; border-top: 0; padding-top: 4px; }
+.wire-reply-composer .wire-pill { min-height: 32px; padding: 0 16px; font-size: 13.5px; background: var(--wire-reply); color: #fff; }
+.wire-replying { margin: 0; font-size: 13px; color: var(--cm-text-subtle); }
+.wire-replying b { font-weight: 500; color: var(--wire-reply); }
+.wire-reply { position: relative; display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 10px 0 4px; border-top: 1px solid var(--wire-line, var(--cm-border)); }
+.wire-reply .wire-post__text { font-size: 14.5px; }
+.wire-reply .wire-post__head { font-size: 13.5px; }
+.wire-thread__empty { margin: 0; padding: 10px 0 12px 54px; font-size: 13px; color: var(--cm-text-subtle); }
+.wire-show-more { justify-self: start; margin: 4px 0 10px 54px; padding: 6px 0; border: 0; background: transparent; color: var(--wire-reply); font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.wire-show-more:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+  .wire-post, .wire-composer { grid-template-columns: 36px minmax(0, 1fr); gap: 10px; padding-inline: 12px; }
+  .wire-post__head .wire-handle { display: none; }
+  .wire-thread { margin-left: -46px; }
+  .wire-actions { gap: 16px; }
+}

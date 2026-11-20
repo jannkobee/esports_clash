@@ -1,0 +1,47 @@
+/* Practice: who plays, then two formats side by side. The live 3D format is the featured choice. */
+.practice { display: grid; gap: 16px; max-width: 1080px; }
+
+.practice-lineup {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: start; gap: 12px 18px;
+  padding: 14px 16px; border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel);
+}
+.practice-side { display: grid; gap: 6px; min-width: 0; }
+.practice-side__label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cm-text-subtle); }
+.practice-side ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.practice-side li {
+  padding: 3px 9px; border: 1px solid var(--cm-border); border-radius: 999px; background: var(--cm-bg-input);
+  font-size: 12px; font-weight: 600; color: var(--cm-text);
+}
+.practice-side p { margin: 0; font-size: 12px; color: var(--cm-text-muted); }
+.practice-lineup__vs { align-self: center; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cm-text-subtle); }
+.practice-lineup__note {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; margin: 2px 0 0; padding-top: 10px;
+  border-top: 1px solid var(--cm-border); font-size: 12px; color: var(--cm-text-muted);
+}
+.practice-lineup__note svg { flex-shrink: 0; color: var(--cm-text-subtle); }
+
+.practice-error { margin: 0; }
+
+.practice-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.practice-mode {
+  display: flex; flex-direction: column; gap: 16px; padding: 18px;
+  border: 1px solid var(--cm-border); border-radius: var(--hx-radius-md); background: var(--cm-bg-panel); box-shadow: var(--hx-shadow-sm);
+}
+.practice-mode--featured { border-color: color-mix(in srgb, var(--hx-red) 40%, var(--cm-border)); }
+.practice-mode__head { display: flex; align-items: flex-start; gap: 12px; }
+.practice-mode__icon {
+  display: inline-grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px;
+  border-radius: var(--hx-radius-md); background: var(--hx-accent-soft); color: var(--hx-accent);
+}
+.practice-mode h2 { margin: 0; font-size: 16px; font-weight: 650; color: var(--cm-text); }
+.practice-mode__head p { margin: 4px 0 0; font-size: 13px; line-height: 1.55; color: var(--cm-text-muted); }
+.practice-field { display: grid; max-width: 320px; }
+.practice-mode__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: auto; }
+.practice-link { font-size: 12px; font-weight: 600; }
+.practice-more { margin: 0; font-size: 12px; color: var(--cm-text-subtle); }
+
+@media (max-width: 860px) {
+  .practice-modes { grid-template-columns: 1fr; }
+  .practice-lineup { grid-template-columns: 1fr; }
+  .practice-lineup__vs { justify-self: start; }
+}

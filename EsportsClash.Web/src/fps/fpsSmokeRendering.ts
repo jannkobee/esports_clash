@@ -1,5 +1,5 @@
 import { MeshBuilder, Mesh, ShaderMaterial, TransformNode, Vector3, type Scene } from '@babylonjs/core';
-import { liveSmokeCloudLobes, type LiveSmokeVolume } from './fpsLiveBrain.ts';
+import { liveSmokeCloudLobes, liveSmokeSettle, LIVE_SMOKE_FLOOR_DROP, type LiveSmokeVolume } from './fpsLiveBrain.ts';
 
 const vertexSource=`precision highp float;
 attribute vec3 position;
@@ -11,6 +11,7 @@ const fragmentSource=`precision highp float;
 varying vec3 worldPoint;
 uniform vec3 eyePosition;
 uniform vec3 cloudOrigin;
+uniform float floorLevel;
 uniform mat4 viewProjection;
 uniform vec4 lobes[15];
 uniform vec3 radii[15];
@@ -30,7 +31,7 @@ float fbm(vec3 p){
 void main(){
   vec3 direction=normalize(worldPoint-eyePosition);
   float opticalDepth=0.0;float weightedEntry=0.0;float weightedMid=0.0;float weightSum=0.0;float frontEntry=10000.0;
-  float floorY=cloudOrigin.y-1.42;
+  float floorY=floorLevel;
   float minT=0.0;
   float maxT=10000.0;
   if(eyePosition.y>=floorY){
@@ -90,7 +91,7 @@ export function createLiveSmokeRenderVolume(scene:Scene,id:number):LiveSmokeRend
   const webgl2='webGLVersion' in engine&&Number(engine.webGLVersion)>1;
   const fragment=(webgl2?'#define SMOKE_DEPTH gl_FragDepth\n':'#extension GL_EXT_frag_depth : enable\n#define SMOKE_DEPTH gl_FragDepthEXT\n')+fragmentSource;
   const material=new ShaderMaterial(`smoke-volume-${id}`,scene,{vertexSource,fragmentSource:fragment},{
-    attributes:['position'],uniforms:['world','worldViewProjection','viewProjection','eyePosition','cloudOrigin','lobes','radii','cloudTime','fade'],needAlphaBlending:true,
+    attributes:['position'],uniforms:['world','worldViewProjection','viewProjection','eyePosition','cloudOrigin','floorLevel','lobes','radii','cloudTime','fade'],needAlphaBlending:true,
   });
   material.disableDepthWrite=true;material.backFaceCulling=true;
   material.onBindObservable.add(()=>{
@@ -108,6 +109,8 @@ export function updateLiveSmokeRenderVolume(view:LiveSmokeRenderVolume,smoke:Liv
   view.root.position.set(smoke.x,smoke.y,smoke.z);
   view.mesh.scaling.set(Math.max(.05,smoke.radius*2.2),Math.max(7.2,smoke.radius*2.4),Math.max(.05,smoke.radius*2.2));
   view.material.setArray4('lobes',centers);view.material.setArray3('radii',radii);
-  view.material.setVector3('cloudOrigin',new Vector3(smoke.x,smoke.y,smoke.z));view.material.setFloat('cloudTime',time);
+  // Shading follows the settled cloud body; the floor clip stays where sight tests put it.
+  view.material.setVector3('cloudOrigin',new Vector3(smoke.x,smoke.y+liveSmokeSettle(smoke.radius),smoke.z));
+  view.material.setFloat('floorLevel',smoke.y-LIVE_SMOKE_FLOOR_DROP);view.material.setFloat('cloudTime',time);
   view.material.setFloat('fade',Math.min(1,Math.max(0,(smoke.expires-time)/1.2)));
 }

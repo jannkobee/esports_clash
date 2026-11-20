@@ -1,9 +1,8 @@
 import {Fragment, useState} from 'react';
-import {ArrowLeft, ArrowRight, Check, ChevronDown, CircleAlert, CircleCheck, RotateCcw, Save, Users} from 'lucide-react';
+import {ArrowLeft, ArrowLeftRight, ArrowRight, Check, ChevronDown, CircleAlert, CircleCheck, RotateCcw, Save, ShoppingBag, Users} from 'lucide-react';
 import {FpsPlayerRole} from './FpsPlayerRole';
 import {fpsRoleFit} from '../fps/fpsRoleFit';
-import {FPS_ATTRIBUTE_LABELS} from '../fps/fpsPersonality';
-import {FPS_BASE_BEHAVIORAL_PROFILES, FPS_POSITION_LABELS, fpsBaseProfileId, personalityLabel, type FpsScoutingProfile} from '../fps/fpsIdentity';
+import {FPS_BASE_BEHAVIORAL_PROFILES, fpsBaseProfileId, personalityLabel, type FpsScoutingProfile} from '../fps/fpsIdentity';
 import {CountryFlag} from './CountryFlag';
 import {SearchField} from './ui/SearchField';
 import {FilterBar, SelectField} from './ui/FilterBar';
@@ -14,6 +13,10 @@ import type {PlayerFormData} from '../playerForm';
 // Manager-facing 1–10 levels use the one owner-mandated conversion (fpsScale10).
 import {fpsScale10 as toScale10} from '../fps/fpsScale10';
 import {pediaHref, pediaMoney} from '../hexapedia';
+import {PlayerCard, type CardPlayer} from './game/PlayerCard';
+import {HexRadar} from './game/HexRadar';
+import {PipMeter} from './game/PipMeter';
+import {ATTRIBUTES, RARITY_LABELS, rarityOf, scaledAttributes, type AttributeKey} from './game/positions';
 import './squad-roster.css';
 
 export interface SquadCard {id:string;training_xp:number;form?:PlayerFormData;definition:{fpsIdentity?:FpsScoutingProfile;presentation?:import('../supporter').PlayerPresentation|null;name:string;ovr:number;wage?:number;nationality?:{code:string;name:string};stats?:Record<string,number>}}
@@ -28,59 +31,67 @@ export function lineupReadiness(cards: Pick<SquadCard, 'id' | 'definition'>[], l
   return {five: distinct === 5, distinct, t, ct, ready: distinct === 5 && t === 5 && ct === 5};
 }
 
-function Readiness({cards, lineup}: {cards: SquadCard[]; lineup: Slot[]}) {
+const toCardPlayer = (c: SquadCard): CardPlayer => ({
+  id: c.id, name: c.definition.name, ovr: c.definition.ovr, stats: c.definition.stats, nationality: c.definition.nationality,
+  appearance: c.definition.presentation?.appearance, positions: c.definition.fpsIdentity?.assignments ?? undefined,
+});
+
+const goToTactics = () => document.getElementById('tactical-system')?.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+/** The team at a glance: rating, shape across the six attributes, and whether it may play official games. */
+function TeamHero({cards, lineup}: {cards: SquadCard[]; lineup: Slot[]}) {
   const r = lineupReadiness(cards, lineup);
-  const items: [boolean, string, string | null][] = [
-    [r.five, r.five ? 'Five starters selected' : `${r.distinct} of 5 starters selected`, null],
-    [r.t === 5, `T-side positions · ${r.t} of 5 assigned`, r.t === 5 ? null : '#tactical-system'],
-    [r.ct === 5, `CT-side positions · ${r.ct} of 5 assigned`, r.ct === 5 ? null : '#tactical-system'],
-  ];
-  return <section className={`squad-ready ${r.ready ? 'is-ready' : ''}`} aria-labelledby="squad-ready-title">
-    <div className="squad-ready__summary">
-      {r.ready ? <CircleCheck size={20} aria-hidden="true" /> : <CircleAlert size={20} aria-hidden="true" />}
-      <div><h3 id="squad-ready-title">{r.ready ? 'Ready for official matches' : 'Not ready for official matches yet'}</h3>
-        <p>{r.ready ? 'This five plays every fixture unless you set orders for a specific game.' : 'Official fixtures and matchmaking need five starters with a unique T and CT position each.'}</p></div>
+  const five = lineup.map(s => cards.find(c => c.id === s.instance_id)).filter((c): c is SquadCard => !!c);
+  const rating = five.length ? five.reduce((sum, c) => sum + toScale10(c.definition.ovr), 0) / five.length : 0;
+  const average: Partial<Record<AttributeKey, number>> = {};
+  for (const {key} of ATTRIBUTES) {
+    const values = five.map(c => scaledAttributes(c.definition.stats)[key]).filter((v): v is number => v != null);
+    if (values.length) average[key] = values.reduce((a, b) => a + b, 0) / values.length;
+  }
+  const best = ATTRIBUTES.filter(a => average[a.key] != null).sort((a, b) => average[b.key]! - average[a.key]!)[0];
+  const tier = rarityOf(Math.round(rating));
+  const circumference = 2 * Math.PI * 44;
+  return <section className={`team-hero is-${tier}`} aria-label="Team overview">
+    <div className="team-hero__rating">
+      <svg viewBox="0 0 100 100" width="112" height="112" aria-hidden="true">
+        <circle cx="50" cy="50" r="44" className="team-hero__track" />
+        <circle cx="50" cy="50" r="44" className="team-hero__progress" style={{strokeDasharray: `${circumference * rating / 10} ${circumference}`}} />
+      </svg>
+      <div><b>{rating.toFixed(1)}</b><small>Team rating</small></div>
+      <span className="team-hero__tier">{RARITY_LABELS[tier]} squad</span>
     </div>
-    <ul className="squad-ready__checks">{items.map(([ok, label, href]) => <li key={label} className={ok ? 'is-ok' : 'is-todo'}>
-      {ok ? <Check size={14} aria-hidden="true" /> : <CircleAlert size={14} aria-hidden="true" />}<span>{label}</span>
-      {href && <a href={href} onClick={e => { e.preventDefault(); document.getElementById('tactical-system')?.scrollIntoView({behavior: 'smooth', block: 'start'}); }}>Assign</a>}
-    </li>)}</ul>
+    <div className="team-hero__shape">
+      <HexRadar values={average} size={176} labels />
+      {best && <p>Strongest at <strong>{best.label}</strong></p>}
+    </div>
+    <div className="team-hero__ready">
+      <span className={'team-hero__status' + (r.ready ? ' is-ready' : '')}>{r.ready ? <CircleCheck size={15} aria-hidden="true" /> : <CircleAlert size={15} aria-hidden="true" />}{r.ready ? 'Match ready' : 'Not match ready'}</span>
+      <PipMeter label="Starters" value={r.distinct} />
+      <PipMeter label="T positions" value={r.t} color="#e8a948" />
+      <PipMeter label="CT positions" value={r.ct} color="#5aa9ff" />
+      {!r.ready && <button type="button" className="cm-btn cm-btn-sm cm-btn-primary" onClick={goToTactics}>Set positions <ArrowRight size={13} aria-hidden="true" /></button>}
+    </div>
   </section>;
 }
 
-function tendencyNotes(profile?: FpsScoutingProfile) {
-  return (profile?.top_tendencies ?? []).filter(t => t.value <= 4 || t.value >= 7).map(t => `${t.label} ${t.value} · ${t.level}`);
-}
-
-/** Everything about a player that is useful once, not on every scan: personality, positions, attributes. */
-function PlayerDetails({card}: {card: SquadCard}) {
-  const profile = card.definition.fpsIdentity, p = profile?.personality, notes = tendencyNotes(profile);
-  return <div className="squad-details">
-    <section><h4>Personality</h4>
-      {p ? <><p className="squad-details__lead" title={FPS_BASE_BEHAVIORAL_PROFILES[fpsBaseProfileId(p) - 1]?.tendency}>{[p.temperament, p.playstyle, p.mindset, p.decisionStyle].map(personalityLabel).join(' · ')}</p>
-        {notes.length ? <ul className="squad-details__list">{notes.map(n => <li key={n}>{n}</li>)}</ul> : <p className="squad-muted">No strong natural tendencies.</p>}</>
-        : <p className="squad-muted">Not scouted yet.</p>}
-    </section>
-    <section><h4>Positions</h4>
-      <dl className="squad-details__pairs">
-        <div><dt>T side</dt><dd>{profile?.assignments?.t ? FPS_POSITION_LABELS[profile.assignments.t].replace(/^T · /, '') : <span className="squad-muted">Not assigned</span>}</dd></div>
-        <div><dt>CT side</dt><dd>{profile?.assignments?.ct ? FPS_POSITION_LABELS[profile.assignments.ct].replace(/^CT · /, '') : <span className="squad-muted">Not assigned</span>}</dd></div>
-        <div><dt>Best fit</dt><dd><FpsPlayerRole stats={card.definition.stats} /></dd></div>
-      </dl>
-    </section>
-    <section><h4>Attributes</h4>
-      <dl className="squad-details__bars">{Object.entries(FPS_ATTRIBUTE_LABELS).map(([key, label]) => {
-        const value = card.definition.stats?.[key];
-        const level = value == null ? null : toScale10(value);
-        return <div key={key}><dt>{label}</dt><dd><span className="squad-bar" aria-hidden="true"><span style={{width: `${(level ?? 0) * 10}%`}} /></span><b>{level ?? '—'}</b><small>/10</small></dd></div>;
-      })}</dl>
-    </section>
+/** The back of a card: who the player is, beyond the numbers. */
+function CardBack({card, sellable}: {card: SquadCard; sellable: boolean}) {
+  const profile = card.definition.fpsIdentity, p = profile?.personality;
+  const notes = (profile?.top_tendencies ?? []).filter(t => t.value <= 4 || t.value >= 7).slice(0, 3);
+  return <div className="card-back">
+    {p ? <p className="card-back__persona" title={FPS_BASE_BEHAVIORAL_PROFILES[fpsBaseProfileId(p) - 1]?.tendency}>{[p.temperament, p.playstyle, p.mindset, p.decisionStyle].map(personalityLabel).join(' · ')}</p> : <p className="squad-muted">Not scouted yet.</p>}
+    {notes.length > 0 && <ul className="card-back__tends">{notes.map(t => <li key={t.key}><span>{t.label}</span><b>{t.value}</b></li>)}</ul>}
+    <dl className="card-back__facts">
+      <div><dt>Form</dt><dd><PlayerForm form={card.form} /></dd></div>
+      <div><dt>Wage</dt><dd>{card.definition.wage != null ? pediaMoney(card.definition.wage * 100) + ' / wk' : '—'}</dd></div>
+    </dl>
+    <div className="card-back__links"><a href={pediaHref('players', card.id)}>Full record</a>{sellable && <a href={'#transfer-exchange?tab=sell&player=' + card.id}>Sell</a>}</div>
   </div>;
 }
 
 /**
- * Squad roster: readiness first, then the starting five, then the roster grouped into starters and reserves.
- * Rows carry only what a manager scans for; personality, positions and attributes open per player.
+ * Squad: the team at a glance, the starting five as cards, the bench, then a searchable roster list.
+ * Click a starter and then a bench player, or drag a bench card onto a starter, to make a change.
  */
 export function SquadRoster({cards, lineup, saved, onChange, busy, onReset, fixture = false}: {cards: SquadCard[]; lineup: Slot[]; saved: Slot[]; onChange: (slots: Slot[]) => void; busy: boolean; onReset: () => void; fixture?: boolean}) {
   const [slot, setSlot] = useState(0), [search, setSearch] = useState(''), [sort, setSort] = useState('overall');
@@ -88,21 +99,27 @@ export function SquadRoster({cards, lineup, saved, onChange, busy, onReset, fixt
   const dirty = JSON.stringify(lineup) !== JSON.stringify(saved);
   const starterIds = lineup.map(s => s.instance_id);
   const starters = new Set(starterIds);
-  const assign = (id: string) => {
+  const assignTo = (target: number, id: string) => {
+    if (busy) return;
     const next = lineup.map(s => ({...s})), existing = next.findIndex(s => s.instance_id === id);
-    if (existing === slot) return;
-    if (existing >= 0) [next[slot], next[existing]] = [next[existing], next[slot]]; else next[slot] = {instance_id: id};
+    if (existing === target) return;
+    if (existing >= 0) [next[target], next[existing]] = [next[existing], next[target]]; else next[target] = {instance_id: id};
     onChange(next);
+    setSlot(target);
   };
+  const assign = (id: string) => assignTo(slot, id);
   const move = (from: number, to: number) => { const next = [...lineup]; [next[from], next[to]] = [next[to], next[from]]; onChange(next); setSlot(to); };
   const toggle = (id: string) => setOpen(prev => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next; });
   const term = search.trim().toLowerCase();
   const matches = (c: SquadCard) => !term || [c.definition.name, fpsRoleFit(c.definition.stats), c.definition.nationality?.name].join(' ').toLowerCase().includes(term);
   const order = (a: SquadCard, b: SquadCard) => sort === 'overall' ? b.definition.ovr - a.definition.ovr : sort === 'form' ? (b.form?.score ?? -1) - (a.form?.score ?? -1) : sort === 'wage' ? (b.definition.wage ?? 0) - (a.definition.wage ?? 0) : a.definition.name.localeCompare(b.definition.name);
   const startingRows = starterIds.map(id => cards.find(c => c.id === id)).filter((c): c is SquadCard => !!c && matches(c));
-  const reserveRows = cards.filter(c => !starters.has(c.id) && matches(c)).sort(order);
+  const reserves = cards.filter(c => !starters.has(c.id)).sort(order);
+  const reserveRows = reserves.filter(matches);
   const shown = startingRows.length + reserveRows.length;
   const slotOf = (id: string) => starterIds.indexOf(id);
+  const selectedCard = cards.find(c => c.id === lineup[slot]?.instance_id);
+  const sellable = (c: SquadCard) => !starters.has(c.id) && !saved.some(s => s.instance_id === c.id);
 
   const row = (c: SquadCard) => {
     const inSlot = lineup[slot]?.instance_id === c.id, expanded = open.has(c.id), n = slotOf(c.id);
@@ -131,38 +148,53 @@ export function SquadRoster({cards, lineup, saved, onChange, busy, onReset, fixt
           </button>
         </td>
       </tr>
-      {expanded && <tr className="squad-detail-row" id={'squad-details-' + c.id}><td colSpan={5}>
-        <PlayerDetails card={c} />
-        {!starters.has(c.id) && !saved.some(s => s.instance_id === c.id) && <p className="squad-detail-foot"><a href={'#transfer-exchange?tab=sell&player=' + c.id}>List {c.definition.name} for auction</a></p>}
-      </td></tr>}
+      {expanded && <tr className="squad-detail-row" id={'squad-details-' + c.id}><td colSpan={5}><CardBack card={c} sellable={sellable(c)} /></td></tr>}
     </Fragment>;
   };
 
   return <div className="squad-desk">
-    {!fixture && <Readiness cards={cards} lineup={lineup} />}
+    {!fixture && <TeamHero cards={cards} lineup={lineup} />}
 
     <section className="squad-five" aria-labelledby="squad-five-title">
-      <header className="squad-section-head"><h3 id="squad-five-title">Starting five</h3><p>Choose a slot, then pick a player from the roster below to fill it. Arrows change the order.</p></header>
-      <div className="squad-slots">{lineup.map((s, i) => {
+      <header className="squad-section-head squad-section-head--row">
+        <h3 id="squad-five-title">Starting five</h3>
+        <p className="squad-hint" aria-live="polite">{selectedCard ? <>Replacing <strong>#{slot + 1} {selectedCard.definition.name}</strong>: pick a bench player, or drag one onto any card.</> : 'Pick a slot to fill.'}</p>
+      </header>
+      <div className="squad-five__cards">{lineup.map((s, i) => {
         const c = cards.find(card => card.id === s.instance_id);
-        return <div className={'squad-slot ' + (slot === i ? 'selected' : '')} key={i}>
-          <button type="button" className="squad-slot__select" aria-pressed={slot === i} onClick={() => setSlot(i)}>
-            <span className="squad-slot__number">{i + 1}</span>
-            {c && <WorldPlayerPortrait id={c.id} name={c.definition.name} appearance={c.definition.presentation?.appearance} size={44} />}
-            <span><strong>{c?.definition.name ?? 'Empty slot'}</strong><small><FpsPlayerRole stats={c?.definition.stats} /></small></span>
-            <b>{c ? toScale10(c.definition.ovr) : '—'}<small>OVR</small></b>
-          </button>
-          <div className="squad-slot__order">
-            <button type="button" disabled={busy || i === 0} onClick={() => move(i, i - 1)} aria-label={`Move starter ${i + 1} earlier`}><ArrowLeft size={12} /></button>
-            <small>{slot === i ? 'Picking for this slot' : 'Select to replace'}</small>
-            <button type="button" disabled={busy || i === 4} onClick={() => move(i, i + 1)} aria-label={`Move starter ${i + 1} later`}><ArrowRight size={12} /></button>
+        if (!c) return <button type="button" key={'empty' + i} className={'squad-empty-slot' + (slot === i ? ' is-selected' : '')} onClick={() => setSlot(i)}><span>#{i + 1}</span>Empty slot</button>;
+        return <div className="squad-five__slot" key={c.id} style={{animationDelay: `${i * 60}ms`}}>
+          <PlayerCard className="is-new" size="lg" player={toCardPlayer(c)} slot={i + 1} selected={slot === i} onSelect={() => setSlot(i)} selectLabel={`Select slot ${i + 1}, ${c.definition.name}`}
+            dragData={c.id} onDropPlayer={id => assignTo(i, id)} back={<CardBack card={c} sellable={false} />} />
+          <div className="squad-five__order">
+            <button type="button" disabled={busy || i === 0} onClick={() => move(i, i - 1)} aria-label={`Move ${c.definition.name} earlier`}><ArrowLeft size={13} /></button>
+            <button type="button" disabled={busy || i === 4} onClick={() => move(i, i + 1)} aria-label={`Move ${c.definition.name} later`}><ArrowRight size={13} /></button>
           </div>
         </div>;
       })}</div>
     </section>
 
-    <section className="squad-roster" aria-labelledby="squad-roster-title">
-      <header className="squad-section-head"><h3 id="squad-roster-title"><Users size={16} aria-hidden="true" /> Club roster <span className="squad-count">{cards.length}</span></h3></header>
+    <section className="squad-bench" aria-labelledby="squad-bench-title">
+      <header className="squad-section-head squad-section-head--row">
+        <h3 id="squad-bench-title"><Users size={16} aria-hidden="true" /> Bench <span className="squad-count">{reserves.length}</span></h3>
+        {reserves.length > 0 && <a className="squad-link" href="#transfer-exchange"><ShoppingBag size={13} aria-hidden="true" /> Find more players</a>}
+      </header>
+      {reserves.length ? <div className="squad-bench__cards">{reserves.map(c => {
+        const inSlot = lineup[slot]?.instance_id === c.id;
+        const better = selectedCard ? toScale10(c.definition.ovr) - toScale10(selectedCard.definition.ovr) : 0;
+        return <PlayerCard key={c.id} size="md" player={toCardPlayer(c)} dragData={c.id} back={<CardBack card={c} sellable={sellable(c)} />}
+          ribbon={better > 0 ? `+${better} on #${slot + 1}` : undefined}
+          footer={<button type="button" className={"cm-btn cm-btn-sm squad-sub"+(better>0?" is-upgrade":"")} disabled={busy || inSlot || !selectedCard} onClick={() => assign(c.id)}>
+            <ArrowLeftRight size={12} aria-hidden="true" />{selectedCard ? `Sub in for #${slot + 1}` : 'Sub in'}</button>} />;
+      })}</div>
+        : <div className="squad-bench__empty">
+          <p><strong>No one on the bench.</strong> Injuries, form slumps and fixture pile-ups hurt a five with no cover.</p>
+          <a className="cm-btn cm-btn-primary cm-btn-sm" href="#transfer-exchange"><ShoppingBag size={13} aria-hidden="true" /> Sign a player</a>
+        </div>}
+    </section>
+
+    <details className="squad-list">
+      <summary><ChevronDown size={14} aria-hidden="true" /> Roster list <span className="squad-count">{cards.length}</span><small>Search, sort and compare everyone</small></summary>
       <FilterBar count={term ? `${shown} of ${cards.length} players` : `${cards.length} players`} active={!!term || sort !== 'overall'} onClear={() => { setSearch(''); setSort('overall'); }}>
         <SearchField label="Search squad" placeholder="Player, role or nationality" value={search} onChange={setSearch} />
         <SelectField label="Sort reserves by" value={sort} onChange={setSort}><option value="overall">Overall</option><option value="form">Form</option><option value="wage">Weekly wage</option><option value="name">Name</option></SelectField>
@@ -173,12 +205,12 @@ export function SquadRoster({cards, lineup, saved, onChange, busy, onReset, fixt
           {startingRows.length > 0 && <tbody><tr className="squad-group-row"><th colSpan={5} scope="colgroup">Starting five <span>{startingRows.length}</span></th></tr>{startingRows.map(row)}</tbody>}
           {reserveRows.length > 0 && <tbody><tr className="squad-group-row"><th colSpan={5} scope="colgroup">Reserves <span>{reserveRows.length}</span></th></tr>{reserveRows.map(row)}</tbody>}
         </table></div>}
-    </section>
+    </details>
 
-    <footer className="squad-save">
-      <span role="status">{dirty ? 'You have unsaved changes to the starting five.' : fixture ? 'These are the orders for this fixture.' : 'Starting five saved.'}</span>
-      <button type="button" className="cm-btn" disabled={busy || !dirty} onClick={onReset}><RotateCcw size={13} aria-hidden="true" />Undo changes</button>
-      <button className="cm-btn cm-btn-primary" disabled={busy || (!dirty && !fixture)}><Save size={13} aria-hidden="true" />{busy ? 'Saving…' : fixture ? 'Save fixture orders' : 'Save starting five'}</button>
+    <footer className={'squad-save' + (dirty || fixture ? ' is-visible' : '')} aria-hidden={!(dirty || fixture)}>
+      <span role="status">{dirty ? 'Lineup changed' : fixture ? 'Orders for this fixture' : 'Starting five saved'}</span>
+      <button type="button" className="cm-btn cm-btn-ghost" disabled={busy || !dirty} onClick={onReset} tabIndex={dirty ? 0 : -1}><RotateCcw size={13} aria-hidden="true" />Undo</button>
+      <button className="cm-btn cm-btn-primary" disabled={busy || (!dirty && !fixture)} tabIndex={dirty || fixture ? 0 : -1}><Save size={13} aria-hidden="true" />{busy ? 'Saving…' : fixture ? 'Save fixture orders' : 'Save starting five'}</button>
     </footer>
   </div>;
 }

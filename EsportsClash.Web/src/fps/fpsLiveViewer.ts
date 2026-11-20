@@ -8,7 +8,7 @@ import { segmentHitsWall } from './fpsSpatialWorld.ts';
 import type { LiveSnapshot, LivePlayer, LiveBlast } from './fpsLiveSimulation.ts';
 import { buildLiveScenery } from './fpsLiveScenery.ts';
 import { buildSpillwayScenery } from './fpsSpillwayScenery.ts';
-import { buildLiveSky, liveBoxSurfaceUV, LIVE_SURFACE_METRES, LiveSurfaceLibrary, type LiveSurface } from './fpsLiveGraphics.ts';
+import { buildLiveSky, liveBoxSurfaceUV, LIVE_SURFACE_BOX_WRAP, LIVE_SURFACE_METRES, LiveSurfaceLibrary, type LiveSurface } from './fpsLiveGraphics.ts';
 import { LIVE_CANAL as LIVE_RIVER, LIVE_PORT, liveCutPavingRect, LIVE_CANAL_CROSSINGS as LIVE_RIVER_BRIDGES } from './fpsLiveTerrain.ts';
 import { SPILLWAY_SHALLOW_WATERS } from './fpsSpillwayTerrain.ts';
 import { liveVillageAsset } from './fpsVillageDesign.ts';
@@ -2179,9 +2179,11 @@ export class FpsLiveViewer {
     if(runtime.id==='fontessa'){
       this.scene.clearColor=new Color4(.74,.81,.82,1);
       this.scene.fogDensity=.0032;this.scene.fogColor=new Color3(.74,.81,.82);
-      this.skyLight.intensity=.72;this.skyLight.diffuse=new Color3(.83,.91,1);this.skyLight.groundColor=new Color3(.34,.29,.23);
+      // Pale paving under a strong sky term sat ~1.5x brighter than the facades and clipped to a flat glow.
+      // Less sky from above and more warm bounce from the street keep walls as bright while floors drop ~15%.
+      this.skyLight.intensity=.62;this.skyLight.diffuse=new Color3(.8,.88,1);this.skyLight.groundColor=new Color3(.47,.41,.33);
       this.sunLight.direction=new Vector3(-.55,-1,.32);this.sunLight.position.set(35,65,-35);
-      this.sunLight.intensity=1.08;this.sunLight.diffuse=new Color3(1,.91,.77);
+      this.sunLight.intensity=1.04;this.sunLight.diffuse=new Color3(1,.91,.77);
 
       const staticStart=this.scene.meshes.length;
       for(const [index,rect] of liveCutPavingRect({minX:-36,maxX:36,minZ:-46,maxZ:46}).entries()){
@@ -2216,17 +2218,26 @@ export class FpsLiveViewer {
         else if(wall.id.startsWith('mid-window-ct-interior-stair-')){minX+=.02;maxX-=.13;}
         else if(wall.id.startsWith('mid-window-side-stair-')||wall.id==='mid-window-side-passage-floor'){minZ+=.03;maxZ-=.03;}
         else if(wall.id.startsWith('canal-quay-')||wall.id.startsWith('canal-stair-landing-')){top=-.015;}
+        // Render only the eave outside the Jade Lantern facade; its collision box reaches into the dining room.
+        else if(wall.id==='restaurant-teal-awning'){minZ=Math.max(minZ,-29.35);}
         const width=maxX-minX,depth=maxZ-minZ,height=top-base;
         const design=wall.id.startsWith('village-terrace-stone-')?undefined:liveVillageAsset(wall.id);
         const kind:LiveSurface=wall.id==='b-apartments-roof'?'clay':design?.surface??'stone';
-        const mesh=MeshBuilder.CreateBox(wall.id,{width,height,depth,faceUV:liveBoxSurfaceUV(width,height,depth,LIVE_SURFACE_METRES[kind])},this.scene);
-        mesh.position.set((minX+maxX)/2,base+height/2,(minZ+maxZ)/2);mesh.material=this.surfaces.material(kind,wall.color);
-        mesh.isPickable=false;mesh.receiveShadows=true;if(top>.05)this.shadows.addShadowCaster(mesh);mesh.freezeWorldMatrix();
+        // Canal access treads share the towpath grey-green; dressed Istrian-style stone reads as steps.
+        const color=/^canal-(market-north|west|apartment)-stair-|^canal-stair-side-/.test(wall.id)?'#b0a58b':wall.color;
+        const mesh=MeshBuilder.CreateBox(wall.id,{width,height,depth,faceUV:liveBoxSurfaceUV(width,height,depth,LIVE_SURFACE_METRES[kind]),wrap:LIVE_SURFACE_BOX_WRAP},this.scene);
+        mesh.position.set((minX+maxX)/2,base+height/2,(minZ+maxZ)/2);mesh.material=this.surfaces.material(kind,color);
+        // Posts thinner than a shadow texel alias into dashed, shimmering lines rather than shadows.
+        mesh.isPickable=false;mesh.receiveShadows=true;if(top>.05&&Math.max(width,depth)>.11)this.shadows.addShadowCaster(mesh);mesh.freezeWorldMatrix();
         mesh.metadata={purpose:design?.purpose??'Walkable apartment stair or deck'};
         if(wall.cutawayGroup){mesh.setEnabled(!this.cutawayEnabled);this.cutawayMeshes.push(mesh);}
       }
       for(const mesh of buildLiveScenery(this.scene,color=>this.material(color),this.surfaces)){
         if(mesh.metadata?.castShadow!==false&&Math.abs(mesh.position.x)<=42&&Math.abs(mesh.position.z)<=50&&!/paving|floor|court|road|street|cloth|plaque|paint/.test(mesh.name))this.shadows.addShadowCaster(mesh);
+      }
+      // Scenery roofs built over cutaway roof slabs hide together with them.
+      for(const mesh of this.scene.meshes.slice(staticStart))if(mesh instanceof Mesh&&mesh.metadata?.cutawayRoof&&!this.cutawayMeshes.includes(mesh)){
+        mesh.setEnabled(!this.cutawayEnabled);this.cutawayMeshes.push(mesh);
       }
       const mosaicTexture=new DynamicTexture('b-basin-blue-mosaic',{width:512,height:512},this.scene,false);
       this.mapTextures.push(mosaicTexture);
@@ -2296,7 +2307,7 @@ export class FpsLiveViewer {
         const design=runtime.definition.resolveAssetStyle?.(wall.id);
         const kind=toRenderSurface(wall.surface??design?.surface,'concrete');
         const hex=wall.color||design?.color||'#8c9092';
-        const mesh=MeshBuilder.CreateBox(wall.id,{width,height,depth,faceUV:liveBoxSurfaceUV(width,height,depth,LIVE_SURFACE_METRES[kind])},this.scene);
+        const mesh=MeshBuilder.CreateBox(wall.id,{width,height,depth,faceUV:liveBoxSurfaceUV(width,height,depth,LIVE_SURFACE_METRES[kind]),wrap:LIVE_SURFACE_BOX_WRAP},this.scene);
         mesh.position.set((wall.minX+wall.maxX)/2,base+height/2,(wall.minZ+wall.maxZ)/2);
         mesh.material=this.surfaces.material(kind,hex);
         mesh.isPickable=false;mesh.receiveShadows=true;

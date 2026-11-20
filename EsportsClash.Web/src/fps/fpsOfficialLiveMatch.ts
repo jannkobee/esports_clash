@@ -9,9 +9,12 @@
 import type { PlayerCard } from '../types.ts';
 import type { FpsIdentityExperiment, FpsMatchEvent, FpsPlayerMatchStats, FpsRoundResult, FpsTeamId } from './fpsTypes.ts';
 import type { LiveMapId } from './fpsLiveMapTypes.ts';
-import { FpsLiveSimulation, LIVE_FPS_STEP, type LiveEvent, type LiveRoundTelemetry } from './fpsLiveSimulation.ts';
+import { FpsLiveSimulation, LIVE_FPS_STEP, type FpsPlaybookUpdate, type LiveEvent, type LiveRoundTelemetry, type LiveSimulationOptions } from './fpsLiveSimulation.ts';
 import { FPS_BEHAVIOR_METRICS, type FpsBehaviorMetric } from './fpsPlayerArchitecture.ts';
 import type { FpsAudioCue } from './fpsBroadcastAudio.ts';
+import { compatibleApproved } from './fpsApprovedLearning.ts';
+import { loadFpsOpponentModel, loadFpsTeamPlaybook } from './fpsLivePlaybook.ts';
+import { loadFpsUtilityBrain } from './fpsUtilityBrain.ts';
 
 export const FPS_OFFICIAL_SIMULATION_VERSION = 5;
 export const FPS_OFFICIAL_LIVE_MAPS: readonly LiveMapId[] = ['fontessa', 'spillway'];
@@ -38,6 +41,16 @@ export interface FpsOfficialLiveReport {
   durationSeconds: number;
   /** Whole broadcast length in seconds (freeze, live and post-round time): replay and settlement timing. */
   broadcastSeconds: number;
+  /** Broadcast timestamp (seconds) when each round's live phase started, for replay round-seeking. */
+  roundStartSeconds: number[];
+  /** Lawful per-round playbook/opponent summaries when club playbooks were pinned for this match. */
+  playbookExperience?: Partial<Record<FpsTeamId, { rounds: FpsPlaybookUpdate['round'][]; observed: NonNullable<FpsPlaybookUpdate['observed']>[] }>>;
+}
+export interface FpsOfficialTeamLearningInput {
+  playbook?: unknown;
+  opponents?: unknown;
+  utility?: unknown;
+  opponentId?: string;
 }
 export interface FpsOfficialTick { sim: FpsLiveSimulation; tick: number; cues: FpsAudioCue[] }
 export interface FpsOfficialOptions {
@@ -45,14 +58,54 @@ export interface FpsOfficialOptions {
   onTick?: (tick: FpsOfficialTick) => void;
   /** Safety bound; a regulation match is about 95k steps. */
   maxSteps?: number;
+  /** Optional immutable hash-pinned approved learning bundle (run strictly frozen for determinism). */
+  approvedBundle?: unknown;
+  /** Optional per-team frozen lineage snapshots (club playbooks, opponent models, utility brains). */
+  teamLearning?: Partial<Record<FpsTeamId, FpsOfficialTeamLearningInput>>;
 }
 
 export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[], seed: number, mapId: LiveMapId,
   identity: FpsIdentityExperiment, options: FpsOfficialOptions = {}): FpsOfficialLiveReport {
   if (!FPS_OFFICIAL_LIVE_MAPS.includes(mapId)) throw new Error(`Unsupported official live map: ${mapId}`);
   const rounds: LiveRoundTelemetry[] = [];
-  // Frozen by default: the engine's utility brain is the committed seed; no other learner is attached.
-  const sim = new FpsLiveSimulation(blue, red, seed, identity, { mapId, onRoundComplete: r => rounds.push(r) });
+  const approved = compatibleApproved(options.approvedBundle);
+  const playbookExperience: Partial<Record<FpsTeamId, { rounds: FpsPlaybookUpdate['round'][]; observed: NonNullable<FpsPlaybookUpdate['observed']>[] }>> = {};
+  const teamLearning: NonNullable<LiveSimulationOptions['teamLearning']> = {};
+  for (const team of ['blue', 'red'] as const) {
+    const input = options.teamLearning?.[team];
+    const book = loadFpsTeamPlaybook(input?.playbook) ?? approved?.playbooks?.[mapId];
+    const opponents = loadFpsOpponentModel(input?.opponents) ?? approved?.opponents;
+    const util = loadFpsUtilityBrain(input?.utility) ?? approved?.utility;
+    if (book || opponents || util) {
+      const bucket = { rounds: [] as FpsPlaybookUpdate['round'][], observed: [] as NonNullable<FpsPlaybookUpdate['observed']>[] };
+      if (book || input?.playbook || input?.opponentId) playbookExperience[team] = bucket;
+      teamLearning[team] = {
+        ...(book || input?.opponentId ? {
+          playbook: {
+            mode: 'frozen',
+            ...(book && book.map === mapId ? { model: book } : {}),
+            ...(opponents ? { opponents } : {}),
+            ...(input?.opponentId ? { opponent: input.opponentId } : {}),
+            onRound: u => { bucket.rounds.push(u.round); if (u.observed) bucket.observed.push(u.observed); },
+          },
+        } : {}),
+        ...(util ? { utilityLearning: { mode: 'frozen', model: util } } : {}),
+      };
+    }
+  }
+  const simOptions: LiveSimulationOptions = {
+    mapId,
+    onRoundComplete: r => rounds.push(r),
+    ...(approved ? {
+      learning: { mode: 'frozen', model: approved.navigation },
+      mechanicsLearning: { mode: 'frozen', model: approved.combat },
+      movementLearning: { mode: 'frozen', model: approved.movement },
+      ...(approved.utility ? { utilityLearning: { mode: 'frozen', model: approved.utility } } : {}),
+    } : {}),
+    ...(Object.keys(teamLearning).length ? { teamLearning } : {}),
+  };
+  // Strictly frozen: deterministic across processes; optional pinned models never mutate in-match.
+  const sim = new FpsLiveSimulation(blue, red, seed, identity, simOptions);
   const names = new Map([...blue, ...red].map(p => [p.id, p.name]));
   const events: FpsMatchEvent[] = [];
   const clutches = new Map<string, number>(), setPieces = new Map<string, number>();
@@ -60,6 +113,9 @@ export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[],
   let clutch: { team: FpsTeamId; id: string } | undefined;
   let executeCounted = false;
   const roundDurations: number[] = [];
+  const roundStartSeconds: number[] = [];
+  const roundExecuted: boolean[] = [];
+  const roundCash: { blue: number; red: number }[] = [];
   const maxSteps = options.maxSteps ?? 400_000;
   let previous = sim.officialRoundState();
   while (previous.phase !== 'finished' && tick < maxSteps) {
@@ -67,7 +123,11 @@ export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[],
     const cues = sim.drainAudioCues();
     options.onTick?.({ sim, tick, cues });
     const state = sim.officialRoundState();
-    if (previous.phase !== 'live' && state.phase === 'live') { liveStartedAt = state.time; clutch = undefined; executeCounted = false; }
+    if (previous.phase !== 'live' && state.phase === 'live') {
+      liveStartedAt = state.time; clutch = undefined; executeCounted = false;
+      roundStartSeconds.push(+(tick * LIVE_FPS_STEP).toFixed(2));
+      roundCash.push({ ...state.cash });
+    }
     if (state.phase === 'live') {
       roundLive = state.time - liveStartedAt;
       // A clutch: one player left against at least one opponent, decided by the round result below.
@@ -83,6 +143,7 @@ export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[],
     for (const e of sim.eventsSince(lastEvent)) { lastEvent = e.id; const converted = convertEvent(e, state.round, tick, names); if (converted) events.push(converted); }
     if (previous.phase === 'live' && state.phase !== 'live') {
       roundDurations.push(Math.max(LIVE_FPS_STEP, roundLive));
+      roundExecuted.push(executeCounted);
       const result = rounds[rounds.length - 1];
       if (clutch && result?.winner === clutch.team && state.alive[clutch.team].includes(clutch.id)) clutches.set(clutch.id, (clutches.get(clutch.id) ?? 0) + 1);
     }
@@ -97,10 +158,12 @@ export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[],
     (r.round <= 15 ? half : r.round <= 30 ? second : overtime)[r.winner]++;
     const reason = REASONS[r.reason];
     if (!reason) throw new Error(`Unknown round end reason: ${r.reason}`);
+    const executed = roundExecuted[i] ?? false;
+    const cash = roundCash[i] ?? { blue: 0, red: 0 };
     return {
       roundNumber: i + 1, winnerTeam: r.winner, winnerSide: r.winner === r.attackTeam ? 'attackers' : 'defenders', reason,
       roundDurationSeconds: +(roundDurations[i] ?? LIVE_FPS_STEP).toFixed(2), devicePlanted: r.planted, ...(r.site && r.planted ? { plantedSite: r.site } : {}),
-      setPieceExecuted: false, setPieceSuccessful: false, blueScoreAfter: score.blue, redScoreAfter: score.red, blueCashTotal: 0, redCashTotal: 0,
+      setPieceExecuted: executed, setPieceSuccessful: executed && r.winner === r.attackTeam, blueScoreAfter: score.blue, redScoreAfter: score.red, blueCashTotal: cash.blue, redCashTotal: cash.red,
     } as FpsRoundResult;
   });
   const totalRounds = roundResults.length;
@@ -136,6 +199,8 @@ export function simulateOfficialLiveMatch(blue: PlayerCard[], red: PlayerCard[],
     roundResults, playerStats, events, behaviorSummary, roundSnapshots,
     durationSeconds: +roundDurations.reduce((s, d) => s + d, 0).toFixed(2),
     broadcastSeconds: +(tick * LIVE_FPS_STEP).toFixed(2),
+    roundStartSeconds,
+    ...(Object.keys(playbookExperience).length ? { playbookExperience } : {}),
   };
 }
 

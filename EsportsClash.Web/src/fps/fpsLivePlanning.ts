@@ -21,7 +21,7 @@ const plantChoices={
  B:[{x:23,z:18.1,style:'for main'},{x:20.1,z:21,style:'for catwalk'},{x:23,z:23.9,style:'for guard street'},{x:25.9,z:21,style:'for gallery'}]
 };
 /** Choose an actual open plant and its defensible direction using only personal evidence. */
-export function planLivePlant(from:FpsPoint,site:LivePlantSite,beliefs:readonly LiveIntelBelief[]=[],previous?:FpsPoint,coverage:readonly FpsPoint[]=[],runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,routePlanner?:(point:FpsPoint)=>LiveRoutePlan):LivePlantPlan|undefined {
+export function planLivePlant(from:FpsPoint,site:LivePlantSite,beliefs:readonly LiveIntelBelief[]=[],previous?:FpsPoint,coverage:readonly FpsPoint[]=[],runtime:LiveMapRuntime=FONTESSA_MAP_RUNTIME,routePlanner?:(point:FpsPoint)=>LiveRoutePlan,openStyleBias=0):LivePlantPlan|undefined {
  const siteChoices=runtime.definition.tactical[site].plantChoices.length?runtime.definition.tactical[site].plantChoices:plantChoices[site];
  const routeTo=routePlanner??createLiveRoutePlanner(from,beliefs,0,undefined,runtime),valid=(p:FpsPoint)=>livePlantSite(p,runtime)===site&&runtime.walkable(p);
  const saved=previous&&valid(previous)?siteChoices.find(p=>distance(p,previous)<.2):undefined;
@@ -32,7 +32,7 @@ export function planLivePlant(from:FpsPoint,site:LivePlantSite,beliefs:readonly 
   const alliesCovering=coverage.filter(a=>distance(a,p.point)<22&&runtime.sightline(a,p.point)).length;
   const exposedScore=beliefs.reduce((sum,b)=>sum+(b.age<6&&runtime.sightline(b,p.point)?b.certainty*11:0),0);
   const isOpenSpot=p.style.includes('main')||p.style.includes('middle')||p.style.includes('catwalk');
-  const styleBias=openPreferred?(isOpenSpot?-1.6:1.1):(isOpenSpot?2.4:-1.8);
+  const styleBias=(openPreferred?(isOpenSpot?-1.6:1.1):(isOpenSpot?2.4:-1.8))+(isOpenSpot?-openStyleBias:openStyleBias);
   return p.route.distance*.65+p.route.exposure*.28-alliesCovering*1.7+exposedScore+styleBias;
  };
  plans.sort((a,b)=>score(a)-score(b)||a.style.localeCompare(b.style));

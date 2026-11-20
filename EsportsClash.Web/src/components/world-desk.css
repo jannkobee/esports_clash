@@ -93,6 +93,36 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin-top: 10px;
+}
+
+/* Owner metrics: a compact two-column list, collapsed by default so Home stays about the club. */
+.world-desk-ops {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2px 20px;
+  margin: 10px 0 0;
+}
+
+.world-desk-ops > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--cm-border);
+  font-size: 12px;
+}
+
+.world-desk-ops dt {
+  color: var(--cm-text-muted);
+  text-transform: capitalize;
+}
+
+.world-desk-ops dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--cm-text);
 }
 
 .world-desk--compact .world-desk-counts {

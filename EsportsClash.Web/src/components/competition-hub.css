@@ -270,3 +270,6 @@
     overflow-x: auto;
   }
 }
+
+.competition-title--slim { flex-wrap: wrap; justify-content: space-between; }
+.competition-title--slim p { margin: 0; font-size: 13px; }
